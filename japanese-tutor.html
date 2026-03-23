@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日語練習所</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Mono:wght@300;400&family=Shippori+Mincho:wght@400;600&display=swap');
+
+  :root {
+    --ink: #1a1410;
+    --paper: #f5f0e8;
+    --paper2: #ede8dc;
+    --red: #c0392b;
+    --gold: #b8960c;
+    --muted: #8a7f72;
+    --border: #d4cfc6;
+    --good: #2d6a4f;
+    --warn: #e07b39;
+    --bad: #c0392b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(0,0,0,0.04) 27px, rgba(0,0,0,0.04) 28px);
+  }
+
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 16px 40px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    background: var(--paper);
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { font-family: 'Shippori Mincho', serif; font-size: 1.5rem; letter-spacing: 0.08em; }
+  header span { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.12em; }
+  .nav-tabs { margin-left: auto; display: flex; border: 1.5px solid var(--ink); }
+  .nav-tab { padding: 6px 16px; font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; cursor: pointer; background: transparent; border: none; border-right: 1.5px solid var(--ink); color: var(--muted); transition: all 0.15s; }
+  .nav-tab:last-child { border-right: none; }
+  .nav-tab.active { background: var(--ink); color: var(--paper); }
+  .nav-tab:hover:not(.active) { background: var(--paper2); }
+
+  main { max-width: 880px; margin: 0 auto; padding: 36px 24px; }
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .card { background: #fff; border: 1.5px solid var(--border); padding: 24px 28px; margin-bottom: 18px; box-shadow: 3px 3px 0 var(--border); }
+  .card-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* RUBY */
+  .sentence-display {
+    text-align: center;
+    padding: 32px 24px 28px;
+    margin-bottom: 20px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    position: relative;
+  }
+  .sentence-jp {
+    font-family: 'Shippori Mincho', serif;
+    font-size: 2rem;
+    letter-spacing: 0.12em;
+    line-height: 2.6;
+    margin-bottom: 8px;
+  }
+  .sentence-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; }
+  .sentence-jp ruby rt { font-size: 0.38em; letter-spacing: 0.04em; color: var(--muted); font-family: 'Noto Serif JP', serif; font-weight: 300; line-height: 1; }
+  .sentence-meaning { font-size: 0.88rem; color: var(--muted); margin-top: 4px; }
+  .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); }
+  .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
+
+  /* RECORD */
+  .record-area { text-align: center; margin: 16px 0; }
+  .btn-record { width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--ink); background: var(--paper); cursor: pointer; font-size: 1.8rem; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+  .btn-record:hover { background: var(--paper2); transform: scale(1.04); }
+  .btn-record.recording { background: var(--red); border-color: var(--red); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,0.4)} 50%{box-shadow:0 0 0 12px rgba(192,57,43,0)} }
+  .record-hint { font-family: 'DM Mono', monospace; font-size: 0.66rem; color: var(--muted); margin-top: 8px; letter-spacing: 0.06em; }
+  .waveform { height: 36px; display: flex; align-items: center; justify-content: center; gap: 3px; margin: 10px 0; opacity: 0; transition: opacity 0.3s; }
+  .waveform.active { opacity: 1; }
+  .wave-bar { width: 3px; background: var(--red); border-radius: 2px; animation: wave 0.5s ease-in-out infinite alternate; }
+  @keyframes wave { from{height:4px} to{height:28px} }
+
+  /* RESULT */
+  .result-box { border: 1.5px solid var(--border); padding: 18px 22px; margin-top: 14px; display: none; }
+  .result-box.visible { display: block; }
+  .score-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+  .score-circle { width: 62px; height: 62px; border-radius: 50%; border: 3px solid var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 1.2rem; flex-shrink: 0; }
+  .score-circle.good{border-color:var(--good);color:var(--good)} .score-circle.warn{border-color:var(--warn);color:var(--warn)} .score-circle.bad{border-color:var(--bad);color:var(--bad)}
+  .score-detail { flex: 1; }
+  .score-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+  .score-bars { display: flex; flex-direction: column; gap: 5px; }
+  .score-bar-row { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; }
+  .score-bar-row span:first-child { width: 52px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.62rem; }
+  .score-bar-track { flex: 1; height: 5px; background: var(--border); border-radius: 2px; }
+  .score-bar-fill { height: 100%; border-radius: 2px; background: var(--ink); transition: width 0.6s ease; }
+  .score-bar-fill.good{background:var(--good)} .score-bar-fill.warn{background:var(--warn)} .score-bar-fill.bad{background:var(--bad)}
+  .transcript-line { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); margin: 8px 0 4px; }
+  .ai-feedback { font-size: 0.83rem; line-height: 1.8; border-top: 1px solid var(--border); margin-top: 12px; padding-top: 12px; white-space: pre-wrap; }
+  .ai-feedback-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 4px; }
+
+  .practice-nav { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .btn { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; padding: 8px 18px; border: 1.5px solid var(--ink); background: transparent; cursor: pointer; transition: all 0.15s; color: var(--ink); }
+  .btn:hover { background: var(--ink); color: var(--paper); }
+  .btn.primary { background: var(--ink); color: var(--paper); }
+  .btn.primary:hover { background: var(--muted); border-color: var(--muted); }
+  .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn.gold { border-color: var(--gold); color: var(--gold); }
+  .btn.gold:hover { background: var(--gold); color: #fff; border-color: var(--gold); }
+
+  /* LIBRARY */
+  .category-tabs { display: flex; border-bottom: 1.5px solid var(--border); margin-bottom: 16px; }
+  .cat-tab { padding: 7px 14px; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.06em; cursor: pointer; background: transparent; border: none; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all 0.15s; }
+  .cat-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
+
+  .jlpt-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .jlpt-btn { font-family: 'DM Mono', monospace; font-size: 0.65rem; padding: 5px 14px; border: 1.5px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); transition: all 0.15s; letter-spacing: 0.06em; }
+  .jlpt-btn:hover,.jlpt-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  .item-list { display: flex; flex-direction: column; gap: 5px; max-height: 420px; overflow-y: auto; }
+  .item-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); background: #fff; }
+  .item-row:hover { background: var(--paper2); }
+  .item-jp-wrap { min-width: 180px; }
+  .item-jp { font-family: 'Shippori Mincho', serif; font-size: 1rem; letter-spacing: 0.06em; line-height: 2.2; }
+  .item-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; }
+  .item-jp ruby rt { font-size: 0.5em; color: var(--muted); font-family: 'Noto Serif JP', serif; font-weight: 300; }
+  .item-meaning { font-size: 0.78rem; color: var(--muted); flex: 1; }
+  .item-tag { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 7px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+  .item-actions { display: flex; gap: 5px; }
+  .btn-sm { font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 3px 9px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); transition: all 0.1s; }
+  .btn-sm:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .btn-sm.danger:hover { background: var(--bad); border-color: var(--bad); }
+
+  .add-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 3px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+  .form-hint { font-size: 0.62rem; color: var(--muted); margin-top: 2px; }
+  .form-input, .form-select { font-family: 'Noto Serif JP', serif; font-size: 0.88rem; padding: 7px 10px; border: 1.5px solid var(--border); background: var(--paper); color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .form-input:focus, .form-select:focus { border-color: var(--ink); }
+
+  /* AI GENERATE */
+  .gen-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 18px; }
+  .gen-form .form-group { min-width: 130px; }
+  .gen-result { display: flex; flex-direction: column; gap: 5px; }
+  .gen-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border: 1px solid var(--border); background: #fff; }
+  .gen-item .item-jp { font-family: 'Shippori Mincho', serif; font-size: 0.95rem; line-height: 2.2; flex: 1; }
+  .gen-item .item-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; }
+  .gen-item .item-jp ruby rt { font-size: 0.5em; color: var(--muted); }
+  .gen-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
+  /* SETTINGS */
+  .settings-grid { display: flex; flex-direction: column; gap: 14px; }
+  .setting-row { display: flex; flex-direction: column; gap: 4px; }
+  .setting-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+  .setting-input { font-family: 'DM Mono', monospace; font-size: 0.78rem; padding: 9px 12px; border: 1.5px solid var(--border); background: var(--paper); color: var(--ink); outline: none; }
+  .setting-input:focus { border-color: var(--ink); }
+  .setting-hint { font-size: 0.7rem; color: var(--muted); }
+  .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--border); margin-right: 5px; }
+  .status-dot.ok { background: var(--good); }
+
+  .loading-text { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; animation: blink 1s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--ink); color: var(--paper); font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; padding: 9px 18px; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: var(--border); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>日語練習所</h1>
+  <span>PRONUNCIATION TRAINER</span>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="switchSection('practice')">練習</button>
+    <button class="nav-tab" onclick="switchSection('library')">題庫</button>
+    <button class="nav-tab" onclick="switchSection('generate')">AI 生成</button>
+    <button class="nav-tab" onclick="switchSection('settings')">設定</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- PRACTICE -->
+  <div class="section active" id="section-practice">
+    <div class="card">
+      <div class="card-label">當前練習</div>
+      <div class="sentence-display" id="sentenceDisplay">
+        <span class="sentence-badge" id="sentenceBadge">—</span>
+        <span class="sentence-counter" id="sentenceCounter">1 / 1</span>
+        <div class="sentence-jp" id="sentenceJp">請前往「設定」填入 API Key</div>
+        <div class="sentence-meaning" id="sentenceMeaning">Settings → 填入 Azure + Claude Key 後開始</div>
+      </div>
+
+      <div class="record-area">
+        <div class="waveform" id="waveform">
+          <div class="wave-bar" style="animation-delay:0s"></div>
+          <div class="wave-bar" style="animation-delay:0.07s"></div>
+          <div class="wave-bar" style="animation-delay:0.14s"></div>
+          <div class="wave-bar" style="animation-delay:0.21s"></div>
+          <div class="wave-bar" style="animation-delay:0.28s"></div>
+          <div class="wave-bar" style="animation-delay:0.35s"></div>
+          <div class="wave-bar" style="animation-delay:0.42s"></div>
+          <div class="wave-bar" style="animation-delay:0.49s"></div>
+          <div class="wave-bar" style="animation-delay:0.56s"></div>
+        </div>
+        <button class="btn-record" id="btnRecord" onclick="toggleRecord()">🎤</button>
+        <div class="record-hint" id="recordHint">點擊開始錄音</div>
+      </div>
+
+      <div class="result-box" id="resultBox">
+        <div class="score-row">
+          <div class="score-circle" id="scoreCircle">—</div>
+          <div class="score-detail">
+            <div class="score-label">發音評分細項</div>
+            <div class="score-bars">
+              <div class="score-bar-row"><span>準確度</span><div class="score-bar-track"><div class="score-bar-fill" id="barAccuracy" style="width:0%"></div></div><span id="valAccuracy">—</span></div>
+              <div class="score-bar-row"><span>流暢度</span><div class="score-bar-track"><div class="score-bar-fill" id="barFluency" style="width:0%"></div></div><span id="valFluency">—</span></div>
+              <div class="score-bar-row"><span>完整度</span><div class="score-bar-track"><div class="score-bar-fill" id="barCompleteness" style="width:0%"></div></div><span id="valCompleteness">—</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="transcript-line">辨識結果：<span id="transcriptText">—</span></div>
+        <div id="aiFeedbackArea" style="display:none">
+          <div class="ai-feedback-label">▸ AI 建議</div>
+          <div class="ai-feedback" id="aiFeedback"></div>
+        </div>
+      </div>
+
+      <div class="practice-nav">
+        <button class="btn" onclick="prevSentence()">← 上一題</button>
+        <button class="btn" onclick="nextSentence()">下一題 →</button>
+        <button class="btn" onclick="shuffleSentences()">隨機</button>
+        <button class="btn primary" id="btnAiFeedback" onclick="requestAiFeedback()" disabled>AI 分析</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIBRARY -->
+  <div class="section" id="section-library">
+    <div class="category-tabs">
+      <button class="cat-tab active" onclick="switchCategory('all')">全部</button>
+      <button class="cat-tab" onclick="switchCategory('jlpt')">JLPT</button>
+      <button class="cat-tab" onclick="switchCategory('sentence')">句子</button>
+      <button class="cat-tab" onclick="switchCategory('word')">單字</button>
+      <button class="cat-tab" onclick="switchCategory('custom')">自訂</button>
+    </div>
+
+    <div id="jlptPanel" style="display:none; margin-bottom:12px;">
+      <div style="font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--muted); margin-bottom:8px; letter-spacing:0.1em;">點擊載入內建 JLPT 題庫 →</div>
+      <div class="jlpt-tabs">
+        <button class="jlpt-btn" onclick="loadJLPT('N5')">N5 入門</button>
+        <button class="jlpt-btn" onclick="loadJLPT('N4')">N4 初級</button>
+        <button class="jlpt-btn" onclick="loadJLPT('N3')">N3 中級</button>
+        <button class="jlpt-btn" onclick="loadJLPT('N2')">N2 中高級</button>
+        <button class="jlpt-btn" onclick="loadJLPT('N1')">N1 高級</button>
+      </div>
+    </div>
+
+    <div class="item-list" id="itemList"></div>
+
+    <div class="card" style="margin-top:20px;">
+      <div class="card-label">手動新增</div>
+      <div class="add-form">
+        <div class="form-group">
+          <label class="form-label">日文（可含漢字）</label>
+          <input class="form-input" id="inputJp" placeholder="例：日本語">
+        </div>
+        <div class="form-group">
+          <label class="form-label">讀音（平假名）</label>
+          <input class="form-input" id="inputReading" placeholder="例：にほんご">
+        </div>
+        <div class="form-group">
+          <label class="form-label">中文意思</label>
+          <input class="form-input" id="inputMeaning" placeholder="例：日語">
+        </div>
+        <div class="form-group">
+          <label class="form-label">類型</label>
+          <select class="form-select" id="inputType">
+            <option value="sentence">句子</option>
+            <option value="word">單字</option>
+            <option value="custom">自訂</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ruby 標記（選填）</label>
+          <input class="form-input" id="inputRuby" placeholder="電車|でんしゃ に 乗|の ります">
+          <div class="form-hint">格式：漢字|讀音，空格分隔，純平假名直接寫</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">JLPT 等級</label>
+          <select class="form-select" id="inputJlpt">
+            <option value="">—</option>
+            <option value="N5">N5</option>
+            <option value="N4">N4</option>
+            <option value="N3">N3</option>
+            <option value="N2">N2</option>
+            <option value="N1">N1</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn primary" onclick="addItem()">新增</button>
+        <button class="btn" onclick="resetToDefaults()">還原預設</button>
+        <button class="btn" onclick="exportCSV()">匯出 CSV</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI GENERATE -->
+  <div class="section" id="section-generate">
+    <div class="card">
+      <div class="card-label">AI 題目生成</div>
+      <div class="gen-form">
+        <div class="form-group">
+          <label class="form-label">主題</label>
+          <input class="form-input" id="genTopic" placeholder="旅行、餐廳、打招呼…" style="min-width:150px;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">JLPT 難度</label>
+          <select class="form-select" id="genLevel">
+            <option value="N5">N5 入門</option>
+            <option value="N4" selected>N4 初級</option>
+            <option value="N3">N3 中級</option>
+            <option value="N2">N2 中高級</option>
+            <option value="N1">N1 高級</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">類型</label>
+          <select class="form-select" id="genType">
+            <option value="sentence">句子</option>
+            <option value="word">單字</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">數量</label>
+          <select class="form-select" id="genCount">
+            <option value="5">5 題</option>
+            <option value="10" selected>10 題</option>
+            <option value="15">15 題</option>
+          </select>
+        </div>
+        <button class="btn gold" onclick="generateItems()" style="align-self:flex-end; white-space:nowrap; padding:8px 22px;">✦ 生成</button>
+      </div>
+
+      <div id="genLoading" style="display:none; padding:20px 0; text-align:center;">
+        <span class="loading-text">Claude 生成中，約需 10 秒…</span>
+      </div>
+
+      <div id="genResults" class="gen-result"></div>
+
+      <div id="genActions" class="gen-actions" style="display:none;">
+        <button class="btn primary" onclick="addAllGenerated()">全部加入題庫</button>
+        <button class="btn" onclick="addSelectedGenerated()">加入勾選項目</button>
+        <button class="btn" onclick="clearGenerated()">清除</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">使用說明</div>
+      <div style="font-size:0.82rem; line-height:2; color:var(--muted);">
+        1. 輸入主題（中日文均可），例如：「便利商店」「天氣」「自我介紹」<br>
+        2. 選擇 JLPT 難度，Claude 會生成符合程度的內容<br>
+        3. 題目自動含漢字、平假名讀音（Ruby 標注）、中文翻譯<br>
+        4. 預覽後勾選想要的題目加入題庫<br>
+        5. 回到「練習」即可開始錄音練習
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="section" id="section-settings">
+    <div class="card">
+      <div class="card-label">Azure Speech API</div>
+      <div class="settings-grid">
+        <div class="setting-row">
+          <label class="setting-label">API Key <span class="status-dot" id="dotAzure"></span></label>
+          <input type="password" class="setting-input" id="azureKey" placeholder="your-azure-speech-key">
+          <div class="setting-hint">Azure Portal → Speech service → Keys and Endpoint → Key 1</div>
+        </div>
+        <div class="setting-row">
+          <label class="setting-label">Region</label>
+          <input class="setting-input" id="azureRegion" placeholder="japaneast">
+          <div class="setting-hint">建議 japaneast 或 eastasia，延遲較低</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Claude API</div>
+      <div class="settings-grid">
+        <div class="setting-row">
+          <label class="setting-label">API Key <span class="status-dot" id="dotClaude"></span></label>
+          <input type="password" class="setting-input" id="claudeKey" placeholder="sk-ant-…">
+          <div class="setting-hint">console.anthropic.com → API Keys</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:8px; margin-top:4px;">
+      <button class="btn primary" onclick="saveSettings()">儲存</button>
+      <button class="btn" onclick="testApis()">測試連線</button>
+    </div>
+    <div id="testResult" style="margin-top:14px; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); line-height:1.9;"></div>
+  </div>
+
+</main>
+<div id="toast"></div>
+
+<script>
+// ===== JLPT BUILT-IN DATABASE =====
+const JLPT_DB = {
+  N5: [
+    {jp:'水',ruby:'みず',reading:'みず',meaning:'水',type:'word',jlpt:'N5'},
+    {jp:'食べます',ruby:'食|た べます',reading:'たべます',meaning:'吃',type:'word',jlpt:'N5'},
+    {jp:'今日はいい天気ですね',ruby:'今日|きょう はいい 天気|てんき ですね',reading:'きょうはいいてんきですね',meaning:'今天天氣真好呢',type:'sentence',jlpt:'N5'},
+    {jp:'おはようございます',ruby:'おはようございます',reading:'おはようございます',meaning:'早安',type:'sentence',jlpt:'N5'},
+    {jp:'ありがとうございます',ruby:'ありがとうございます',reading:'ありがとうございます',meaning:'謝謝',type:'sentence',jlpt:'N5'},
+    {jp:'私は学生です',ruby:'私|わたし は 学生|がくせい です',reading:'わたしはがくせいです',meaning:'我是學生',type:'sentence',jlpt:'N5'},
+    {jp:'電車',ruby:'電車|でんしゃ',reading:'でんしゃ',meaning:'電車',type:'word',jlpt:'N5'},
+    {jp:'何時ですか',ruby:'何時|なんじ ですか',reading:'なんじですか',meaning:'幾點了？',type:'sentence',jlpt:'N5'},
+    {jp:'これはいくらですか',ruby:'これはいくらですか',reading:'これはいくらですか',meaning:'這個多少錢？',type:'sentence',jlpt:'N5'},
+    {jp:'トイレはどこですか',ruby:'トイレはどこですか',reading:'とれいはどこですか',meaning:'廁所在哪裡？',type:'sentence',jlpt:'N5'},
+    {jp:'大きい',ruby:'大|おお きい',reading:'おおきい',meaning:'大的',type:'word',jlpt:'N5'},
+    {jp:'友達',ruby:'友達|ともだち',reading:'ともだち',meaning:'朋友',type:'word',jlpt:'N5'},
+  ],
+  N4: [
+    {jp:'予約をお願いします',ruby:'予約|よやく をお 願|ねが いします',reading:'よやくをおねがいします',meaning:'請幫我預約',type:'sentence',jlpt:'N4'},
+    {jp:'道に迷いました',ruby:'道|みち に 迷|まよ いました',reading:'みちにまよいました',meaning:'我迷路了',type:'sentence',jlpt:'N4'},
+    {jp:'もう少し安くなりますか',ruby:'もう 少|すこ し 安|やす くなりますか',reading:'もうすこしやすくなりますか',meaning:'可以便宜一點嗎？',type:'sentence',jlpt:'N4'},
+    {jp:'練習',ruby:'練習|れんしゅう',reading:'れんしゅう',meaning:'練習',type:'word',jlpt:'N4'},
+    {jp:'準備する',ruby:'準備|じゅんび する',reading:'じゅんびする',meaning:'準備',type:'word',jlpt:'N4'},
+    {jp:'どうぞよろしくお願いします',ruby:'どうぞよろしくお 願|ねが いします',reading:'どうぞよろしくおねがいします',meaning:'請多多關照',type:'sentence',jlpt:'N4'},
+    {jp:'電話番号を教えてください',ruby:'電話|でんわ 番号|ばんごう を 教|おし えてください',reading:'でんわばんごうをおしえてください',meaning:'請告訴我電話號碼',type:'sentence',jlpt:'N4'},
+    {jp:'忘れ物をしました',ruby:'忘|わす れ 物|もの をしました',reading:'わすれものをしました',meaning:'我忘記東西了',type:'sentence',jlpt:'N4'},
+    {jp:'久しぶりですね',ruby:'久|ひさ しぶりですね',reading:'ひさしぶりですね',meaning:'好久不見呢',type:'sentence',jlpt:'N4'},
+    {jp:'経験',ruby:'経験|けいけん',reading:'けいけん',meaning:'經驗',type:'word',jlpt:'N4'},
+  ],
+  N3: [
+    {jp:'ご連絡をお待ちしております',ruby:'ご 連絡|れんらく をお 待|ま ちしております',reading:'ごれんらくをおまちしております',meaning:'恭候您的聯繫',type:'sentence',jlpt:'N3'},
+    {jp:'状況に応じて判断します',ruby:'状況|じょうきょう に 応|おう じて 判断|はんだん します',reading:'じょうきょうにおうじてはんだんします',meaning:'會根據情況來判斷',type:'sentence',jlpt:'N3'},
+    {jp:'影響',ruby:'影響|えいきょう',reading:'えいきょう',meaning:'影響',type:'word',jlpt:'N3'},
+    {jp:'解決策',ruby:'解決策|かいけつさく',reading:'かいけつさく',meaning:'解決方案',type:'word',jlpt:'N3'},
+    {jp:'それについて詳しく説明してください',ruby:'それについて 詳|くわ しく 説明|せつめい してください',reading:'それについてくわしくせつめいしてください',meaning:'請詳細說明那件事',type:'sentence',jlpt:'N3'},
+    {jp:'費用はどのくらいかかりますか',ruby:'費用|ひよう はどのくらいかかりますか',reading:'ひようはどのくらいかかりますか',meaning:'費用大概需要多少？',type:'sentence',jlpt:'N3'},
+    {jp:'確認',ruby:'確認|かくにん',reading:'かくにん',meaning:'確認',type:'word',jlpt:'N3'},
+    {jp:'ご迷惑をおかけして申し訳ありません',ruby:'ご 迷惑|めいわく をおかけして 申|もう し 訳|わけ ありません',reading:'ごめいわくをおかけしてもうしわけありません',meaning:'非常抱歉給您添麻煩了',type:'sentence',jlpt:'N3'},
+  ],
+  N2: [
+    {jp:'ご指摘の通り早急に対応いたします',ruby:'ご 指摘|してき の 通|とお り 早急|さっきゅう に 対応|たいおう いたします',reading:'ごしてきのとおりさっきゅうにたいおういたします',meaning:'正如您所指出的，我們將立即處理',type:'sentence',jlpt:'N2'},
+    {jp:'予算の範囲内で最善を尽くします',ruby:'予算|よさん の 範囲|はんい 内|ない で 最善|さいぜん を 尽|つ くします',reading:'よさんのはんいないでさいぜんをつくします',meaning:'在預算範圍內盡全力',type:'sentence',jlpt:'N2'},
+    {jp:'煩雑',ruby:'煩雑|はんざつ',reading:'はんざつ',meaning:'繁雜、麻煩',type:'word',jlpt:'N2'},
+    {jp:'懸念事項',ruby:'懸念|けねん 事項|じこう',reading:'けねんじこう',meaning:'顧慮事項',type:'word',jlpt:'N2'},
+    {jp:'今後ともよろしくお願い申し上げます',ruby:'今後|こんご ともよろしくお 願|ねが い 申|もう し 上|あ げます',reading:'こんごともよろしくおねがいもうしあげます',meaning:'今後也請多多關照',type:'sentence',jlpt:'N2'},
+  ],
+  N1: [
+    {jp:'逡巡することなく判断を下した',ruby:'逡巡|しゅんじゅん することなく 判断|はんだん を 下|くだ した',reading:'しゅんじゅんすることなくはんだんをくだした',meaning:'毫不猶豫地作出了判斷',type:'sentence',jlpt:'N1'},
+    {jp:'忖度',ruby:'忖度|そんたく',reading:'そんたく',meaning:'揣摩上意、察言觀色',type:'word',jlpt:'N1'},
+    {jp:'この問題は一筋縄ではいかない',ruby:'この 問題|もんだい は 一筋縄|ひとすじなわ ではいかない',reading:'このもんだいはひとすじなわではいかない',meaning:'這個問題不是那麼簡單的',type:'sentence',jlpt:'N1'},
+    {jp:'蓋然性',ruby:'蓋然性|がいぜんせい',reading:'がいぜんせい',meaning:'蓋然性、可能性',type:'word',jlpt:'N1'},
+    {jp:'彼女の発言は示唆に富んでいた',ruby:'彼女|かのじょ の 発言|はつげん は 示唆|しさ に 富|と んでいた',reading:'かのじょのはつげんはしさにとんでいた',meaning:'她的發言富含深意',type:'sentence',jlpt:'N1'},
+  ]
+};
+
+// ===== STATE =====
+let state = {
+  items: [], currentIndex: 0, currentCategory: 'all',
+  isRecording: false, mediaRecorder: null, audioChunks: [],
+  lastResult: null, generatedItems: [],
+  settings: { azureKey: '', azureRegion: 'japaneast', claudeKey: '' }
+};
+
+const DEFAULT_ITEMS = [
+  {id:'d1',jp:'おはようございます',ruby:'おはようございます',reading:'おはようございます',meaning:'早安',type:'sentence',jlpt:'N5'},
+  {id:'d2',jp:'ありがとうございます',ruby:'ありがとうございます',reading:'ありがとうございます',meaning:'謝謝您',type:'sentence',jlpt:'N5'},
+  {id:'d3',jp:'はじめまして',ruby:'はじめまして',reading:'はじめまして',meaning:'初次見面',type:'sentence',jlpt:'N5'},
+  {id:'d4',jp:'日本語を勉強しています',ruby:'日本語|にほんご を 勉強|べんきょう しています',reading:'にほんごをべんきょうしています',meaning:'我正在學日語',type:'sentence',jlpt:'N4'},
+  {id:'d5',jp:'電車はどこですか',ruby:'電車|でんしゃ はどこですか',reading:'でんしゃはどこですか',meaning:'電車在哪裡？',type:'sentence',jlpt:'N5'},
+];
+
+// ===== RUBY RENDERING =====
+// Format: "漢字|よみ 純仮名 漢字2|よみ2"
+function renderRuby(rubyStr, jpStr) {
+  if (!rubyStr || rubyStr === jpStr || !rubyStr.includes('|')) {
+    return jpStr;
+  }
+  return rubyStr.split(' ').map(token => {
+    if (token.includes('|')) {
+      const [base, rt] = token.split('|');
+      return `<ruby>${base}<rt>${rt}</rt></ruby>`;
+    }
+    return token;
+  }).join('');
+}
+
+// ===== INIT =====
+function init() {
+  const saved = localStorage.getItem('jptutor_items_v2');
+  state.items = saved ? JSON.parse(saved) : DEFAULT_ITEMS.map(i => ({...i}));
+  const ss = localStorage.getItem('jptutor_settings');
+  if (ss) {
+    state.settings = {...state.settings, ...JSON.parse(ss)};
+    if (state.settings.azureKey) document.getElementById('azureKey').value = state.settings.azureKey;
+    if (state.settings.azureRegion) document.getElementById('azureRegion').value = state.settings.azureRegion;
+    if (state.settings.claudeKey) document.getElementById('claudeKey').value = state.settings.claudeKey;
+    updateStatusDots();
+  }
+  renderLibrary();
+  loadCurrentSentence();
+}
+
+function updateStatusDots() {
+  const dA = document.getElementById('dotAzure');
+  const dC = document.getElementById('dotClaude');
+  if (dA) dA.className = 'status-dot ' + (state.settings.azureKey ? 'ok' : '');
+  if (dC) dC.className = 'status-dot ' + (state.settings.claudeKey ? 'ok' : '');
+}
+
+// ===== NAV =====
+function switchSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach((t, i) => {
+    t.classList.toggle('active', ['practice','library','generate','settings'][i] === name);
+  });
+}
+
+// ===== PRACTICE =====
+function filteredItems() {
+  if (state.currentCategory === 'all') return state.items;
+  if (state.currentCategory === 'jlpt') return state.items.filter(i => i.jlpt);
+  return state.items.filter(i => i.type === state.currentCategory);
+}
+
+function loadCurrentSentence() {
+  const items = filteredItems();
+  if (!items.length) {
+    document.getElementById('sentenceJp').innerHTML = '—';
+    document.getElementById('sentenceMeaning').textContent = '題庫是空的';
+    document.getElementById('sentenceCounter').textContent = '0 / 0';
+    document.getElementById('sentenceBadge').textContent = '—';
+    return;
+  }
+  if (state.currentIndex >= items.length) state.currentIndex = 0;
+  const item = items[state.currentIndex];
+  document.getElementById('sentenceJp').innerHTML = renderRuby(item.ruby, item.jp);
+  document.getElementById('sentenceMeaning').textContent = item.meaning;
+  document.getElementById('sentenceCounter').textContent = `${state.currentIndex + 1} / ${items.length}`;
+  document.getElementById('sentenceBadge').textContent = item.jlpt || item.type || '—';
+  clearResult();
+}
+
+function prevSentence() { const items = filteredItems(); state.currentIndex = (state.currentIndex - 1 + items.length) % items.length; loadCurrentSentence(); }
+function nextSentence() { const items = filteredItems(); state.currentIndex = (state.currentIndex + 1) % items.length; loadCurrentSentence(); }
+function shuffleSentences() { state.currentIndex = Math.floor(Math.random() * filteredItems().length); loadCurrentSentence(); }
+
+function clearResult() {
+  document.getElementById('resultBox').classList.remove('visible');
+  document.getElementById('aiFeedbackArea').style.display = 'none';
+  document.getElementById('btnAiFeedback').disabled = true;
+  state.lastResult = null;
+}
+
+// ===== RECORDING =====
+async function toggleRecord() {
+  if (!state.settings.azureKey) { showToast('請先在設定填入 Azure API Key'); return; }
+  if (state.isRecording) stopRecording(); else await startRecording();
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    state.audioChunks = [];
+    state.mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+    state.mediaRecorder.ondataavailable = e => state.audioChunks.push(e.data);
+    state.mediaRecorder.onstop = processAudio;
+    state.mediaRecorder.start();
+    state.isRecording = true;
+    document.getElementById('btnRecord').classList.add('recording');
+    document.getElementById('btnRecord').textContent = '⏹';
+    document.getElementById('recordHint').textContent = '錄音中… 點擊停止';
+    document.getElementById('waveform').classList.add('active');
+  } catch(e) { showToast('無法取得麥克風權限'); }
+}
+
+function stopRecording() {
+  if (state.mediaRecorder && state.isRecording) {
+    state.mediaRecorder.stop();
+    state.mediaRecorder.stream.getTracks().forEach(t => t.stop());
+    state.isRecording = false;
+    document.getElementById('btnRecord').classList.remove('recording');
+    document.getElementById('btnRecord').textContent = '🎤';
+    document.getElementById('recordHint').textContent = '分析中…';
+    document.getElementById('waveform').classList.remove('active');
+  }
+}
+
+async function processAudio() {
+  const blob = new Blob(state.audioChunks, { type: 'audio/webm' });
+  const arrayBuffer = await blob.arrayBuffer();
+  const audioCtx = new AudioContext({ sampleRate: 16000 });
+  let decoded;
+  try { decoded = await audioCtx.decodeAudioData(arrayBuffer); }
+  catch(e) { showToast('音訊解碼失敗，請重試'); document.getElementById('recordHint').textContent = '點擊開始錄音'; return; }
+  await sendToAzure(audioBufferToWav(decoded));
+}
+
+function audioBufferToWav(buffer) {
+  const samples = buffer.getChannelData(0);
+  const pcm = new Int16Array(samples.length);
+  for (let i = 0; i < samples.length; i++) pcm[i] = Math.max(-32768, Math.min(32767, samples[i] * 32768));
+  const wav = new ArrayBuffer(44 + pcm.buffer.byteLength);
+  const v = new DataView(wav);
+  const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ws(0,'RIFF'); v.setUint32(4, 36 + pcm.buffer.byteLength, true);
+  ws(8,'WAVE'); ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true);
+  v.setUint16(22,1,true); v.setUint32(24,buffer.sampleRate,true);
+  v.setUint32(28,buffer.sampleRate*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true);
+  ws(36,'data'); v.setUint32(40,pcm.buffer.byteLength,true);
+  new Uint8Array(wav,44).set(new Uint8Array(pcm.buffer));
+  return new Blob([wav], { type: 'audio/wav' });
+}
+
+async function sendToAzure(wavBlob) {
+  const items = filteredItems();
+  const refText = items[state.currentIndex]?.jp || '';
+  const key = state.settings.azureKey;
+  const region = state.settings.azureRegion || 'japaneast';
+  const paCfg = btoa(JSON.stringify({ ReferenceText: refText, GradingSystem: 'HundredMark', Granularity: 'Phoneme', EnableMiscue: true }));
+  try {
+    const res = await fetch(`https://${region}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=ja-JP&format=detailed`, {
+      method: 'POST',
+      headers: { 'Ocp-Apim-Subscription-Key': key, 'Content-Type': 'audio/wav; codecs=audio/pcm; samplerate=16000', 'Pronunciation-Assessment': paCfg },
+      body: wavBlob
+    });
+    if (!res.ok) throw new Error(`Azure ${res.status}: ${await res.text()}`);
+    renderResult(await res.json(), refText);
+  } catch(e) { showToast('Azure 連線失敗：' + e.message); document.getElementById('recordHint').textContent = '點擊開始錄音'; }
+}
+
+function renderResult(data, refText) {
+  document.getElementById('recordHint').textContent = '點擊開始錄音';
+  const pa = data?.NBest?.[0]?.PronunciationAssessment;
+  const transcript = data?.NBest?.[0]?.Display || '（未辨識）';
+  if (!pa) { showToast('未取得評分，請重試'); return; }
+  const overall = Math.round(pa.PronScore || 0);
+  const accuracy = Math.round(pa.AccuracyScore || 0);
+  const fluency = Math.round(pa.FluencyScore || 0);
+  const completeness = Math.round(pa.CompletenessScore || 0);
+  state.lastResult = { overall, accuracy, fluency, completeness, transcript, refText };
+  const grade = overall >= 80 ? 'good' : overall >= 60 ? 'warn' : 'bad';
+  const circle = document.getElementById('scoreCircle');
+  circle.textContent = overall; circle.className = 'score-circle ' + grade;
+  const setBar = (id, valId, val) => {
+    const g = val >= 80 ? 'good' : val >= 60 ? 'warn' : 'bad';
+    document.getElementById(id).style.width = val + '%';
+    document.getElementById(id).className = 'score-bar-fill ' + g;
+    document.getElementById(valId).textContent = val;
+  };
+  setBar('barAccuracy','valAccuracy',accuracy);
+  setBar('barFluency','valFluency',fluency);
+  setBar('barCompleteness','valCompleteness',completeness);
+  document.getElementById('transcriptText').textContent = transcript;
+  document.getElementById('resultBox').classList.add('visible');
+  document.getElementById('btnAiFeedback').disabled = false;
+}
+
+// ===== AI FEEDBACK =====
+async function requestAiFeedback() {
+  if (!state.settings.claudeKey) { showToast('請先填入 Claude API Key'); return; }
+  if (!state.lastResult) return;
+  const { overall, accuracy, fluency, completeness, transcript, refText } = state.lastResult;
+  document.getElementById('aiFeedbackArea').style.display = 'block';
+  document.getElementById('aiFeedback').innerHTML = '<span class="loading-text">分析中…</span>';
+  document.getElementById('btnAiFeedback').disabled = true;
+  const prompt = `你是日語發音教練。練習結果：
+目標：${refText} ｜ 辨識：${transcript}
+整體：${overall}/100｜準確：${accuracy}｜流暢：${fluency}｜完整：${completeness}
+請用繁體中文給出：1. 簡短評語（1句）2. 具體問題（如有）3. 最重要的改進建議（1條）
+簡潔，不超過120字。`;
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': state.settings.claudeKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 300, messages: [{ role: 'user', content: prompt }] })
+    });
+    document.getElementById('aiFeedback').textContent = (await res.json())?.content?.[0]?.text || '無法取得分析';
+  } catch(e) { document.getElementById('aiFeedback').textContent = '連線失敗：' + e.message; }
+  document.getElementById('btnAiFeedback').disabled = false;
+}
+
+// ===== LIBRARY =====
+function switchCategory(cat) {
+  state.currentCategory = cat;
+  state.currentIndex = 0;
+  document.querySelectorAll('.cat-tab').forEach((t, i) => {
+    t.classList.toggle('active', ['all','jlpt','sentence','word','custom'][i] === cat);
+  });
+  document.getElementById('jlptPanel').style.display = cat === 'jlpt' ? 'block' : 'none';
+  renderLibrary();
+  loadCurrentSentence();
+}
+
+function loadJLPT(level) {
+  const existing = new Set(state.items.map(i => i.jp));
+  const toAdd = (JLPT_DB[level] || []).filter(i => !existing.has(i.jp)).map(i => ({...i, id: 'jlpt_' + Date.now() + Math.random()}));
+  if (!toAdd.length) { showToast(`${level} 題庫已全部載入`); return; }
+  state.items.push(...toAdd);
+  saveItems(); renderLibrary(); loadCurrentSentence();
+  showToast(`已載入 ${toAdd.length} 個 ${level} 題目`);
+  document.querySelectorAll('.jlpt-btn').forEach(b => b.classList.toggle('active', b.textContent.startsWith(level)));
+}
+
+function renderLibrary() {
+  const list = document.getElementById('itemList');
+  const items = state.currentCategory === 'all' ? state.items :
+    state.currentCategory === 'jlpt' ? state.items.filter(i => i.jlpt) :
+    state.items.filter(i => i.type === state.currentCategory);
+  if (!items.length) { list.innerHTML = '<div style="padding:20px;color:var(--muted);font-size:0.82rem;">暫無項目</div>'; return; }
+  list.innerHTML = items.map(item => `
+    <div class="item-row">
+      <div class="item-jp-wrap">
+        <div class="item-jp">${renderRuby(item.ruby, item.jp)}</div>
+      </div>
+      <div class="item-meaning">${item.meaning}</div>
+      <div class="item-tag">${item.jlpt || item.type}</div>
+      <div class="item-actions">
+        <button class="btn-sm" onclick="practiceItem(${JSON.stringify(String(item.id))})">練習</button>
+        <button class="btn-sm danger" onclick="deleteItem(${JSON.stringify(String(item.id))})">刪除</button>
+      </div>
+    </div>`).join('');
+}
+
+function practiceItem(id) {
+  const idx = state.items.findIndex(i => String(i.id) === id);
+  if (idx === -1) return;
+  state.currentCategory = 'all';
+  state.currentIndex = idx;
+  document.querySelectorAll('.cat-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  document.getElementById('jlptPanel').style.display = 'none';
+  switchSection('practice');
+  loadCurrentSentence();
+}
+
+function addItem() {
+  const jp = document.getElementById('inputJp').value.trim();
+  const reading = document.getElementById('inputReading').value.trim();
+  const meaning = document.getElementById('inputMeaning').value.trim();
+  const ruby = document.getElementById('inputRuby').value.trim();
+  const type = document.getElementById('inputType').value;
+  const jlpt = document.getElementById('inputJlpt').value;
+  if (!jp || !meaning) { showToast('日文和中文意思為必填'); return; }
+  state.items.push({ id: 'u_' + Date.now(), jp, ruby: ruby || reading || jp, reading: reading || jp, meaning, type, jlpt: jlpt || undefined });
+  saveItems(); renderLibrary();
+  ['inputJp','inputReading','inputMeaning','inputRuby'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('inputJlpt').value = '';
+  showToast('已新增：' + jp);
+}
+
+function deleteItem(id) {
+  state.items = state.items.filter(i => String(i.id) !== id);
+  saveItems(); renderLibrary(); loadCurrentSentence();
+}
+
+function resetToDefaults() {
+  state.items = DEFAULT_ITEMS.map(i => ({...i}));
+  saveItems(); renderLibrary(); loadCurrentSentence(); showToast('已還原預設題庫');
+}
+
+function exportCSV() {
+  const rows = [['日文','讀音','中文','類型','JLPT']];
+  state.items.forEach(i => rows.push([i.jp, i.reading, i.meaning, i.type, i.jlpt || '']));
+  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = '日語題庫.csv'; a.click();
+}
+
+function saveItems() { localStorage.setItem('jptutor_items_v2', JSON.stringify(state.items)); }
+
+// ===== AI GENERATE =====
+async function generateItems() {
+  if (!state.settings.claudeKey) { showToast('請先填入 Claude API Key'); return; }
+  const topic = document.getElementById('genTopic').value.trim() || '日常生活';
+  const level = document.getElementById('genLevel').value;
+  const type = document.getElementById('genType').value;
+  const count = document.getElementById('genCount').value;
+  document.getElementById('genLoading').style.display = 'block';
+  document.getElementById('genResults').innerHTML = '';
+  document.getElementById('genActions').style.display = 'none';
+  state.generatedItems = [];
+
+  const typeLabel = type === 'sentence' ? '句子' : '單字';
+  const prompt = `你是日語教材設計師。請生成 ${count} 個日語${typeLabel}，主題「${topic}」，難度 JLPT ${level}。
+
+只回傳純 JSON 陣列，不要任何說明或 markdown：
+[{"jp":"日文原文","ruby":"Ruby標記","reading":"完整平假名","meaning":"繁體中文"}]
+
+ruby 格式：有漢字用「漢字|讀音」，純平假名直接寫，用空格分隔 token。
+例：「電車に乗ります」→ "電車|でんしゃ に 乗|の ります"
+例：「ありがとう」→ "ありがとう"
+
+請確保符合 ${level} 程度，內容實用。`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': state.settings.claudeKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 2000, messages: [{ role: 'user', content: prompt }] })
+    });
+    let text = (await res.json())?.content?.[0]?.text || '[]';
+    text = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(text);
+    state.generatedItems = parsed.map((i, idx) => ({ ...i, id: 'gen_' + Date.now() + idx, type, jlpt: level, selected: true }));
+    renderGenerated();
+  } catch(e) {
+    document.getElementById('genResults').innerHTML = `<div style="color:var(--bad);font-size:0.82rem;padding:12px;">生成失敗：${e.message}</div>`;
+  }
+  document.getElementById('genLoading').style.display = 'none';
+}
+
+function renderGenerated() {
+  const container = document.getElementById('genResults');
+  if (!state.generatedItems.length) { container.innerHTML = '<div style="color:var(--muted);padding:12px;font-size:0.82rem;">無結果</div>'; return; }
+  container.innerHTML = state.generatedItems.map((item, idx) => `
+    <div class="gen-item">
+      <input type="checkbox" checked onchange="state.generatedItems[${idx}].selected = this.checked" style="cursor:pointer; flex-shrink:0;">
+      <div class="item-jp" style="flex:1;">${renderRuby(item.ruby, item.jp)}</div>
+      <div class="item-meaning" style="min-width:120px;">${item.meaning}</div>
+      <div class="item-tag">${item.jlpt}</div>
+    </div>`).join('');
+  document.getElementById('genActions').style.display = 'flex';
+}
+
+function addAllGenerated() {
+  const existing = new Set(state.items.map(i => i.jp));
+  const toAdd = state.generatedItems.filter(i => !existing.has(i.jp));
+  state.items.push(...toAdd); saveItems(); renderLibrary();
+  showToast(`已加入 ${toAdd.length} 個題目`); clearGenerated();
+}
+
+function addSelectedGenerated() {
+  const existing = new Set(state.items.map(i => i.jp));
+  const toAdd = state.generatedItems.filter(i => i.selected && !existing.has(i.jp));
+  state.items.push(...toAdd); saveItems(); renderLibrary();
+  showToast(`已加入 ${toAdd.length} 個題目`); clearGenerated();
+}
+
+function clearGenerated() {
+  state.generatedItems = [];
+  document.getElementById('genResults').innerHTML = '';
+  document.getElementById('genActions').style.display = 'none';
+}
+
+// ===== SETTINGS =====
+function saveSettings() {
+  state.settings.azureKey = document.getElementById('azureKey').value.trim();
+  state.settings.azureRegion = document.getElementById('azureRegion').value.trim() || 'japaneast';
+  state.settings.claudeKey = document.getElementById('claudeKey').value.trim();
+  localStorage.setItem('jptutor_settings', JSON.stringify(state.settings));
+  updateStatusDots(); showToast('設定已儲存');
+}
+
+async function testApis() {
+  const result = document.getElementById('testResult');
+  result.innerHTML = '<span class="loading-text">測試中…</span>';
+  const results = [];
+  if (state.settings.claudeKey) {
+    try {
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': state.settings.claudeKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+        body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 10, messages:[{role:'user',content:'hi'}] })
+      });
+      results.push(r.ok ? '✓ Claude API 連線正常' : `✗ Claude API 錯誤 ${r.status}`);
+    } catch(e) { results.push('✗ Claude API 連線失敗'); }
+  } else { results.push('— Claude API Key 未填入'); }
+  results.push(state.settings.azureKey ? '— Azure：Key 已填入（需實際錄音才能驗證）' : '— Azure Speech Key 未填入');
+  result.innerHTML = results.map(r => `<div>${r}</div>`).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+init();
+</script>
+</body>
+</html>
