@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="日語練習所">
 <link rel="manifest" href="manifest.json">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Mono:wght@300;400&family=Shippori+Mincho:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
 
   :root {
     --ink: #2a201c;
@@ -29,7 +29,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    font-family: 'Noto Serif JP', serif;
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
     background: var(--paper);
     color: var(--ink);
     min-height: 100vh;
@@ -48,15 +48,15 @@
     position: sticky; top: 0; z-index: 100;
     box-shadow: 0 1px 8px rgba(0,0,0,0.04);
   }
-  header h1 { font-family: 'Shippori Mincho', serif; font-size: 1.3rem; letter-spacing: 0.08em; }
-  .header-sub { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.12em; }
+  header h1 { font-family: 'Noto Sans JP', sans-serif; font-size: 1.3rem; letter-spacing: 0.08em; }
+  .header-sub { font-family: 'Courier New', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.12em; }
 
   main { padding: 16px 14px; }
   .section { display: none; }
   .section.active { display: block; }
 
   .card { background: #fff; border: 1px solid var(--border); padding: 22px 26px; margin-bottom: 18px; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.05); }
-  .card-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-label { font-family: 'Courier New', monospace; font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   .card-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
   /* FLASHCARD */
@@ -86,20 +86,20 @@
   .sentence-display.srs-due { border-color: var(--warn); }
   .sentence-display.srs-new { border-color: var(--accent); }
 
-  .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
-  .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); }
-  .srs-indicator { position: absolute; bottom: 10px; right: 14px; font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--muted); }
+  .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'Courier New', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
+  .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); }
+  .srs-indicator { position: absolute; bottom: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.55rem; color: var(--muted); }
 
   .sentence-jp {
-    font-family: 'Shippori Mincho', serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 2rem;
     letter-spacing: 0.12em;
     line-height: 2.8;
   }
   .sentence-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; }
-  .sentence-jp ruby rt { font-size: 0.36em; letter-spacing: 0.04em; color: var(--muted); font-family: 'Noto Serif JP', serif; font-weight: 300; line-height: 1; }
+  .sentence-jp ruby rt { font-size: 0.36em; letter-spacing: 0.04em; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; line-height: 1; }
   .sentence-meaning { font-size: 0.86rem; color: var(--muted); }
-  .sentence-type { font-family: 'DM Mono', monospace; font-size: 0.58rem; color: var(--border); letter-spacing: 0.06em; }
+  .sentence-type { font-family: 'Courier New', monospace; font-size: 0.58rem; color: var(--border); letter-spacing: 0.06em; }
 
   /* Example sentence block */
   .example-block {
@@ -110,14 +110,14 @@
     text-align: center;
   }
   .example-jp {
-    font-family: 'Shippori Mincho', serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 0.95rem;
     letter-spacing: 0.08em;
     line-height: 2.4;
     color: var(--ink);
   }
   .example-jp ruby { margin: 0 1px; }
-  .example-jp ruby rt { font-size: 0.5em; color: var(--muted); font-family: 'Noto Serif JP', serif; font-weight: 300; text-align: center; }
+  .example-jp ruby rt { font-size: 0.5em; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; text-align: center; }
   .example-meaning { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
   .example-meaning-en { font-size: 0.7rem; color: var(--muted); font-style: italic; }
   .word-meaning-en { font-size: 0.78rem; color: var(--muted); font-style: italic; }
@@ -125,22 +125,22 @@
   .btn-speak-en { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 0 2px; opacity: 0.45; line-height: 1; transition: opacity 0.15s; }
   .btn-speak-en:hover { opacity: 1; }
   /* Toggle switches */
-  .tog-switch { display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; user-select: none; }
+  .tog-switch { display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; user-select: none; }
   .tog-switch input { display: none; }
   .tog-track { width: 30px; height: 16px; background: rgba(0,0,0,0.1); border-radius: 8px; position: relative; transition: background 0.2s; flex-shrink: 0; }
   .tog-track::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
   .tog-switch input:checked + .tog-track { background: var(--accent); }
   .tog-switch input:checked + .tog-track::after { transform: translateX(14px); }
-  .example-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--border); letter-spacing: 0.1em; margin-bottom: 4px; text-transform: uppercase; }
+  .example-label { font-family: 'Courier New', monospace; font-size: 0.55rem; color: var(--border); letter-spacing: 0.1em; margin-bottom: 4px; text-transform: uppercase; }
 
   /* SPEED */
-  .speed-btn { font-family: 'DM Mono', monospace; font-size: 0.63rem; padding: 4px 11px; border: 1px solid var(--border); border-radius: 20px; background: transparent; cursor: pointer; color: var(--muted); transition: all 0.12s; }
+  .speed-btn { font-family: 'Courier New', monospace; font-size: 0.63rem; padding: 4px 11px; border: 1px solid var(--border); border-radius: 20px; background: transparent; cursor: pointer; color: var(--muted); transition: all 0.12s; }
   .speed-btn.active,.speed-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
   /* SRS RATING BUTTONS */
   .srs-row { display: flex; gap: 8px; margin-top: 14px; justify-content: center; }
   .srs-btn {
-    font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.05em;
+    font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.05em;
     padding: 10px 20px; border: 1px solid; border-radius: 10px; cursor: pointer;
     transition: all 0.15s; background: transparent; flex: 1; max-width: 140px;
     display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -156,7 +156,7 @@
   .srs-btn.easy:hover { background: var(--gold); color: #fff; }
 
   /* NAV */
-  .btn { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.06em; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; transition: all 0.15s; color: var(--ink); }
+  .btn { font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.06em; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; transition: all 0.15s; color: var(--ink); }
   .btn:hover { background: var(--paper2); border-color: var(--muted); }
   .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
   .btn.primary:hover { background: #b8606c; border-color: #b8606c; }
@@ -168,26 +168,26 @@
 
   /* MODE TOGGLE */
   .mode-row { display: flex; gap: 6px; align-items: center; margin-left: auto; }
-  .mode-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
+  .mode-label { font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
   .toggle-wrap { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .toggle-btn { font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 4px 10px; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
+  .toggle-btn { font-family: 'Courier New', monospace; font-size: 0.6rem; padding: 4px 10px; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
   .toggle-btn:last-child { border-right: none; }
   .toggle-btn.active { background: var(--accent); color: #fff; }
 
   /* FILTER BAR */
   .filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
-  .filter-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.08em; }
-  .filter-btn { font-family: 'DM Mono', monospace; font-size: 0.62rem; padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px; background: transparent; cursor: pointer; color: var(--muted); transition: all 0.12s; }
+  .filter-label { font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.08em; }
+  .filter-btn { font-family: 'Courier New', monospace; font-size: 0.62rem; padding: 4px 12px; border: 1px solid var(--border); border-radius: 20px; background: transparent; cursor: pointer; color: var(--muted); transition: all 0.12s; }
   .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
   .filter-btn:hover:not(.active) { background: var(--paper2); }
 
   /* LIBRARY */
   .category-tabs { display: flex; border-bottom: 1.5px solid var(--border); margin-bottom: 14px; flex-wrap: wrap; }
-  .cat-tab { padding: 7px 13px; font-family: 'DM Mono', monospace; font-size: 0.66rem; letter-spacing: 0.06em; cursor: pointer; background: transparent; border: none; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all 0.15s; }
+  .cat-tab { padding: 7px 13px; font-family: 'Courier New', monospace; font-size: 0.66rem; letter-spacing: 0.06em; cursor: pointer; background: transparent; border: none; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1.5px; transition: all 0.15s; }
   .cat-tab.active { color: var(--ink); border-bottom-color: var(--ink); }
 
   .search-row { display: flex; gap: 8px; margin-bottom: 12px; }
-  .search-input { font-family: 'Noto Serif JP', serif; font-size: 0.82rem; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; flex: 1; transition: border-color 0.15s; }
+  .search-input { font-family: 'Noto Sans JP', sans-serif; font-size: 0.82rem; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; flex: 1; transition: border-color 0.15s; }
   .search-input:focus { border-color: var(--accent); }
 
   .item-list { display: flex; flex-direction: column; gap: 4px; max-height: 440px; overflow-y: auto; }
@@ -195,23 +195,23 @@
   .item-row:hover { background: var(--paper2); }
   .item-row.mastered { opacity: 0.55; }
   .item-jp-wrap { min-width: 160px; }
-  .item-jp { font-family: 'Shippori Mincho', serif; font-size: 0.95rem; letter-spacing: 0.06em; line-height: 2.2; }
+  .item-jp { font-family: 'Noto Sans JP', sans-serif; font-size: 0.95rem; letter-spacing: 0.06em; line-height: 2.2; }
   .item-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; }
-  .item-jp ruby rt { font-size: 0.5em; color: var(--muted); font-family: 'Noto Serif JP', serif; font-weight: 300; }
+  .item-jp ruby rt { font-size: 0.5em; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; }
   .item-meaning { font-size: 0.76rem; color: var(--muted); flex: 1; }
-  .item-tag { font-family: 'DM Mono', monospace; font-size: 0.53rem; letter-spacing: 0.08em; padding: 2px 6px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+  .item-tag { font-family: 'Courier New', monospace; font-size: 0.53rem; letter-spacing: 0.08em; padding: 2px 6px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; white-space: nowrap; }
   .item-tag.mastered { border-color: var(--good); color: var(--good); }
   .item-actions { display: flex; gap: 4px; }
-  .btn-sm { font-family: 'DM Mono', monospace; font-size: 0.58rem; padding: 3px 8px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); transition: all 0.1s; white-space: nowrap; }
+  .btn-sm { font-family: 'Courier New', monospace; font-size: 0.58rem; padding: 3px 8px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); transition: all 0.1s; white-space: nowrap; }
   .btn-sm:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .btn-sm.danger:hover { background: var(--bad); border-color: var(--bad); }
   .btn-sm.play:hover { background: var(--good); border-color: var(--good); }
 
   .add-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
   .form-group { display: flex; flex-direction: column; gap: 3px; }
-  .form-label { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+  .form-label { font-family: 'Courier New', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
   .form-hint { font-size: 0.6rem; color: var(--muted); margin-top: 2px; }
-  .form-input, .form-select { font-family: 'Noto Serif JP', serif; font-size: 0.86rem; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; transition: border-color 0.15s; }
+  .form-input, .form-select { font-family: 'Noto Sans JP', sans-serif; font-size: 0.86rem; padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; transition: border-color 0.15s; }
   .form-input:focus, .form-select:focus { border-color: var(--accent); }
 
   /* AI GENERATE */
@@ -223,34 +223,34 @@
   /* STATS */
   .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; margin-bottom: 20px; }
   .stat-box { background: #fff; border: 1px solid var(--border); padding: 16px 18px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); }
-  .stat-num { font-family: 'DM Mono', monospace; font-size: 2rem; font-weight: 400; color: var(--ink); line-height: 1; }
+  .stat-num { font-family: 'Courier New', monospace; font-size: 2rem; font-weight: 400; color: var(--ink); line-height: 1; }
   .stat-num.green { color: var(--good); }
   .stat-num.orange { color: var(--warn); }
   .stat-num.gold { color: var(--gold); }
-  .stat-desc { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-top: 6px; }
+  .stat-desc { font-family: 'Courier New', monospace; font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-top: 6px; }
 
   .level-bars { display: flex; flex-direction: column; gap: 10px; }
   .level-row { display: flex; align-items: center; gap: 10px; }
-  .level-name { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); width: 28px; }
+  .level-name { font-family: 'Courier New', monospace; font-size: 0.65rem; color: var(--muted); width: 28px; }
   .level-bar-wrap { flex: 1; height: 8px; background: var(--paper2); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
   .level-bar { height: 100%; background: var(--accent); transition: width 0.4s ease; border-radius: 4px; }
-  .level-count { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 60px; text-align: right; }
+  .level-count { font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); width: 60px; text-align: right; }
 
   /* SETTINGS */
   .settings-grid { display: flex; flex-direction: column; gap: 14px; }
   .setting-row { display: flex; flex-direction: column; gap: 4px; }
-  .setting-label { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
-  .setting-input { font-family: 'DM Mono', monospace; font-size: 0.78rem; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; }
+  .setting-label { font-family: 'Courier New', monospace; font-size: 0.65rem; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+  .setting-input { font-family: 'Courier New', monospace; font-size: 0.78rem; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--paper); color: var(--ink); outline: none; }
   .setting-input:focus { border-color: var(--accent); }
   .setting-hint { font-size: 0.68rem; color: var(--muted); }
   .status-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--border); margin-right: 5px; }
   .status-dot.ok { background: var(--good); }
-  .tts-status { font-family: 'DM Mono', monospace; font-size: 0.7rem; padding: 10px 14px; border: 1px solid var(--border); background: var(--paper); margin-top: 8px; color: var(--muted); }
+  .tts-status { font-family: 'Courier New', monospace; font-size: 0.7rem; padding: 10px 14px; border: 1px solid var(--border); background: var(--paper); margin-top: 8px; color: var(--muted); }
 
-  .loading-text { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; animation: blink 1s infinite; }
+  .loading-text { font-family: 'Courier New', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.06em; animation: blink 1s infinite; }
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--ink); color: var(--paper); font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; padding: 9px 18px; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; }
+  #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--ink); color: var(--paper); font-family: 'Courier New', monospace; font-size: 0.7rem; letter-spacing: 0.06em; padding: 9px 18px; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* FLAG BUTTON */
@@ -266,9 +266,9 @@
   .debug-row { padding: 10px 12px; border: 1px solid var(--border); background: #fff; display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
   .debug-row.flagged-row { border-left: 3px solid var(--bad); }
   .debug-row.scan-row { border-left: 3px solid var(--warn); }
-  .debug-id { font-family: 'DM Mono', monospace; font-size: 0.56rem; color: var(--border); }
-  .debug-word { font-family: 'Shippori Mincho', serif; font-size: 0.95rem; }
-  .debug-issue { font-size: 0.68rem; color: var(--warn); font-family: 'DM Mono', monospace; }
+  .debug-id { font-family: 'Courier New', monospace; font-size: 0.56rem; color: var(--border); }
+  .debug-word { font-family: 'Noto Sans JP', sans-serif; font-size: 0.95rem; }
+  .debug-issue { font-size: 0.68rem; color: var(--warn); font-family: 'Courier New', monospace; }
   .debug-actions { display: flex; gap: 4px; margin-top: 2px; flex-wrap: wrap; }
 
   ::-webkit-scrollbar { width: 4px; }
@@ -291,13 +291,13 @@
   .nav-row-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
   .btn-nav-bar { width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 999px; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.82rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.12s; }
   .btn-nav-bar:hover { background: var(--paper2); }
-  .btn-word-bar { flex: 1; height: 38px; background: var(--accent); color: #fff; border: none; border-radius: 999px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; transition: filter 0.12s; }
+  .btn-word-bar { flex: 1; height: 38px; background: var(--accent); color: #fff; border: none; border-radius: 999px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; transition: filter 0.12s; }
   .btn-word-bar:hover { filter: brightness(1.08); }
   .btn-word-bar.playing { background: var(--good); }
-  .btn-sent-bar { flex: 1; height: 38px; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 999px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.04em; transition: all 0.12s; }
+  .btn-sent-bar { flex: 1; height: 38px; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 999px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.04em; transition: all 0.12s; }
   .btn-sent-bar:hover { background: var(--paper2); }
   .tab-bar-bottom { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .tab-btn-bottom { flex: 1; padding: 7px 0; font-family: 'DM Mono', monospace; font-size: 0.64rem; letter-spacing: 0.06em; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
+  .tab-btn-bottom { flex: 1; padding: 7px 0; font-family: 'Courier New', monospace; font-size: 0.64rem; letter-spacing: 0.06em; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
   .tab-btn-bottom:last-child { border-right: none; }
   .tab-btn-bottom.active { background: var(--accent); color: #fff; }
 
@@ -1737,36 +1737,6 @@ function intervalLabel(days) {
 // ===== HELPERS =====
 const $id = id => document.getElementById(id);
 
-// ===== iOS AUDIO UNLOCK =====
-// iOS Safari only allows audio.play() from within a synchronous user gesture.
-// The only reliable workaround: reuse ONE Audio element that was unlocked during
-// the first gesture (iOS unlocks a specific element instance, not new ones).
-let _audioEl = null;
-let _audioElUnlocked = false;
-
-function _getAudioEl() {
-  if (!_audioEl) {
-    _audioEl = new Audio();
-    _audioEl.preload = 'auto';
-  }
-  return _audioEl;
-}
-
-function _unlockAudio() {
-  if (_audioElUnlocked) return;
-  try {
-    const el = _getAudioEl();
-    // Play silence to unlock this element instance
-    el.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAA' +
-             'EAAQAARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
-    const p = el.play();
-    if (p) p.then(() => { el.pause(); el.src = ''; _audioElUnlocked = true; })
-             .catch(() => {});
-  } catch(e) {}
-}
-
-document.addEventListener('touchstart', _unlockAudio, { passive: true });
-document.addEventListener('click', _unlockAudio, { passive: true });
 
 // Loop debug logger — writes to console AND on-screen panel (visible on mobile)
 let _loopLogLines = [];
@@ -2021,7 +1991,7 @@ function _resetExampleMode() {
 function _stopAudio() {
   _speakVersion++; // abort any in-flight speak loop
   _dbg(`_stopAudio → ver bumped to ${_speakVersion}`);
-  if (_currentAudio) { try { _currentAudio.pause(); _currentAudio.src = ''; } catch(e){} _currentAudio = null; }
+  if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
   _speakEndUI();
 }
 
@@ -2194,7 +2164,7 @@ async function speak(text, onEnd, verSnap) {
   }
 
   // Stop any currently playing audio
-  if (_currentAudio) { try { _currentAudio.pause(); _currentAudio.src = ''; } catch(e){} _currentAudio = null; }
+  if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
 
   // Show loading state immediately so toggleSpeak() knows we're busy
   _speakPlayUI();
@@ -2222,16 +2192,7 @@ async function speak(text, onEnd, verSnap) {
     if (verSnap !== undefined && _speakVersion !== verSnap) { _speakEndUI(); if (onEnd) onEnd(); return; }
 
     const url = URL.createObjectURL(blob);
-    // Reuse the unlocked Audio element (iOS only allows play() on an element
-    // that was already play()ed during a user gesture — new Audio() creates
-    // a fresh locked element every time)
-    const audio = _getAudioEl();
-    // Remove any old listeners before reusing
-    const oldClone = audio.cloneNode(false);
-    audio.parentNode?.replaceChild(oldClone, audio);
-    // cloneNode doesn't work well for Audio — just reassign src and re-add listeners
-    audio.src = url;
-    audio.load();
+    const audio = new Audio(url);
     _currentAudio = audio;
 
     // Once-guard so onended / onerror / play().catch / safety timer never double-fire onEnd
@@ -2243,18 +2204,16 @@ async function speak(text, onEnd, verSnap) {
       if (err) showToast(err);
       if (onEnd) onEnd();
     };
-    // Safety timeout: if audio.onended never fires (iOS background / lock screen bug),
-    // force-continue after 12s so the loop never gets stuck
+    // Safety timeout: if audio.onended never fires (iOS background/lock screen),
+    // force-continue after 12s so loop never stalls
     const _safetyTimer = setTimeout(() => _done(), 12000);
 
-    // Use one-time listeners to avoid accumulation across reuses
-    const _onEnded = () => { _dbg(`audio ended ver=${verSnap}`); _done(); };
-    const _onError = (e) => { _dbg(`audio ERROR ver=${verSnap} ${e?.message||''}`); _done('音訊播放失敗'); };
-    audio.addEventListener('ended', _onEnded, { once: true });
-    audio.addEventListener('error', _onError, { once: true });
+    audio.addEventListener('ended', () => { _dbg(`ended ver=${verSnap}`); _done(); }, { once: true });
+    audio.addEventListener('error', () => { _dbg(`error ver=${verSnap}`); _done('音訊播放失敗'); }, { once: true });
 
     const p = audio.play();
     if (p) p.catch(e => {
+      _dbg(`play() rejected: ${e.name}`);
       if (e.name !== 'AbortError') _done('播放失敗：需先點擊畫面解鎖音訊');
       else _done();
     });
