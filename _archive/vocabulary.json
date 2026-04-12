@@ -1,0 +1,6428 @@
+[
+  {
+    "lesson": 1,
+    "word": "中国人",
+    "reading": "ちゅうごくじん",
+    "type": "名詞",
+    "meaning": "中国人"
+  },
+  {
+    "lesson": 1,
+    "word": "林",
+    "reading": "はやし",
+    "type": "固有名詞",
+    "meaning": "林"
+  },
+  {
+    "lesson": 1,
+    "word": "日本人",
+    "reading": "にほんじん",
+    "type": "名詞",
+    "meaning": "日本人"
+  },
+  {
+    "lesson": 1,
+    "word": "小野",
+    "reading": "おの",
+    "type": "固有名詞",
+    "meaning": "小野"
+  },
+  {
+    "lesson": 1,
+    "word": "韓国人",
+    "reading": "かんこくじん",
+    "type": "名詞",
+    "meaning": "韩国人"
+  },
+  {
+    "lesson": 1,
+    "word": "吉田",
+    "reading": "よしだ",
+    "type": "固有名詞",
+    "meaning": "吉田"
+  },
+  {
+    "lesson": 1,
+    "word": "〜人",
+    "reading": "アメリガじん",
+    "type": "名詞",
+    "meaning": "美国人"
+  },
+  {
+    "lesson": 1,
+    "word": "田中",
+    "reading": "た",
+    "type": "固有名詞",
+    "meaning": "田中"
+  },
+  {
+    "lesson": 1,
+    "word": "〜人",
+    "reading": "フランズじん",
+    "type": "名詞",
+    "meaning": "法国人"
+  },
+  {
+    "lesson": 1,
+    "word": "中村",
+    "reading": "なかむら",
+    "type": "固有名詞",
+    "meaning": "中村"
+  },
+  {
+    "lesson": 1,
+    "word": "学生",
+    "reading": "がくせい",
+    "type": "名詞",
+    "meaning": "（大）学生"
+  },
+  {
+    "lesson": 1,
+    "word": "太郎",
+    "reading": "だろう",
+    "type": "固有名詞",
+    "meaning": "太郎"
+  },
+  {
+    "lesson": 1,
+    "word": "先生",
+    "reading": "せんぜい",
+    "type": "名詞",
+    "meaning": "老师"
+  },
+  {
+    "lesson": 1,
+    "word": "金",
+    "reading": "キム",
+    "type": "固有名詞",
+    "meaning": "金"
+  },
+  {
+    "lesson": 1,
+    "word": "留学生",
+    "reading": "りゅうがくせい",
+    "type": "名詞",
+    "meaning": "留学生"
+  },
+  {
+    "lesson": 1,
+    "word": "デゴポン",
+    "reading": "デゴポン",
+    "type": "固有名詞",
+    "meaning": "迪蓬"
+  },
+  {
+    "lesson": 1,
+    "word": "教授",
+    "reading": "きょ员海",
+    "type": "名詞",
+    "meaning": "教授 ス ミ"
+  },
+  {
+    "lesson": 1,
+    "word": "ス",
+    "reading": "ス",
+    "type": "固有名詞",
+    "meaning": "史密斯"
+  },
+  {
+    "lesson": 1,
+    "word": "社員",
+    "reading": "し基いん",
+    "type": "名詞",
+    "meaning": "职员 ジWン ソ"
+  },
+  {
+    "lesson": 1,
+    "word": "ン",
+    "reading": "ン",
+    "type": "固有名詞",
+    "meaning": "约翰逊"
+  },
+  {
+    "lesson": 1,
+    "word": "会社員",
+    "reading": "かいし裕いん",
+    "type": "名詞",
+    "meaning": "公司职员 義 う ご"
+  },
+  {
+    "lesson": 1,
+    "word": "中国",
+    "reading": "く",
+    "type": "固有名詞",
+    "meaning": "中国"
+  },
+  {
+    "lesson": 1,
+    "word": "店員",
+    "reading": "てんいん",
+    "type": "名詞",
+    "meaning": "店员"
+  },
+  {
+    "lesson": 1,
+    "word": "東京大学",
+    "reading": "とうきょうだ1いがく",
+    "type": "固有名詞",
+    "meaning": "东京大学"
+  },
+  {
+    "lesson": 1,
+    "word": "研修生",
+    "reading": "い",
+    "type": "名詞",
+    "meaning": "进修生"
+  },
+  {
+    "lesson": 1,
+    "word": "北京大学",
+    "reading": "ペキンだいがく",
+    "type": "固有名詞",
+    "meaning": "北京大学"
+  },
+  {
+    "lesson": 1,
+    "word": "企業",
+    "reading": "ぎぎよう",
+    "type": "名詞",
+    "meaning": "企业"
+  },
+  {
+    "lesson": 1,
+    "word": "JC企画",
+    "reading": "ジェーシーぎかく",
+    "type": "固有名詞",
+    "meaning": "JC策划公司"
+  },
+  {
+    "lesson": 1,
+    "word": "大学",
+    "reading": "だいがく",
+    "type": "名詞",
+    "meaning": "大学 ペキンりよごうしゃ（北京旅行社）"
+  },
+  {
+    "lesson": 1,
+    "word": "ち君",
+    "reading": "ち君",
+    "type": "固有名詞",
+    "meaning": "北京旅行社"
+  },
+  {
+    "lesson": 1,
+    "word": "課長",
+    "reading": "かちょう",
+    "type": "名詞",
+    "meaning": "科长 にっちゅうしょ‘"
+  },
+  {
+    "lesson": 1,
+    "word": "日中商事",
+    "reading": "うじ",
+    "type": "固有名詞",
+    "meaning": "日中商社"
+  },
+  {
+    "lesson": 1,
+    "word": "社長",
+    "reading": "しゃちょう",
+    "type": "名詞",
+    "meaning": "总经理,社长"
+  },
+  {
+    "lesson": 2,
+    "word": "ンドン",
+    "reading": "ンドン",
+    "type": "固有名詞",
+    "meaning": "伦敦"
+  },
+  {
+    "lesson": 2,
+    "word": "本",
+    "reading": "ん",
+    "type": "名詞",
+    "meaning": "书"
+  },
+  {
+    "lesson": 2,
+    "word": "人",
+    "reading": "ひ五",
+    "type": "名詞",
+    "meaning": "人"
+  },
+  {
+    "lesson": 2,
+    "word": "か姦",
+    "reading": "か姦",
+    "type": "名詞",
+    "meaning": "包,公文包"
+  },
+  {
+    "lesson": 2,
+    "word": "家族",
+    "reading": "がぞく",
+    "type": "名詞",
+    "meaning": "家人,家属"
+  },
+  {
+    "lesson": 2,
+    "word": "アート",
+    "reading": "アート",
+    "type": "名詞",
+    "meaning": "笔记本，本子 日"
+  },
+  {
+    "lesson": 2,
+    "word": "母",
+    "reading": "は",
+    "type": "名詞",
+    "meaning": "俄）母亲"
+  },
+  {
+    "lesson": 2,
+    "word": "鉛筆",
+    "reading": "えんぴつ",
+    "type": "名詞",
+    "meaning": "铅笔・"
+  },
+  {
+    "lesson": 2,
+    "word": "おがあさん",
+    "reading": "お母さん",
+    "type": "名詞",
+    "meaning": "母亲"
+  },
+  {
+    "lesson": 2,
+    "word": "傘",
+    "reading": "あさ",
+    "type": "名詞",
+    "meaning": "伞"
+  },
+  {
+    "lesson": 2,
+    "word": "日本語",
+    "reading": "にほんご",
+    "type": "名詞",
+    "meaning": "日语"
+  },
+  {
+    "lesson": 2,
+    "word": "靴",
+    "reading": "くう",
+    "type": "名詞",
+    "meaning": "鞋"
+  },
+  {
+    "lesson": 2,
+    "word": "中国語",
+    "reading": "ちゅうごくご",
+    "type": "名詞",
+    "meaning": "汉语，中文"
+  },
+  {
+    "lesson": 2,
+    "word": "新聞",
+    "reading": "しんぶん",
+    "type": "名詞",
+    "meaning": "报纸"
+  },
+  {
+    "lesson": 2,
+    "word": "これ",
+    "reading": "これ",
+    "type": "代名詞",
+    "meaning": "这，这个"
+  },
+  {
+    "lesson": 2,
+    "word": "雑誌",
+    "reading": "ざ5",
+    "type": "名詞",
+    "meaning": "杂志"
+  },
+  {
+    "lesson": 2,
+    "word": "そ五",
+    "reading": "そ五",
+    "type": "代名詞",
+    "meaning": "那,那个"
+  },
+  {
+    "lesson": 2,
+    "word": "辞書",
+    "reading": "でしょ",
+    "type": "名詞",
+    "meaning": "词典"
+  },
+  {
+    "lesson": 2,
+    "word": "あれ",
+    "reading": "あれ",
+    "type": "代名詞",
+    "meaning": "那，那个"
+  },
+  {
+    "lesson": 2,
+    "word": "メラ",
+    "reading": "メラ",
+    "type": "名詞",
+    "meaning": "照相机"
+  },
+  {
+    "lesson": 2,
+    "word": "ごれ",
+    "reading": "ごれ",
+    "type": "疑問詞",
+    "meaning": "哪个"
+  },
+  {
+    "lesson": 2,
+    "word": "デレビ",
+    "reading": "デレビ",
+    "type": "名詞",
+    "meaning": "电视机"
+  },
+  {
+    "lesson": 2,
+    "word": "何",
+    "reading": "なん",
+    "type": "疑問詞",
+    "meaning": "什么"
+  },
+  {
+    "lesson": 2,
+    "word": "パソコン",
+    "reading": "パソコン",
+    "type": "名詞",
+    "meaning": "个人电脑"
+  },
+  {
+    "lesson": 2,
+    "word": "ぜれ",
+    "reading": "ぜれ",
+    "type": "疑問詞",
+    "meaning": "谁"
+  },
+  {
+    "lesson": 2,
+    "word": "ヲジオ",
+    "reading": "ヲジオ",
+    "type": "名詞",
+    "meaning": "收音机 区なた虜E］ 哪位"
+  },
+  {
+    "lesson": 2,
+    "word": "電話",
+    "reading": "でん万",
+    "type": "名詞",
+    "meaning": "电话"
+  },
+  {
+    "lesson": 2,
+    "word": "こあ",
+    "reading": "こあ",
+    "type": "連体詞",
+    "meaning": "这,这个"
+  },
+  {
+    "lesson": 2,
+    "word": "机",
+    "reading": "っす",
+    "type": "名詞",
+    "meaning": "桌子，书桌"
+  },
+  {
+    "lesson": 2,
+    "word": "そあ",
+    "reading": "そあ",
+    "type": "連体詞",
+    "meaning": "那,那个"
+  },
+  {
+    "lesson": 2,
+    "word": "い育",
+    "reading": "い育",
+    "type": "名詞",
+    "meaning": "椅子"
+  },
+  {
+    "lesson": 2,
+    "word": "ああ",
+    "reading": "ああ",
+    "type": "連体詞",
+    "meaning": "那，那个"
+  },
+  {
+    "lesson": 2,
+    "word": "かぎ",
+    "reading": "かぎ",
+    "type": "名詞",
+    "meaning": "钥匙，锁 行"
+  },
+  {
+    "lesson": 2,
+    "word": "の",
+    "reading": "の",
+    "type": "連体詞",
+    "meaning": "哪个"
+  },
+  {
+    "lesson": 2,
+    "word": "時計",
+    "reading": "と和",
+    "type": "名詞",
+    "meaning": "钟，表"
+  },
+  {
+    "lesson": 2,
+    "word": "えつ",
+    "reading": "えつ",
+    "type": "感嘆詞",
+    "meaning": "啊"
+  },
+  {
+    "lesson": 2,
+    "word": "手帳",
+    "reading": "てちょう",
+    "type": "名詞",
+    "meaning": "记事本 あ"
+  },
+  {
+    "lesson": 2,
+    "word": "あ",
+    "reading": "あ",
+    "type": "感嘆詞",
+    "meaning": "哇"
+  },
+  {
+    "lesson": 2,
+    "word": "写真",
+    "reading": "しや以",
+    "type": "名詞",
+    "meaning": "照片"
+  },
+  {
+    "lesson": 2,
+    "word": "え",
+    "reading": "え",
+    "type": "感嘆詞",
+    "meaning": "（应答）嗯・是"
+  },
+  {
+    "lesson": 2,
+    "word": "車",
+    "reading": "くるま",
+    "type": "名詞",
+    "meaning": "车"
+  },
+  {
+    "lesson": 2,
+    "word": "長島",
+    "reading": "ながしま",
+    "type": "固有名詞",
+    "meaning": "长岛"
+  },
+  {
+    "lesson": 2,
+    "word": "自転車",
+    "reading": "じてんしゃ",
+    "type": "名詞",
+    "meaning": "自行车"
+  },
+  {
+    "lesson": 2,
+    "word": "日本",
+    "reading": "に居ん",
+    "type": "固有名詞",
+    "meaning": "日本"
+  },
+  {
+    "lesson": 2,
+    "word": "おみやげ",
+    "reading": "お土産",
+    "type": "名詞",
+    "meaning": "礼物"
+  },
+  {
+    "lesson": 2,
+    "word": "スワトウ",
+    "reading": "スワトウ",
+    "type": "固有名詞",
+    "meaning": "汕头"
+  },
+  {
+    "lesson": 2,
+    "word": "名産品",
+    "reading": "めいさんひん",
+    "type": "名詞",
+    "meaning": "特产,名产"
+  },
+  {
+    "lesson": 2,
+    "word": "ルク",
+    "reading": "ルク",
+    "type": "名詞",
+    "meaning": "丝绸"
+  },
+  {
+    "lesson": 2,
+    "word": "ハう万テ",
+    "reading": "ハう万テ",
+    "type": "名詞",
+    "meaning": "手绢"
+  },
+  {
+    "lesson": 2,
+    "word": "会社",
+    "reading": "ス",
+    "type": "名詞",
+    "meaning": "公司"
+  },
+  {
+    "lesson": 2,
+    "word": "方",
+    "reading": "か无I",
+    "type": "名詞",
+    "meaning": "（敬称）位,人"
+  },
+  {
+    "lesson": 3,
+    "word": "デパート",
+    "reading": "デパート",
+    "type": "名詞",
+    "meaning": "百货商店"
+  },
+  {
+    "lesson": 3,
+    "word": "デジカメ",
+    "reading": "デジカメ",
+    "type": "名詞",
+    "meaning": "数码相机"
+  },
+  {
+    "lesson": 3,
+    "word": "食堂",
+    "reading": "しょくどう",
+    "type": "名詞",
+    "meaning": "食堂"
+  },
+  {
+    "lesson": 3,
+    "word": "国",
+    "reading": "くに",
+    "type": "名詞",
+    "meaning": "国，国家"
+  },
+  {
+    "lesson": 3,
+    "word": "郵便局",
+    "reading": "ゆうびんきよく",
+    "type": "名詞",
+    "meaning": "邮局 百1"
+  },
+  {
+    "lesson": 3,
+    "word": "地図",
+    "reading": "ず",
+    "type": "名詞",
+    "meaning": "地图"
+  },
+  {
+    "lesson": 3,
+    "word": "銀行",
+    "reading": "ぎ",
+    "type": "名詞",
+    "meaning": "银行"
+  },
+  {
+    "lesson": 3,
+    "word": "隣",
+    "reading": "と",
+    "type": "名詞",
+    "meaning": "旁边"
+  },
+  {
+    "lesson": 3,
+    "word": "図書館",
+    "reading": "と口Fかん",
+    "type": "名詞",
+    "meaning": "图书馆"
+  },
+  {
+    "lesson": 3,
+    "word": "周辺",
+    "reading": "しゅうへん",
+    "type": "名詞",
+    "meaning": "附近，周边"
+  },
+  {
+    "lesson": 3,
+    "word": "づンション",
+    "reading": "づンション",
+    "type": "名詞",
+    "meaning": "（高级）公寓 云 1"
+  },
+  {
+    "lesson": 3,
+    "word": "今日",
+    "reading": "う",
+    "type": "名詞",
+    "meaning": "今天"
+  },
+  {
+    "lesson": 3,
+    "word": "テル",
+    "reading": "テル",
+    "type": "名詞",
+    "meaning": "宾馆 す 港 I"
+  },
+  {
+    "lesson": 3,
+    "word": "水曜日",
+    "reading": "うび",
+    "type": "名詞",
+    "meaning": "星期三"
+  },
+  {
+    "lesson": 3,
+    "word": "コンビニ",
+    "reading": "コンビニ",
+    "type": "名詞",
+    "meaning": "便利店"
+  },
+  {
+    "lesson": 3,
+    "word": "木曜日",
+    "reading": "もそようび",
+    "type": "名詞",
+    "meaning": "星期四"
+  },
+  {
+    "lesson": 3,
+    "word": "喫茶店",
+    "reading": "きっさてん",
+    "type": "名詞",
+    "meaning": "咖啡馆 こ"
+  },
+  {
+    "lesson": 3,
+    "word": "こ",
+    "reading": "こ",
+    "type": "代名詞",
+    "meaning": "这里，这儿"
+  },
+  {
+    "lesson": 3,
+    "word": "病院",
+    "reading": "びよういん",
+    "type": "名詞",
+    "meaning": "医院 そ"
+  },
+  {
+    "lesson": 3,
+    "word": "本屋",
+    "reading": "んや",
+    "type": "名詞",
+    "meaning": "书店"
+  },
+  {
+    "lesson": 3,
+    "word": "あそそ",
+    "reading": "あそそ",
+    "type": "代名詞",
+    "meaning": "那里,那儿"
+  },
+  {
+    "lesson": 3,
+    "word": "ワストラン",
+    "reading": "ワストラン",
+    "type": "名詞",
+    "meaning": "餐馆,西餐馆"
+  },
+  {
+    "lesson": 3,
+    "word": "ル",
+    "reading": "ル",
+    "type": "名詞",
+    "meaning": "大楼,大厦"
+  },
+  {
+    "lesson": 3,
+    "word": "そ",
+    "reading": "そ",
+    "type": "代名詞",
+    "meaning": "那儿，那边"
+  },
+  {
+    "lesson": 3,
+    "word": "建物",
+    "reading": "たでもの",
+    "type": "名詞",
+    "meaning": "大楼,建筑物"
+  },
+  {
+    "lesson": 3,
+    "word": "あ",
+    "reading": "あ",
+    "type": "代名詞",
+    "meaning": "那儿，那边"
+  },
+  {
+    "lesson": 3,
+    "word": "ううぼ",
+    "reading": "売り場",
+    "type": "名詞",
+    "meaning": "柜台，出售处 ど"
+  },
+  {
+    "lesson": 3,
+    "word": "ドイレ",
+    "reading": "ドイレ",
+    "type": "名詞",
+    "meaning": "厕所,盥洗室 ど1ち"
+  },
+  {
+    "lesson": 3,
+    "word": "ら",
+    "reading": "ら",
+    "type": "疑問詞",
+    "meaning": "哪儿，哪边"
+  },
+  {
+    "lesson": 3,
+    "word": "いりぐち",
+    "reading": "入り口",
+    "type": "名詞",
+    "meaning": "入口"
+  },
+  {
+    "lesson": 3,
+    "word": "あかう",
+    "reading": "あかう",
+    "type": "感嘆詞",
+    "meaning": "请问,对不起"
+  },
+  {
+    "lesson": 3,
+    "word": "事務所",
+    "reading": "じむしょ",
+    "type": "名詞",
+    "meaning": "事务所，办事处"
+  },
+  {
+    "lesson": 3,
+    "word": "上海",
+    "reading": "ンハイ",
+    "type": "固有名詞",
+    "meaning": "上海"
+  },
+  {
+    "lesson": 3,
+    "word": "受付",
+    "reading": "うけつけ",
+    "type": "名詞",
+    "meaning": "接待处"
+  },
+  {
+    "lesson": 3,
+    "word": "東京",
+    "reading": "とうきょう",
+    "type": "固有名詞",
+    "meaning": "东京"
+  },
+  {
+    "lesson": 3,
+    "word": "〜会場",
+    "reading": "バーゲンかいじょう",
+    "type": "名詞",
+    "meaning": "降价处理大卖场"
+  },
+  {
+    "lesson": 3,
+    "word": "エスカレーター",
+    "reading": "エスカレーター",
+    "type": "名詞",
+    "meaning": "自动扶梯 貫くら多少钱"
+  },
+  {
+    "lesson": 3,
+    "word": "服",
+    "reading": "ふぐ",
+    "type": "名詞",
+    "meaning": "衣服 お〜/〜階/〜円/〜曜日"
+  },
+  {
+    "lesson": 3,
+    "word": "ョート",
+    "reading": "ョート",
+    "type": "名詞",
+    "meaning": "风衣，大衣"
+  },
+  {
+    "lesson": 4,
+    "word": "部屋",
+    "reading": "へ弔",
+    "type": "名詞",
+    "meaning": "房间,屋子"
+  },
+  {
+    "lesson": 4,
+    "word": "中",
+    "reading": "なか",
+    "type": "名詞",
+    "meaning": "里面,内部,中间"
+  },
+  {
+    "lesson": 4,
+    "word": "庭",
+    "reading": "にあ",
+    "type": "名詞",
+    "meaning": "院子"
+  },
+  {
+    "lesson": 4,
+    "word": "T",
+    "reading": "した",
+    "type": "名詞",
+    "meaning": "下面"
+  },
+  {
+    "lesson": 4,
+    "word": "い元像",
+    "reading": "い元像",
+    "type": "名詞",
+    "meaning": "家"
+  },
+  {
+    "lesson": 4,
+    "word": "前",
+    "reading": "まIえ",
+    "type": "名詞",
+    "meaning": "前，前面"
+  },
+  {
+    "lesson": 4,
+    "word": "居間",
+    "reading": "いま",
+    "type": "名詞",
+    "meaning": "起居室"
+  },
+  {
+    "lesson": 4,
+    "word": "う乒",
+    "reading": "後ろ",
+    "type": "名詞",
+    "meaning": "后,后面"
+  },
+  {
+    "lesson": 4,
+    "word": "冷蔵庫",
+    "reading": "れ订ぞうこ",
+    "type": "名詞",
+    "meaning": "冰箱 E"
+  },
+  {
+    "lesson": 4,
+    "word": "かく",
+    "reading": "近く",
+    "type": "名詞",
+    "meaning": "附近，近旁"
+  },
+  {
+    "lesson": 4,
+    "word": "壁",
+    "reading": "か天",
+    "type": "名詞",
+    "meaning": "墙壁"
+  },
+  {
+    "lesson": 4,
+    "word": "場所",
+    "reading": "ば珏",
+    "type": "名詞",
+    "meaning": "所在地，地方，场所"
+  },
+  {
+    "lesson": 4,
+    "word": "ス彳Iッチ",
+    "reading": "ス彳Iッチ",
+    "type": "名詞",
+    "meaning": "开关"
+  },
+  {
+    "lesson": 4,
+    "word": "教室",
+    "reading": "きょうしつ",
+    "type": "名詞",
+    "meaning": "教室"
+  },
+  {
+    "lesson": 4,
+    "word": "本棚",
+    "reading": "ほんだな",
+    "type": "名詞",
+    "meaning": "书架"
+  },
+  {
+    "lesson": 4,
+    "word": "会議室",
+    "reading": "か福しつ",
+    "type": "名詞",
+    "meaning": "会议室"
+  },
+  {
+    "lesson": 4,
+    "word": "ッド",
+    "reading": "ッド",
+    "type": "名詞",
+    "meaning": "床"
+  },
+  {
+    "lesson": 4,
+    "word": "図書室",
+    "reading": "と口よしつ",
+    "type": "名詞",
+    "meaning": "图书室"
+  },
+  {
+    "lesson": 4,
+    "word": "猫",
+    "reading": "こ",
+    "type": "名詞",
+    "meaning": "猫"
+  },
+  {
+    "lesson": 4,
+    "word": "公園",
+    "reading": "こうえん",
+    "type": "名詞",
+    "meaning": "公园"
+  },
+  {
+    "lesson": 4,
+    "word": "犬",
+    "reading": "い泻",
+    "type": "名詞",
+    "meaning": "狗"
+  },
+  {
+    "lesson": 4,
+    "word": "花屋",
+    "reading": "はなや",
+    "type": "名詞",
+    "meaning": "花店"
+  },
+  {
+    "lesson": 4,
+    "word": "箱",
+    "reading": "はこ",
+    "type": "名詞",
+    "meaning": "盒子,箱子"
+  },
+  {
+    "lesson": 4,
+    "word": "売店",
+    "reading": "ばいてん",
+    "type": "名詞",
+    "meaning": "小卖部，售货亭"
+  },
+  {
+    "lesson": 4,
+    "word": "眼鏡",
+    "reading": "あがね",
+    "type": "名詞",
+    "meaning": "眼镜 灵"
+  },
+  {
+    "lesson": 4,
+    "word": "駅",
+    "reading": "き",
+    "type": "名詞",
+    "meaning": "车站"
+  },
+  {
+    "lesson": 4,
+    "word": "ビデオ",
+    "reading": "ビデオ",
+    "type": "名詞",
+    "meaning": "录像机"
+  },
+  {
+    "lesson": 4,
+    "word": "地下鉄",
+    "reading": "ちかてつ",
+    "type": "名詞",
+    "meaning": "地铁"
+  },
+  {
+    "lesson": 4,
+    "word": "ール",
+    "reading": "ール",
+    "type": "名詞",
+    "meaning": "足球"
+  },
+  {
+    "lesson": 4,
+    "word": "木",
+    "reading": "き1",
+    "type": "名詞",
+    "meaning": "树，树木"
+  },
+  {
+    "lesson": 4,
+    "word": "ぞール",
+    "reading": "ぞール",
+    "type": "名詞",
+    "meaning": "啤酒"
+  },
+  {
+    "lesson": 4,
+    "word": "ひとりぐらし",
+    "reading": "一人暮らし",
+    "type": "名詞",
+    "meaning": "单身生活"
+  },
+  {
+    "lesson": 4,
+    "word": "ウ彳スキー",
+    "reading": "ウ彳スキー",
+    "type": "名詞",
+    "meaning": "威士忌"
+  },
+  {
+    "lesson": 4,
+    "word": "あ毎す",
+    "reading": "あ毎す",
+    "type": "動詞1",
+    "meaning": "有,在（非意志者）"
+  },
+  {
+    "lesson": 4,
+    "word": "子供",
+    "reading": "こども",
+    "type": "名詞",
+    "meaning": "孩子,小孩"
+  },
+  {
+    "lesson": 4,
+    "word": "います",
+    "reading": "います",
+    "type": "動詞2",
+    "meaning": "有，在（具意志者）"
+  },
+  {
+    "lesson": 4,
+    "word": "兄弟",
+    "reading": "うだい",
+    "type": "名詞",
+    "meaning": "兄弟姐妹"
+  },
+  {
+    "lesson": 4,
+    "word": "え泰",
+    "reading": "え泰",
+    "type": "感嘆詞",
+    "meaning": "啊，嗯"
+  },
+  {
+    "lesson": 4,
+    "word": "両親",
+    "reading": "うしん",
+    "type": "名詞",
+    "meaning": "父母,双亲"
+  },
+  {
+    "lesson": 4,
+    "word": "横浜",
+    "reading": "よこはま",
+    "type": "固有名詞",
+    "meaning": "横滨"
+  },
+  {
+    "lesson": 4,
+    "word": "妹",
+    "reading": "いもうど",
+    "type": "名詞",
+    "meaning": "妹妹"
+  },
+  {
+    "lesson": 4,
+    "word": "名古屋",
+    "reading": "なごや",
+    "type": "固有名詞",
+    "meaning": "名古屋"
+  },
+  {
+    "lesson": 4,
+    "word": "男",
+    "reading": "おを",
+    "type": "名詞",
+    "meaning": "男"
+  },
+  {
+    "lesson": 4,
+    "word": "大阪",
+    "reading": "おおさか",
+    "type": "固有名詞",
+    "meaning": "大阪"
+  },
+  {
+    "lesson": 4,
+    "word": "女",
+    "reading": "お兀な",
+    "type": "名詞",
+    "meaning": "女"
+  },
+  {
+    "lesson": 4,
+    "word": "J R",
+    "reading": "ジェーヲール",
+    "type": "固有名詞",
+    "meaning": "JR"
+  },
+  {
+    "lesson": 4,
+    "word": "生徒",
+    "reading": "いと",
+    "type": "名詞",
+    "meaning": "学生"
+  },
+  {
+    "lesson": 4,
+    "word": "±",
+    "reading": "うえ",
+    "type": "名詞",
+    "meaning": "上面"
+  },
+  {
+    "lesson": 4,
+    "word": "外",
+    "reading": "そと",
+    "type": "名詞",
+    "meaning": "外面"
+  },
+  {
+    "lesson": 5,
+    "word": "今",
+    "reading": "いま",
+    "type": "名詞",
+    "meaning": "现在"
+  },
+  {
+    "lesson": 5,
+    "word": "先週",
+    "reading": "せんしゆう",
+    "type": "名詞",
+    "meaning": "上个星期"
+  },
+  {
+    "lesson": 5,
+    "word": "来週",
+    "reading": "らいしゅう",
+    "type": "名詞",
+    "meaning": "下个星期"
+  },
+  {
+    "lesson": 5,
+    "word": "さらいしゅう",
+    "reading": "さ来週",
+    "type": "名詞",
+    "meaning": "下下个星期"
+  },
+  {
+    "lesson": 5,
+    "word": "今週",
+    "reading": "こんしゅう",
+    "type": "名詞",
+    "meaning": "这个星期"
+  },
+  {
+    "lesson": 5,
+    "word": "昨日",
+    "reading": "きのう",
+    "type": "名詞",
+    "meaning": "昨天"
+  },
+  {
+    "lesson": 5,
+    "word": "明日",
+    "reading": "あしだ",
+    "type": "名詞",
+    "meaning": "明天"
+  },
+  {
+    "lesson": 5,
+    "word": "あぎって",
+    "reading": "あぎって",
+    "type": "名詞",
+    "meaning": "后天"
+  },
+  {
+    "lesson": 5,
+    "word": "おい",
+    "reading": "おい",
+    "type": "名詞",
+    "meaning": "前天"
+  },
+  {
+    "lesson": 5,
+    "word": "毎日",
+    "reading": "まいにち",
+    "type": "名詞",
+    "meaning": "每天,每日"
+  },
+  {
+    "lesson": 5,
+    "word": "毎朝",
+    "reading": "いあさ",
+    "type": "名詞",
+    "meaning": "每天早晨"
+  },
+  {
+    "lesson": 5,
+    "word": "毎晩",
+    "reading": "まいばん",
+    "type": "名詞",
+    "meaning": "每天晚上"
+  },
+  {
+    "lesson": 5,
+    "word": "毎週",
+    "reading": "まいしゅう",
+    "type": "名詞",
+    "meaning": "每个星期"
+  },
+  {
+    "lesson": 5,
+    "word": "am",
+    "reading": "エニエム",
+    "type": "名詞",
+    "meaning": "上午"
+  },
+  {
+    "lesson": 5,
+    "word": "pm",
+    "reading": "ピニエム",
+    "type": "名詞",
+    "meaning": "下午"
+  },
+  {
+    "lesson": 5,
+    "word": "日曜日",
+    "reading": "に1うび",
+    "type": "名詞",
+    "meaning": "星期日"
+  },
+  {
+    "lesson": 5,
+    "word": "月曜日",
+    "reading": "げっようび",
+    "type": "名詞",
+    "meaning": "星期一"
+  },
+  {
+    "lesson": 5,
+    "word": "火曜日",
+    "reading": "かようび",
+    "type": "名詞",
+    "meaning": "星期二"
+  },
+  {
+    "lesson": 5,
+    "word": "金曜日",
+    "reading": "き相うび",
+    "type": "名詞",
+    "meaning": "星期五"
+  },
+  {
+    "lesson": 5,
+    "word": "土曜日",
+    "reading": "どぶ1うび",
+    "type": "名詞",
+    "meaning": "星期六"
+  },
+  {
+    "lesson": 5,
+    "word": "今朝",
+    "reading": "けさ",
+    "type": "名詞",
+    "meaning": "今天早晨"
+  },
+  {
+    "lesson": 5,
+    "word": "学校",
+    "reading": "がっこう",
+    "type": "名詞",
+    "meaning": "学校"
+  },
+  {
+    "lesson": 5,
+    "word": "試験",
+    "reading": "しけん",
+    "type": "名詞",
+    "meaning": "考试"
+  },
+  {
+    "lesson": 5,
+    "word": "仕事",
+    "reading": "しごと",
+    "type": "名詞",
+    "meaning": "工作"
+  },
+  {
+    "lesson": 5,
+    "word": "遅刻",
+    "reading": "ちス",
+    "type": "名詞",
+    "meaning": "迟到"
+  },
+  {
+    "lesson": 5,
+    "word": "やす",
+    "reading": "休み",
+    "type": "名詞",
+    "meaning": "休息"
+  },
+  {
+    "lesson": 5,
+    "word": "出張",
+    "reading": "しゅっちょう",
+    "type": "名詞",
+    "meaning": "出差"
+  },
+  {
+    "lesson": 5,
+    "word": "研修",
+    "reading": "けんしゆう",
+    "type": "名詞",
+    "meaning": "进修"
+  },
+  {
+    "lesson": 5,
+    "word": "旅行",
+    "reading": "りよこう",
+    "type": "名詞",
+    "meaning": "旅行"
+  },
+  {
+    "lesson": 5,
+    "word": "展覧会",
+    "reading": "て序んかい",
+    "type": "名詞",
+    "meaning": "展览会"
+  },
+  {
+    "lesson": 5,
+    "word": "歓迎会",
+    "reading": "か術いかい",
+    "type": "名詞",
+    "meaning": "欢迎会"
+  },
+  {
+    "lesson": 5,
+    "word": "パーティー",
+    "reading": "パーティー",
+    "type": "名詞",
+    "meaning": "联欢会"
+  },
+  {
+    "lesson": 5,
+    "word": "お商",
+    "reading": "お宅",
+    "type": "名詞",
+    "meaning": "府上，（您）家"
+  },
+  {
+    "lesson": 5,
+    "word": "パつ",
+    "reading": "パつ",
+    "type": "疑問詞",
+    "meaning": "什么时候"
+  },
+  {
+    "lesson": 5,
+    "word": "す",
+    "reading": "休みます",
+    "type": "動詞1",
+    "meaning": "休息"
+  },
+  {
+    "lesson": 5,
+    "word": "す",
+    "reading": "働きます",
+    "type": "動詞1",
+    "meaning": "工作"
+  },
+  {
+    "lesson": 5,
+    "word": "はじまります",
+    "reading": "始まります",
+    "type": "動詞1",
+    "meaning": "开始"
+  },
+  {
+    "lesson": 5,
+    "word": "おわります",
+    "reading": "終わります",
+    "type": "動詞1",
+    "meaning": "结束"
+  },
+  {
+    "lesson": 5,
+    "word": "おざます",
+    "reading": "起きます",
+    "type": "動詞2",
+    "meaning": "起床"
+  },
+  {
+    "lesson": 5,
+    "word": "ねます",
+    "reading": "寝ます",
+    "type": "動詞2",
+    "meaning": "睡觉"
+  },
+  {
+    "lesson": 5,
+    "word": "勉强〜",
+    "reading": "べんきょうします",
+    "type": "動詞3",
+    "meaning": "学习"
+  },
+  {
+    "lesson": 5,
+    "word": "つも",
+    "reading": "つも",
+    "type": "副詞",
+    "meaning": "经常，总是"
+  },
+  {
+    "lesson": 5,
+    "word": "北京支社",
+    "reading": "しゃ",
+    "type": "固有名詞",
+    "meaning": "北京分社"
+  },
+  {
+    "lesson": 5,
+    "word": "神戸",
+    "reading": "こうベ",
+    "type": "固有名詞",
+    "meaning": "神户"
+  },
+  {
+    "lesson": 6,
+    "word": "来月",
+    "reading": "いげつ",
+    "type": "名詞",
+    "meaning": "下个月"
+  },
+  {
+    "lesson": 6,
+    "word": "先月",
+    "reading": "せんげつ",
+    "type": "名詞",
+    "meaning": "上个月"
+  },
+  {
+    "lesson": 6,
+    "word": "夜中",
+    "reading": "よ恭",
+    "type": "名詞",
+    "meaning": "午夜,半夜"
+  },
+  {
+    "lesson": 6,
+    "word": "ゆ尹",
+    "reading": "ゆ尹",
+    "type": "名詞",
+    "meaning": "昨天晩上"
+  },
+  {
+    "lesson": 6,
+    "word": "ョンサート",
+    "reading": "ョンサート",
+    "type": "名詞",
+    "meaning": "音乐会"
+  },
+  {
+    "lesson": 6,
+    "word": "ク归マス",
+    "reading": "ク归マス",
+    "type": "名詞",
+    "meaning": "圣诞节"
+  },
+  {
+    "lesson": 6,
+    "word": "誕生日",
+    "reading": "うび",
+    "type": "名詞",
+    "meaning": "生日"
+  },
+  {
+    "lesson": 6,
+    "word": "こどもが",
+    "reading": "こどもの日",
+    "type": "名詞",
+    "meaning": "儿童节"
+  },
+  {
+    "lesson": 6,
+    "word": "な天すみ",
+    "reading": "夏休み",
+    "type": "名詞",
+    "meaning": "暑假"
+  },
+  {
+    "lesson": 6,
+    "word": "交通機関",
+    "reading": "こうつうぎかん",
+    "type": "名詞",
+    "meaning": "交通工具"
+  },
+  {
+    "lesson": 6,
+    "word": "新幹線",
+    "reading": "しん祖んせん",
+    "type": "名詞",
+    "meaning": "新干线"
+  },
+  {
+    "lesson": 6,
+    "word": "飛行機",
+    "reading": "ひごうき",
+    "type": "名詞",
+    "meaning": "飞机"
+  },
+  {
+    "lesson": 6,
+    "word": "ラヨリー",
+    "reading": "ラヨリー",
+    "type": "名詞",
+    "meaning": "渡轮"
+  },
+  {
+    "lesson": 6,
+    "word": "電車",
+    "reading": "で商Dる",
+    "type": "名詞",
+    "meaning": "电车"
+  },
+  {
+    "lesson": 6,
+    "word": "バス",
+    "reading": "バス",
+    "type": "名詞",
+    "meaning": "公共汽车"
+  },
+  {
+    "lesson": 6,
+    "word": "クシー",
+    "reading": "クシー",
+    "type": "名詞",
+    "meaning": "出租车"
+  },
+  {
+    "lesson": 6,
+    "word": "美術館",
+    "reading": "かん",
+    "type": "名詞",
+    "meaning": "美术馆"
+  },
+  {
+    "lesson": 6,
+    "word": "ート",
+    "reading": "ート",
+    "type": "名詞",
+    "meaning": "公寓"
+  },
+  {
+    "lesson": 6,
+    "word": "うモ",
+    "reading": "うモ",
+    "type": "名詞",
+    "meaning": "家"
+  },
+  {
+    "lesson": 6,
+    "word": "ラール",
+    "reading": "ラール",
+    "type": "名詞",
+    "meaning": "游泳池"
+  },
+  {
+    "lesson": 6,
+    "word": "友達",
+    "reading": "ともだち",
+    "type": "名詞",
+    "meaning": "朋友"
+  },
+  {
+    "lesson": 6,
+    "word": "弟",
+    "reading": "おうど",
+    "type": "名詞",
+    "meaning": "弟弟"
+  },
+  {
+    "lesson": 6,
+    "word": "いきます",
+    "reading": "行きます",
+    "type": "動詞1",
+    "meaning": "去"
+  },
+  {
+    "lesson": 6,
+    "word": "かえります",
+    "reading": "帰ります",
+    "type": "動詞1",
+    "meaning": "回来,回去"
+  },
+  {
+    "lesson": 6,
+    "word": "きます",
+    "reading": "来ます",
+    "type": "動詞3",
+    "meaning": "来"
+  },
+  {
+    "lesson": 6,
+    "word": "たしか",
+    "reading": "たしか",
+    "type": "副詞",
+    "meaning": "好像是,大概;的确"
+  },
+  {
+    "lesson": 6,
+    "word": "まさずぐ",
+    "reading": "まさずぐ",
+    "type": "副詞",
+    "meaning": "径直,笔直"
+  },
+  {
+    "lesson": 6,
+    "word": "いっしょに",
+    "reading": "いっしょに",
+    "type": "副詞",
+    "meaning": "ー起"
+  },
+  {
+    "lesson": 6,
+    "word": "佐藤",
+    "reading": "ぎとう",
+    "type": "固有名詞",
+    "meaning": "佐藤"
+  },
+  {
+    "lesson": 6,
+    "word": "北京",
+    "reading": "ベキン",
+    "type": "固有名詞",
+    "meaning": "北京"
+  },
+  {
+    "lesson": 6,
+    "word": "アメリカ",
+    "reading": "アメリカ",
+    "type": "固有名詞",
+    "meaning": "美国"
+  },
+  {
+    "lesson": 6,
+    "word": "韓国",
+    "reading": "んこく",
+    "type": "固有名詞",
+    "meaning": "韩国"
+  },
+  {
+    "lesson": 6,
+    "word": "フランス",
+    "reading": "フランス",
+    "type": "固有名詞",
+    "meaning": "法国"
+  },
+  {
+    "lesson": 6,
+    "word": "ひろしま位島",
+    "reading": "ひろしま位島",
+    "type": "固有名詞",
+    "meaning": "广岛"
+  },
+  {
+    "lesson": 6,
+    "word": "京都",
+    "reading": "うと",
+    "type": "固有名詞",
+    "meaning": "京都"
+  },
+  {
+    "lesson": 6,
+    "word": "北海道",
+    "reading": "ほっがいどう",
+    "type": "固有名詞",
+    "meaning": "北海道"
+  },
+  {
+    "lesson": 6,
+    "word": "箱根",
+    "reading": "はこね",
+    "type": "固有名詞",
+    "meaning": "箱根"
+  },
+  {
+    "lesson": 6,
+    "word": "銀座",
+    "reading": "ぎ泰",
+    "type": "固有名詞",
+    "meaning": "银座"
+  },
+  {
+    "lesson": 6,
+    "word": "渋谷",
+    "reading": "や",
+    "type": "固有名詞",
+    "meaning": "涩谷"
+  },
+  {
+    "lesson": 6,
+    "word": "新宿",
+    "reading": "しんじゅく",
+    "type": "固有名詞",
+    "meaning": ":"
+  },
+  {
+    "lesson": 7,
+    "word": "そぼや",
+    "reading": "そば屋",
+    "type": "名詞",
+    "meaning": "葬麦面馆"
+  },
+  {
+    "lesson": 7,
+    "word": "テニス",
+    "reading": "テニス",
+    "type": "名詞",
+    "meaning": "网球"
+  },
+  {
+    "lesson": 7,
+    "word": "ジョ宅ラ",
+    "reading": "ジョ宅ラ",
+    "type": "名詞",
+    "meaning": "慢跑,跑步"
+  },
+  {
+    "lesson": 7,
+    "word": "コ",
+    "reading": "コ",
+    "type": "名詞",
+    "meaning": "咖啡"
+  },
+  {
+    "lesson": 7,
+    "word": "動物園",
+    "reading": "どうぶづえん",
+    "type": "名詞",
+    "meaning": "动物园"
+  },
+  {
+    "lesson": 7,
+    "word": "ヨーラ",
+    "reading": "ヨーラ",
+    "type": "名詞",
+    "meaning": "可乐"
+  },
+  {
+    "lesson": 7,
+    "word": "ちゃ",
+    "reading": "お茶",
+    "type": "名詞",
+    "meaning": "茶"
+  },
+  {
+    "lesson": 7,
+    "word": "パンダ",
+    "reading": "パンダ",
+    "type": "名詞",
+    "meaning": "熊猫"
+  },
+  {
+    "lesson": 7,
+    "word": "のR座す",
+    "reading": "飲みます",
+    "type": "動詞1",
+    "meaning": "喝"
+  },
+  {
+    "lesson": 7,
+    "word": "ラIイン",
+    "reading": "ラIイン",
+    "type": "名詞",
+    "meaning": "葡萄酒、"
+  },
+  {
+    "lesson": 7,
+    "word": "か节ます",
+    "reading": "買います",
+    "type": "動詞1",
+    "meaning": "买"
+  },
+  {
+    "lesson": 7,
+    "word": "パン",
+    "reading": "パン",
+    "type": "名詞",
+    "meaning": "面包"
+  },
+  {
+    "lesson": 7,
+    "word": "と後す",
+    "reading": "撮ります",
+    "type": "動詞1",
+    "meaning": "拍照,拍摄"
+  },
+  {
+    "lesson": 7,
+    "word": "デーキ",
+    "reading": "デーキ",
+    "type": "名詞",
+    "meaning": "蛋糕"
+  },
+  {
+    "lesson": 7,
+    "word": "かぎまIす",
+    "reading": "書きます",
+    "type": "動詞1",
+    "meaning": "写"
+  },
+  {
+    "lesson": 7,
+    "word": "おかゆ",
+    "reading": "お粥",
+    "type": "名詞",
+    "meaning": "粥"
+  },
+  {
+    "lesson": 7,
+    "word": "よみます",
+    "reading": "読みます",
+    "type": "動詞1",
+    "meaning": "读"
+  },
+  {
+    "lesson": 7,
+    "word": "ひるこSはん",
+    "reading": "昼ご飯",
+    "type": "名詞",
+    "meaning": "午饭"
+  },
+  {
+    "lesson": 7,
+    "word": "き譯す",
+    "reading": "聞きます",
+    "type": "動詞1",
+    "meaning": "听"
+  },
+  {
+    "lesson": 7,
+    "word": "おべんとう",
+    "reading": "お弁当",
+    "type": "名詞",
+    "meaning": "盒饭"
+  },
+  {
+    "lesson": 7,
+    "word": "たべます",
+    "reading": "食べます",
+    "type": "動詞2",
+    "meaning": "吃"
+  },
+  {
+    "lesson": 7,
+    "word": "ば",
+    "reading": "ば",
+    "type": "名詞",
+    "meaning": "葬麦面"
+  },
+  {
+    "lesson": 7,
+    "word": "うど兀",
+    "reading": "うど兀",
+    "type": "名詞",
+    "meaning": "面条"
+  },
+  {
+    "lesson": 7,
+    "word": "親子丼",
+    "reading": "おやこどん",
+    "type": "名詞",
+    "meaning": "鸡肉鸡蛋盖饭"
+  },
+  {
+    "lesson": 7,
+    "word": "みま・す",
+    "reading": "見ます",
+    "type": "動詞2",
+    "meaning": "看"
+  },
+  {
+    "lesson": 7,
+    "word": "し崖す",
+    "reading": "し崖す",
+    "type": "動詞3",
+    "meaning": "干,做"
+  },
+  {
+    "lesson": 7,
+    "word": "掃除〜",
+    "reading": "そうじします",
+    "type": "動詞3",
+    "meaning": "打扫,扫除"
+  },
+  {
+    "lesson": 7,
+    "word": "力r二",
+    "reading": "力r二",
+    "type": "名詞",
+    "meaning": "咖哩（饭）"
+  },
+  {
+    "lesson": 7,
+    "word": "これから",
+    "reading": "これから",
+    "type": "副詞",
+    "meaning": "从现在起,今后"
+  },
+  {
+    "lesson": 7,
+    "word": "卵",
+    "reading": "たまご",
+    "type": "名詞",
+    "meaning": "鸡蛋"
+  },
+  {
+    "lesson": 7,
+    "word": "デーズ",
+    "reading": "デーズ",
+    "type": "名詞",
+    "meaning": "干酪"
+  },
+  {
+    "lesson": 7,
+    "word": "では",
+    "reading": "では",
+    "type": "接続詞",
+    "meaning": "那么"
+  },
+  {
+    "lesson": 7,
+    "word": "リ方",
+    "reading": "リ方",
+    "type": "名詞",
+    "meaning": "苹果"
+  },
+  {
+    "lesson": 7,
+    "word": "イ丹",
+    "reading": "イ丹",
+    "type": "名詞",
+    "meaning": "草莓"
+  },
+  {
+    "lesson": 7,
+    "word": "ザッカー",
+    "reading": "ザッカー",
+    "type": "名詞",
+    "meaning": "足球"
+  },
+  {
+    "lesson": 7,
+    "word": "野球",
+    "reading": "やぎ何",
+    "type": "名詞",
+    "meaning": "棒球"
+  },
+  {
+    "lesson": 7,
+    "word": "申込書",
+    "reading": "もうしこみしよ",
+    "type": "名詞",
+    "meaning": "申请书"
+  },
+  {
+    "lesson": 7,
+    "word": "手紙",
+    "reading": "て宓",
+    "type": "名詞",
+    "meaning": "信"
+  },
+  {
+    "lesson": 7,
+    "word": "CD",
+    "reading": "シーデマー",
+    "type": "名詞",
+    "meaning": "CD"
+  },
+  {
+    "lesson": 7,
+    "word": "音楽",
+    "reading": "んがく",
+    "type": "名詞",
+    "meaning": "音乐"
+  },
+  {
+    "lesson": 7,
+    "word": "映画",
+    "reading": "え橱",
+    "type": "名詞",
+    "meaning": "电影"
+  },
+  {
+    "lesson": 8,
+    "word": "プワゼント",
+    "reading": "プワゼント",
+    "type": "名詞",
+    "meaning": "礼物"
+  },
+  {
+    "lesson": 8,
+    "word": "デケット",
+    "reading": "デケット",
+    "type": "名詞",
+    "meaning": "票"
+  },
+  {
+    "lesson": 8,
+    "word": "パンフレット",
+    "reading": "パンフレット",
+    "type": "名詞",
+    "meaning": "小册子"
+  },
+  {
+    "lesson": 8,
+    "word": "記念品",
+    "reading": "きねんひん",
+    "type": "名詞",
+    "meaning": "纪念品"
+  },
+  {
+    "lesson": 8,
+    "word": "〜表",
+    "reading": "スケジュールひよう",
+    "type": "名詞",
+    "meaning": "日程表"
+  },
+  {
+    "lesson": 8,
+    "word": "写真集",
+    "reading": "んしゅう",
+    "type": "名詞",
+    "meaning": "影集"
+  },
+  {
+    "lesson": 8,
+    "word": "花",
+    "reading": "はな",
+    "type": "名詞",
+    "meaning": "花"
+  },
+  {
+    "lesson": 8,
+    "word": "おさあ",
+    "reading": "お金",
+    "type": "名詞",
+    "meaning": "钱,金钱"
+  },
+  {
+    "lesson": 8,
+    "word": "ボールペン",
+    "reading": "ボールペン",
+    "type": "名詞",
+    "meaning": "圆珠笔"
+  },
+  {
+    "lesson": 8,
+    "word": "宿題",
+    "reading": "しゅ旋い",
+    "type": "名詞",
+    "meaning": "作业"
+  },
+  {
+    "lesson": 8,
+    "word": "航空便",
+    "reading": "こうくうびん",
+    "type": "名詞",
+    "meaning": "航空邮件"
+  },
+  {
+    "lesson": 8,
+    "word": "速達",
+    "reading": "そこ切",
+    "type": "名詞",
+    "meaning": "速递,快件"
+  },
+  {
+    "lesson": 8,
+    "word": "ラヲックス",
+    "reading": "ラヲックス",
+    "type": "名詞",
+    "meaning": "传真"
+  },
+  {
+    "lesson": 8,
+    "word": "メニ而",
+    "reading": "メニ而",
+    "type": "名詞",
+    "meaning": "邮件"
+  },
+  {
+    "lesson": 8,
+    "word": "電話番号",
+    "reading": "で诲5ぼんごう",
+    "type": "名詞",
+    "meaning": "电话号码"
+  },
+  {
+    "lesson": 8,
+    "word": "住所",
+    "reading": "じるうしよ",
+    "type": "名詞",
+    "meaning": "住址"
+  },
+  {
+    "lesson": 8,
+    "word": "名前",
+    "reading": "な方",
+    "type": "名詞",
+    "meaning": "姓名"
+  },
+  {
+    "lesson": 8,
+    "word": "件",
+    "reading": "けん",
+    "type": "名詞",
+    "meaning": "事件,事情"
+  },
+  {
+    "lesson": 8,
+    "word": "新聞紙",
+    "reading": "しんぶんし",
+    "type": "名詞",
+    "meaning": "报纸"
+  },
+  {
+    "lesson": 8,
+    "word": "紙飛行機",
+    "reading": "かみひごうき",
+    "type": "名詞",
+    "meaning": "纸折的飞机"
+  },
+  {
+    "lesson": 8,
+    "word": "ひる千すみ",
+    "reading": "昼休み",
+    "type": "名詞",
+    "meaning": "午休"
+  },
+  {
+    "lesson": 8,
+    "word": "も亦ます",
+    "reading": "も亦ます",
+    "type": "動詞1",
+    "meaning": "拿到,得到"
+  },
+  {
+    "lesson": 8,
+    "word": "す",
+    "reading": "会います",
+    "type": "動詞1",
+    "meaning": "见"
+  },
+  {
+    "lesson": 8,
+    "word": "おくりま’す",
+    "reading": "送ります",
+    "type": "動詞1",
+    "meaning": "寄"
+  },
+  {
+    "lesson": 8,
+    "word": "っくりま’す",
+    "reading": "作ります",
+    "type": "動詞1",
+    "meaning": "做,制造"
+  },
+  {
+    "lesson": 8,
+    "word": "ふとりま’す",
+    "reading": "太ります",
+    "type": "動詞1",
+    "meaning": "胖"
+  },
+  {
+    "lesson": 8,
+    "word": "だします",
+    "reading": "出します",
+    "type": "動詞1",
+    "meaning": "寄（信）"
+  },
+  {
+    "lesson": 8,
+    "word": "とど言まIす",
+    "reading": "届きます",
+    "type": "動詞1",
+    "meaning": "收到,送到,寄到"
+  },
+  {
+    "lesson": 8,
+    "word": "かぎます",
+    "reading": "かぎます",
+    "type": "動詞1",
+    "meaning": "画"
+  },
+  {
+    "lesson": 8,
+    "word": "かてます",
+    "reading": "貸します",
+    "type": "動詞1",
+    "meaning": "借出，借给"
+  },
+  {
+    "lesson": 8,
+    "word": "な百福す",
+    "reading": "習います",
+    "type": "動詞1",
+    "meaning": "学习"
+  },
+  {
+    "lesson": 8,
+    "word": "あげます",
+    "reading": "あげます",
+    "type": "動詞2",
+    "meaning": "给"
+  },
+  {
+    "lesson": 8,
+    "word": "か据す",
+    "reading": "か据す",
+    "type": "動詞2",
+    "meaning": "打（电话）"
+  },
+  {
+    "lesson": 8,
+    "word": "まIえに",
+    "reading": "前に",
+    "type": "副詞",
+    "meaning": "以前"
+  },
+  {
+    "lesson": 8,
+    "word": "かります",
+    "reading": "借ります",
+    "type": "動詞2",
+    "meaning": "（向别人"
+  },
+  {
+    "lesson": 8,
+    "word": "も1う",
+    "reading": "も1う",
+    "type": "副詞",
+    "meaning": "已经"
+  },
+  {
+    "lesson": 8,
+    "word": "ぎっき",
+    "reading": "ぎっき",
+    "type": "副詞",
+    "meaning": "刚オ"
+  },
+  {
+    "lesson": 8,
+    "word": "たったいま",
+    "reading": "たった今",
+    "type": "副詞",
+    "meaning": "刚刚"
+  },
+  {
+    "lesson": 8,
+    "word": "もういちど",
+    "reading": "もう一度",
+    "type": "副詞",
+    "meaning": "再一次"
+  },
+  {
+    "lesson": 8,
+    "word": "チョコレート",
+    "reading": "チョコレート",
+    "type": "名詞",
+    "meaning": "巧克カ"
+  },
+  {
+    "lesson": 8,
+    "word": "ーム",
+    "reading": "ーム",
+    "type": "名詞",
+    "meaning": "冰激凌"
+  },
+  {
+    "lesson": 8,
+    "word": "小麦粉",
+    "reading": "こむ卖",
+    "type": "名詞",
+    "meaning": "面粉"
+  },
+  {
+    "lesson": 8,
+    "word": "ぼIし",
+    "reading": "ぼIし",
+    "type": "名詞",
+    "meaning": "筷子"
+  },
+  {
+    "lesson": 8,
+    "word": "スヲーン",
+    "reading": "スヲーン",
+    "type": "名詞",
+    "meaning": "勺子"
+  },
+  {
+    "lesson": 8,
+    "word": "おだいさん",
+    "reading": "お兄さん",
+    "type": "名詞",
+    "meaning": "哥哥"
+  },
+  {
+    "lesson": 8,
+    "word": "韓国語",
+    "reading": "かんこくご",
+    "type": "名詞",
+    "meaning": "韩语"
+  },
+  {
+    "lesson": 8,
+    "word": "夕方",
+    "reading": "ゆうがた",
+    "type": "名詞",
+    "meaning": "傍晚"
+  },
+  {
+    "lesson": 8,
+    "word": "陳",
+    "reading": "ん",
+    "type": "固有名詞",
+    "meaning": "陈"
+  },
+  {
+    "lesson": 9,
+    "word": "料理",
+    "reading": "うり",
+    "type": "名詞",
+    "meaning": "菜肴,饭菜"
+  },
+  {
+    "lesson": 9,
+    "word": "四川料理",
+    "reading": "しせんりょうり",
+    "type": "名詞",
+    "meaning": "四川菜"
+  },
+  {
+    "lesson": 9,
+    "word": "せまIい",
+    "reading": "狭い",
+    "type": "い形容詞",
+    "meaning": "狭窄"
+  },
+  {
+    "lesson": 9,
+    "word": "おおぎい",
+    "reading": "大きい",
+    "type": "い形容詞",
+    "meaning": "大"
+  },
+  {
+    "lesson": 9,
+    "word": "スープ",
+    "reading": "スープ",
+    "type": "名詞",
+    "meaning": "汤"
+  },
+  {
+    "lesson": 9,
+    "word": "北京〜",
+    "reading": "ペキンダック",
+    "type": "名詞",
+    "meaning": "北京烤鸭"
+  },
+  {
+    "lesson": 9,
+    "word": "い",
+    "reading": "小さい",
+    "type": "い形容詞",
+    "meaning": "小"
+  },
+  {
+    "lesson": 9,
+    "word": "い可己い",
+    "reading": "忙しい",
+    "type": "い形容詞",
+    "meaning": "忙,忙碌"
+  },
+  {
+    "lesson": 9,
+    "word": "たべもの",
+    "reading": "食べ物",
+    "type": "名詞",
+    "meaning": "食物,食品"
+  },
+  {
+    "lesson": 9,
+    "word": "すきやき",
+    "reading": "すき焼き",
+    "type": "名詞",
+    "meaning": "日式牛肉火锅"
+  },
+  {
+    "lesson": 9,
+    "word": "温泉",
+    "reading": "おんせん",
+    "type": "名詞",
+    "meaning": "温泉"
+  },
+  {
+    "lesson": 9,
+    "word": "おゆ",
+    "reading": "お湯",
+    "type": "名詞",
+    "meaning": "热水,开水"
+  },
+  {
+    "lesson": 9,
+    "word": "水",
+    "reading": "みず",
+    "type": "名詞",
+    "meaning": "水,J原水"
+  },
+  {
+    "lesson": 9,
+    "word": "浴衣",
+    "reading": "ゆかた",
+    "type": "名詞",
+    "meaning": "i浴衣,夏季和服"
+  },
+  {
+    "lesson": 9,
+    "word": "な城",
+    "reading": "眺め",
+    "type": "名詞",
+    "meaning": ":景色,风景"
+  },
+  {
+    "lesson": 9,
+    "word": "薬",
+    "reading": "くすり",
+    "type": "名詞",
+    "meaning": "药"
+  },
+  {
+    "lesson": 9,
+    "word": "天気",
+    "reading": "でんき",
+    "type": "名詞",
+    "meaning": ":天气"
+  },
+  {
+    "lesson": 9,
+    "word": "海",
+    "reading": "ラみ",
+    "type": "名詞",
+    "meaning": "大海"
+  },
+  {
+    "lesson": 9,
+    "word": "山",
+    "reading": "やま",
+    "type": "名詞",
+    "meaning": "山"
+  },
+  {
+    "lesson": 9,
+    "word": "紙",
+    "reading": "かあ",
+    "type": "名詞",
+    "meaning": "纸"
+  },
+  {
+    "lesson": 9,
+    "word": "ヨース",
+    "reading": "ヨース",
+    "type": "名詞",
+    "meaning": "新闻"
+  },
+  {
+    "lesson": 9,
+    "word": "女性",
+    "reading": "じょせい",
+    "type": "名詞",
+    "meaning": "女性"
+  },
+  {
+    "lesson": 9,
+    "word": "おきゃくさま",
+    "reading": "お客様",
+    "type": "名詞",
+    "meaning": "来宾"
+  },
+  {
+    "lesson": 9,
+    "word": "デラス",
+    "reading": "デラス",
+    "type": "名詞",
+    "meaning": "玻璃杯"
+  },
+  {
+    "lesson": 9,
+    "word": "歌舞伎",
+    "reading": "かぶき",
+    "type": "名詞",
+    "meaning": "歌舞伎"
+  },
+  {
+    "lesson": 9,
+    "word": "きもも",
+    "reading": "気持ち",
+    "type": "名詞",
+    "meaning": "心情"
+  },
+  {
+    "lesson": 9,
+    "word": "た・Iん",
+    "reading": "たIん",
+    "type": "名詞",
+    "meaning": "很多"
+  },
+  {
+    "lesson": 9,
+    "word": "か有1い",
+    "reading": "辛い",
+    "type": "い形容詞",
+    "meaning": "辣"
+  },
+  {
+    "lesson": 9,
+    "word": "あまい",
+    "reading": "甘い",
+    "type": "い形容詞",
+    "meaning": "甜"
+  },
+  {
+    "lesson": 9,
+    "word": "しょmぽい",
+    "reading": "しょmぽい",
+    "type": "い形容詞",
+    "meaning": "咸"
+  },
+  {
+    "lesson": 9,
+    "word": "すさぽい",
+    "reading": "酸っぱい",
+    "type": "い形容詞",
+    "meaning": "酸"
+  },
+  {
+    "lesson": 9,
+    "word": "に必い",
+    "reading": "苦い",
+    "type": "い形容詞",
+    "meaning": "苦"
+  },
+  {
+    "lesson": 9,
+    "word": "い",
+    "reading": "い",
+    "type": "い形容詞",
+    "meaning": "好"
+  },
+  {
+    "lesson": 9,
+    "word": "わ名い",
+    "reading": "悪い",
+    "type": "い形容詞",
+    "meaning": "不好,坏"
+  },
+  {
+    "lesson": 9,
+    "word": "すぼ貳い",
+    "reading": "すぼ貳い",
+    "type": "い形容詞",
+    "meaning": "极好，绝佳"
+  },
+  {
+    "lesson": 9,
+    "word": "とおい",
+    "reading": "遠い",
+    "type": "い形容詞",
+    "meaning": "远"
+  },
+  {
+    "lesson": 9,
+    "word": "ち见い",
+    "reading": "近い",
+    "type": "い形容詞",
+    "meaning": "近"
+  },
+  {
+    "lesson": 9,
+    "word": "たみい",
+    "reading": "高い",
+    "type": "い形容詞",
+    "meaning": "高，贵"
+  },
+  {
+    "lesson": 9,
+    "word": "ひぐい",
+    "reading": "低い",
+    "type": "い形容詞",
+    "meaning": "低"
+  },
+  {
+    "lesson": 9,
+    "word": "やずい",
+    "reading": "安い",
+    "type": "い形容詞",
+    "meaning": "便宜"
+  },
+  {
+    "lesson": 9,
+    "word": "さ屛い",
+    "reading": "寒い",
+    "type": "い形容詞",
+    "meaning": "寒冷"
+  },
+  {
+    "lesson": 9,
+    "word": "あうい",
+    "reading": "暑い",
+    "type": "い形容詞",
+    "meaning": "（天气）热"
+  },
+  {
+    "lesson": 9,
+    "word": "あ云い",
+    "reading": "青い",
+    "type": "い形容詞",
+    "meaning": "蓝色的"
+  },
+  {
+    "lesson": 9,
+    "word": "い",
+    "reading": "白い",
+    "type": "い形容詞",
+    "meaning": "白色的"
+  },
+  {
+    "lesson": 9,
+    "word": "あたらじい",
+    "reading": "新しい",
+    "type": "い形容詞",
+    "meaning": "新"
+  },
+  {
+    "lesson": 9,
+    "word": "ふ石い",
+    "reading": "古い",
+    "type": "い形容詞",
+    "meaning": "旧"
+  },
+  {
+    "lesson": 9,
+    "word": "むずかしい",
+    "reading": "難しい",
+    "type": "い形容詞",
+    "meaning": "难"
+  },
+  {
+    "lesson": 9,
+    "word": "やさしい",
+    "reading": "易しい",
+    "type": "い形容詞",
+    "meaning": "容易"
+  },
+  {
+    "lesson": 9,
+    "word": "おい",
+    "reading": "多い",
+    "type": "い形容詞",
+    "meaning": "多"
+  },
+  {
+    "lesson": 9,
+    "word": "すそ无い",
+    "reading": "少ない",
+    "type": "い形容詞",
+    "meaning": "少"
+  },
+  {
+    "lesson": 9,
+    "word": "かわい’い",
+    "reading": "かわいい",
+    "type": "い形容詞",
+    "meaning": "可爱"
+  },
+  {
+    "lesson": 9,
+    "word": "ほんとうに",
+    "reading": "本当に",
+    "type": "名詞",
+    "meaning": "真的，实在是"
+  },
+  {
+    "lesson": 9,
+    "word": "あ莉",
+    "reading": "あ莉",
+    "type": "副詞",
+    "meaning": "不（太）〜，不很〜"
+  },
+  {
+    "lesson": 9,
+    "word": "た萨嘉",
+    "reading": "た萨嘉",
+    "type": "副詞",
+    "meaning": "很，非常"
+  },
+  {
+    "lesson": 9,
+    "word": "っと",
+    "reading": "っと",
+    "type": "副詞",
+    "meaning": "一点儿"
+  },
+  {
+    "lesson": 9,
+    "word": "全然",
+    "reading": "ぜ确ス",
+    "type": "副詞",
+    "meaning": "根本（不），全然（不）"
+  },
+  {
+    "lesson": 9,
+    "word": "おいしい",
+    "reading": "おいしい",
+    "type": "い形容詞",
+    "meaning": "好吃，可口"
+  },
+  {
+    "lesson": 9,
+    "word": "まずい",
+    "reading": "まずい",
+    "type": "い形容詞",
+    "meaning": "不好吃，难吃"
+  },
+  {
+    "lesson": 9,
+    "word": "あうIい",
+    "reading": "熱い",
+    "type": "い形容詞",
+    "meaning": "热，烫"
+  },
+  {
+    "lesson": 9,
+    "word": "ちょうど",
+    "reading": "ちょうど",
+    "type": "副詞",
+    "meaning": "正好，恰好"
+  },
+  {
+    "lesson": 9,
+    "word": "あ",
+    "reading": "あ",
+    "type": "感嘆詞",
+    "meaning": "哎呀,咦"
+  },
+  {
+    "lesson": 9,
+    "word": "天安門",
+    "reading": "て械んもん",
+    "type": "固有名詞",
+    "meaning": "天安门"
+  },
+  {
+    "lesson": 9,
+    "word": "ぽんりのちょうじWう",
+    "reading": "万里の長城",
+    "type": "固有名詞",
+    "meaning": "万里长城"
+  },
+  {
+    "lesson": 9,
+    "word": "ひ万い",
+    "reading": "広い",
+    "type": "い形容詞",
+    "meaning": "广阔，宽敞"
+  },
+  {
+    "lesson": 10,
+    "word": "紅葉",
+    "reading": "もみじ",
+    "type": "名詞",
+    "meaning": "红叶 きたない（汚い） ［形 1 I脏"
+  },
+  {
+    "lesson": 10,
+    "word": "故郷",
+    "reading": "ごきよう",
+    "type": "名詞",
+    "meaning": "故乡"
+  },
+  {
+    "lesson": 10,
+    "word": "ぎれい",
+    "reading": "ぎれい",
+    "type": "な形容詞",
+    "meaning": "漂亮,干净"
+  },
+  {
+    "lesson": 10,
+    "word": "とおり1",
+    "reading": "通り",
+    "type": "名詞",
+    "meaning": "大街"
+  },
+  {
+    "lesson": 10,
+    "word": "有名",
+    "reading": "ゆうめい",
+    "type": "な形容詞",
+    "meaning": "有名"
+  },
+  {
+    "lesson": 10,
+    "word": "町",
+    "reading": "まW",
+    "type": "名詞",
+    "meaning": "城市，街道"
+  },
+  {
+    "lesson": 10,
+    "word": "にぎやか",
+    "reading": "にぎやか",
+    "type": "な形容詞",
+    "meaning": "热闹,繁华"
+  },
+  {
+    "lesson": 10,
+    "word": "所",
+    "reading": "とを",
+    "type": "名詞",
+    "meaning": "场所 ［"
+  },
+  {
+    "lesson": 10,
+    "word": "ずか",
+    "reading": "静か",
+    "type": "な形容詞",
+    "meaning": "安静 、"
+  },
+  {
+    "lesson": 10,
+    "word": "おなせ",
+    "reading": "お店",
+    "type": "名詞",
+    "meaning": "餐馆;商店"
+  },
+  {
+    "lesson": 10,
+    "word": "暇",
+    "reading": "ひま",
+    "type": "な形容詞",
+    "meaning": "空闲"
+  },
+  {
+    "lesson": 10,
+    "word": "人形",
+    "reading": "にんぎよう",
+    "type": "名詞",
+    "meaning": "玩偶"
+  },
+  {
+    "lesson": 10,
+    "word": "親切",
+    "reading": "しんせつ",
+    "type": "な形容詞",
+    "meaning": "热情"
+  },
+  {
+    "lesson": 10,
+    "word": "作品",
+    "reading": "さくひん",
+    "type": "名詞",
+    "meaning": "作品"
+  },
+  {
+    "lesson": 10,
+    "word": "すぎ",
+    "reading": "好き",
+    "type": "な形容詞",
+    "meaning": "喜欢"
+  },
+  {
+    "lesson": 10,
+    "word": "彫刻",
+    "reading": "ちょうこく",
+    "type": "名詞",
+    "meaning": "雕刻"
+  },
+  {
+    "lesson": 10,
+    "word": "き",
+    "reading": "嫌い",
+    "type": "な形容詞",
+    "meaning": "讨厌"
+  },
+  {
+    "lesson": 10,
+    "word": "自動車",
+    "reading": "じどうしゃ",
+    "type": "名詞",
+    "meaning": "汽车 天"
+  },
+  {
+    "lesson": 10,
+    "word": "便利",
+    "reading": "んり",
+    "type": "な形容詞",
+    "meaning": "方便"
+  },
+  {
+    "lesson": 10,
+    "word": "道具",
+    "reading": "ど5",
+    "type": "名詞",
+    "meaning": "工具"
+  },
+  {
+    "lesson": 10,
+    "word": "不便",
+    "reading": "よべん",
+    "type": "な形容詞",
+    "meaning": "不方便"
+  },
+  {
+    "lesson": 10,
+    "word": "魚",
+    "reading": "さかな",
+    "type": "名詞",
+    "meaning": "鱼"
+  },
+  {
+    "lesson": 10,
+    "word": "元気",
+    "reading": "げんき",
+    "type": "な形容詞",
+    "meaning": "健康,有精神"
+  },
+  {
+    "lesson": 10,
+    "word": "おがし",
+    "reading": "お菓子",
+    "type": "名詞",
+    "meaning": "点心"
+  },
+  {
+    "lesson": 10,
+    "word": "簡単",
+    "reading": "かんたん",
+    "type": "な形容詞",
+    "meaning": "简单"
+  },
+  {
+    "lesson": 10,
+    "word": "物",
+    "reading": "もお",
+    "type": "名詞",
+    "meaning": "物品，东西 尺"
+  },
+  {
+    "lesson": 10,
+    "word": "ンサム",
+    "reading": "ンサム",
+    "type": "な形容詞",
+    "meaning": "英俊,帅气"
+  },
+  {
+    "lesson": 10,
+    "word": "ラーズン",
+    "reading": "ラーズン",
+    "type": "名詞",
+    "meaning": "季节 区"
+  },
+  {
+    "lesson": 10,
+    "word": "んな",
+    "reading": "んな",
+    "type": "疑問詞",
+    "meaning": "什么样的,怎样的"
+  },
+  {
+    "lesson": 10,
+    "word": "修学旅行",
+    "reading": "しゅうがくりよこう",
+    "type": "名詞",
+    "meaning": "修学旅行 ぶ"
+  },
+  {
+    "lesson": 10,
+    "word": "う",
+    "reading": "う",
+    "type": "副詞",
+    "meaning": "怎样,如何"
+  },
+  {
+    "lesson": 10,
+    "word": "観光客",
+    "reading": "か兀ほうるやく",
+    "type": "名詞",
+    "meaning": "游客"
+  },
+  {
+    "lesson": 10,
+    "word": "い瘁が",
+    "reading": "い瘁が",
+    "type": "副詞",
+    "meaning": "如何"
+  },
+  {
+    "lesson": 10,
+    "word": "作家",
+    "reading": "さ",
+    "type": "名詞",
+    "meaning": "作家"
+  },
+  {
+    "lesson": 10,
+    "word": "いろいろ",
+    "reading": "いろいろ",
+    "type": "副詞",
+    "meaning": "各种各样"
+  },
+  {
+    "lesson": 10,
+    "word": "部長",
+    "reading": "ぶちょう",
+    "type": "名詞",
+    "meaning": "部长 で"
+  },
+  {
+    "lesson": 10,
+    "word": "も",
+    "reading": "も",
+    "type": "接続詞",
+    "meaning": "可是,不过"
+  },
+  {
+    "lesson": 10,
+    "word": "平日",
+    "reading": "へいじつ",
+    "type": "名詞",
+    "meaning": "平日,非休息日"
+  },
+  {
+    "lesson": 10,
+    "word": "そ",
+    "reading": "そ",
+    "type": "接続詞",
+    "meaning": "而且,于是"
+  },
+  {
+    "lesson": 10,
+    "word": "0",
+    "reading": "な",
+    "type": "名詞",
+    "meaning": "日子 と 袞"
+  },
+  {
+    "lesson": 10,
+    "word": "で",
+    "reading": "で",
+    "type": "接続詞",
+    "meaning": "（转换话题）哎"
+  },
+  {
+    "lesson": 10,
+    "word": "生活",
+    "reading": "せいかつ",
+    "type": "名詞",
+    "meaning": "生活"
+  },
+  {
+    "lesson": 10,
+    "word": "あれえ",
+    "reading": "あれえ",
+    "type": "感嘆詞",
+    "meaning": "咦"
+  },
+  {
+    "lesson": 10,
+    "word": "世界",
+    "reading": "ぜかい",
+    "type": "名詞",
+    "meaning": "世界 五"
+  },
+  {
+    "lesson": 10,
+    "word": "奈良",
+    "reading": "ら",
+    "type": "固有名詞",
+    "meaning": "奈良"
+  },
+  {
+    "lesson": 10,
+    "word": "は孑",
+    "reading": "晴れ",
+    "type": "名詞",
+    "meaning": "晴天"
+  },
+  {
+    "lesson": 10,
+    "word": "富士山",
+    "reading": "ぶじさん",
+    "type": "固有名詞",
+    "meaning": "富士山"
+  },
+  {
+    "lesson": 10,
+    "word": "雨",
+    "reading": "あめ",
+    "type": "名詞",
+    "meaning": "雨,下雨"
+  },
+  {
+    "lesson": 11,
+    "word": "歌",
+    "reading": "う元",
+    "type": "名詞",
+    "meaning": "歌,歌曲"
+  },
+  {
+    "lesson": 11,
+    "word": "カラオケ",
+    "reading": "カラオケ",
+    "type": "名詞",
+    "meaning": "卡拉0K"
+  },
+  {
+    "lesson": 11,
+    "word": "外国",
+    "reading": "がいこく",
+    "type": "名詞",
+    "meaning": "外国"
+  },
+  {
+    "lesson": 11,
+    "word": "ック",
+    "reading": "ック",
+    "type": "名詞",
+    "meaning": "摇滚乐"
+  },
+  {
+    "lesson": 11,
+    "word": "ポップス",
+    "reading": "ポップス",
+    "type": "名詞",
+    "meaning": "流行音乐"
+  },
+  {
+    "lesson": 11,
+    "word": "クララック",
+    "reading": "クララック",
+    "type": "名詞",
+    "meaning": "西方古典音乐"
+  },
+  {
+    "lesson": 11,
+    "word": "ピテラ",
+    "reading": "ピテラ",
+    "type": "名詞",
+    "meaning": "钢琴"
+  },
+  {
+    "lesson": 11,
+    "word": "絵",
+    "reading": "灵",
+    "type": "名詞",
+    "meaning": "画儿"
+  },
+  {
+    "lesson": 11,
+    "word": "英語",
+    "reading": "えいご",
+    "type": "名詞",
+    "meaning": "英语"
+  },
+  {
+    "lesson": 11,
+    "word": "〜語",
+    "reading": "スペインご",
+    "type": "名詞",
+    "meaning": "西班牙语"
+  },
+  {
+    "lesson": 11,
+    "word": "ス系ーツ",
+    "reading": "ス系ーツ",
+    "type": "名詞",
+    "meaning": "体育,运动"
+  },
+  {
+    "lesson": 11,
+    "word": "水泳",
+    "reading": "すいえい",
+    "type": "名詞",
+    "meaning": "游泳"
+  },
+  {
+    "lesson": 11,
+    "word": "ルフ",
+    "reading": "ルフ",
+    "type": "名詞",
+    "meaning": "高尔夫球"
+  },
+  {
+    "lesson": 11,
+    "word": "運転",
+    "reading": "うんてん",
+    "type": "名詞",
+    "meaning": "开车"
+  },
+  {
+    "lesson": 11,
+    "word": "の万もの",
+    "reading": "飲み物",
+    "type": "名詞",
+    "meaning": "饮料"
+  },
+  {
+    "lesson": 11,
+    "word": "お邓",
+    "reading": "お酒",
+    "type": "名詞",
+    "meaning": "酒,酒类"
+  },
+  {
+    "lesson": 11,
+    "word": "肉",
+    "reading": "にぐ",
+    "type": "名詞",
+    "meaning": "肉"
+  },
+  {
+    "lesson": 11,
+    "word": "野菜",
+    "reading": "やぎ订",
+    "type": "名詞",
+    "meaning": "蔬菜"
+  },
+  {
+    "lesson": 11,
+    "word": "果物",
+    "reading": "くだもの",
+    "type": "名詞",
+    "meaning": "水果"
+  },
+  {
+    "lesson": 11,
+    "word": "会議",
+    "reading": "がいぎ",
+    "type": "名詞",
+    "meaning": "会议"
+  },
+  {
+    "lesson": 11,
+    "word": "脚",
+    "reading": "あて",
+    "type": "名詞",
+    "meaning": "腿"
+  },
+  {
+    "lesson": 11,
+    "word": "く",
+    "reading": "く",
+    "type": "代名詞",
+    "meaning": "我（男性自称）"
+  },
+  {
+    "lesson": 11,
+    "word": "す",
+    "reading": "分かります",
+    "type": "動詞1",
+    "meaning": "懂，明白"
+  },
+  {
+    "lesson": 11,
+    "word": "す",
+    "reading": "迷います",
+    "type": "動詞1",
+    "meaning": "犹豫，难以决定"
+  },
+  {
+    "lesson": 11,
+    "word": "できます",
+    "reading": "できます",
+    "type": "動詞2",
+    "meaning": "会;能;完成"
+  },
+  {
+    "lesson": 11,
+    "word": "しめます",
+    "reading": "閉めます",
+    "type": "動詞2",
+    "meaning": "关闭,关门"
+  },
+  {
+    "lesson": 11,
+    "word": "いだい",
+    "reading": "痛い",
+    "type": "い形容詞",
+    "meaning": "疼，疼痛"
+  },
+  {
+    "lesson": 11,
+    "word": "上手",
+    "reading": "じょ弓デ",
+    "type": "な形容詞",
+    "meaning": "擅长,高明，水平高"
+  },
+  {
+    "lesson": 11,
+    "word": "下手",
+    "reading": "へだ",
+    "type": "な形容詞",
+    "meaning": "不高明，水平低"
+  },
+  {
+    "lesson": 11,
+    "word": "苦手",
+    "reading": "に环マ",
+    "type": "な形容詞",
+    "meaning": "不擅长，不善于"
+  },
+  {
+    "lesson": 11,
+    "word": "ヒマワリ",
+    "reading": "ヒマワリ",
+    "type": "名詞",
+    "meaning": "向日葵"
+  },
+  {
+    "lesson": 11,
+    "word": "バラ",
+    "reading": "バラ",
+    "type": "名詞",
+    "meaning": "蔷薇,玫瑰"
+  },
+  {
+    "lesson": 11,
+    "word": "ータ",
+    "reading": "ータ",
+    "type": "名詞",
+    "meaning": "计算机,电脑"
+  },
+  {
+    "lesson": 11,
+    "word": "窓",
+    "reading": "まど",
+    "type": "名詞",
+    "meaning": "窗，窗户"
+  },
+  {
+    "lesson": 11,
+    "word": "時々",
+    "reading": "ときどき",
+    "type": "副詞",
+    "meaning": "有时，时不时"
+  },
+  {
+    "lesson": 11,
+    "word": "よ1",
+    "reading": "よ1",
+    "type": "副詞",
+    "meaning": "经常,常常"
+  },
+  {
+    "lesson": 11,
+    "word": "たまK",
+    "reading": "たまK",
+    "type": "副詞",
+    "meaning": "偶尔，很少"
+  },
+  {
+    "lesson": 11,
+    "word": "まえ",
+    "reading": "まえ",
+    "type": "副詞",
+    "meaning": "还，再，又"
+  },
+  {
+    "lesson": 11,
+    "word": "どうして",
+    "reading": "どうして",
+    "type": "副詞",
+    "meaning": "为什么"
+  },
+  {
+    "lesson": 11,
+    "word": "ですから",
+    "reading": "ですから",
+    "type": "接続詞",
+    "meaning": "所以，因此"
+  },
+  {
+    "lesson": 11,
+    "word": "うーん",
+    "reading": "うーん",
+    "type": "感嘆詞",
+    "meaning": "嗯……,这个"
+  },
+  {
+    "lesson": 11,
+    "word": "模様",
+    "reading": "もよう",
+    "type": "名詞",
+    "meaning": "花纹，纹案"
+  },
+  {
+    "lesson": 12,
+    "word": "季節",
+    "reading": "ぎせつ",
+    "type": "名詞",
+    "meaning": "季节"
+  },
+  {
+    "lesson": 12,
+    "word": "冬",
+    "reading": "ふゆ",
+    "type": "名詞",
+    "meaning": "冬天,冬季"
+  },
+  {
+    "lesson": 12,
+    "word": "春",
+    "reading": "ほる",
+    "type": "名詞",
+    "meaning": "春天,春季"
+  },
+  {
+    "lesson": 12,
+    "word": "日本料理",
+    "reading": "にほんりようり",
+    "type": "名詞",
+    "meaning": "日式饭菜"
+  },
+  {
+    "lesson": 12,
+    "word": "寿司",
+    "reading": "すて",
+    "type": "名詞",
+    "meaning": "寿司"
+  },
+  {
+    "lesson": 12,
+    "word": "ナシl",
+    "reading": "ナシl",
+    "type": "名詞",
+    "meaning": "梨"
+  },
+  {
+    "lesson": 12,
+    "word": "ナナ",
+    "reading": "ナナ",
+    "type": "名詞",
+    "meaning": "香蕉"
+  },
+  {
+    "lesson": 12,
+    "word": "ミカン",
+    "reading": "ミカン",
+    "type": "名詞",
+    "meaning": "橘子"
+  },
+  {
+    "lesson": 12,
+    "word": "焼酎",
+    "reading": "しよう記う",
+    "type": "名詞",
+    "meaning": "烧酒"
+  },
+  {
+    "lesson": 12,
+    "word": "日本酒",
+    "reading": "にほんしゅ",
+    "type": "名詞",
+    "meaning": "日本酒"
+  },
+  {
+    "lesson": 12,
+    "word": "紅茶",
+    "reading": "こう彰",
+    "type": "名詞",
+    "meaning": "红茶"
+  },
+  {
+    "lesson": 12,
+    "word": "〜茶",
+    "reading": "ウ二日ンちゃ",
+    "type": "名詞",
+    "meaning": "乌龙茶"
+  },
+  {
+    "lesson": 12,
+    "word": "〜茶",
+    "reading": "ジャズミンちゃ",
+    "type": "名詞",
+    "meaning": "茉莉花茶"
+  },
+  {
+    "lesson": 12,
+    "word": "緑茶",
+    "reading": "りよ睫草",
+    "type": "名詞",
+    "meaning": "绿茶"
+  },
+  {
+    "lesson": 12,
+    "word": "ース",
+    "reading": "ース",
+    "type": "名詞",
+    "meaning": "果汁"
+  },
+  {
+    "lesson": 12,
+    "word": "人気",
+    "reading": "に礦",
+    "type": "名詞",
+    "meaning": "声望,受欢迎"
+  },
+  {
+    "lesson": 12,
+    "word": "席",
+    "reading": "せき",
+    "type": "名詞",
+    "meaning": "座位，席位"
+  },
+  {
+    "lesson": 12,
+    "word": "ラス",
+    "reading": "ラス",
+    "type": "名詞",
+    "meaning": "班级"
+  },
+  {
+    "lesson": 12,
+    "word": "種類",
+    "reading": "るい",
+    "type": "名詞",
+    "meaning": "种类"
+  },
+  {
+    "lesson": 12,
+    "word": "背",
+    "reading": "辺",
+    "type": "名詞",
+    "meaning": "个子"
+  },
+  {
+    "lesson": 12,
+    "word": "兄",
+    "reading": "あに",
+    "type": "名詞",
+    "meaning": "哥哥，兄长"
+  },
+  {
+    "lesson": 12,
+    "word": "さ戾ス撮近",
+    "reading": "さ戾ス撮近",
+    "type": "名詞",
+    "meaning": "最近，近来"
+  },
+  {
+    "lesson": 12,
+    "word": "ふ可ます",
+    "reading": "降ります",
+    "type": "動詞1",
+    "meaning": "下（雨，雪）,降（雨，雪）"
+  },
+  {
+    "lesson": 12,
+    "word": "あたたか’い",
+    "reading": "暖かい",
+    "type": "い形容詞",
+    "meaning": "暖和，温暖"
+  },
+  {
+    "lesson": 12,
+    "word": "すずしい",
+    "reading": "涼しい",
+    "type": "い形容詞",
+    "meaning": "凉爽"
+  },
+  {
+    "lesson": 12,
+    "word": "は弔い",
+    "reading": "速い",
+    "type": "い形容詞",
+    "meaning": "快"
+  },
+  {
+    "lesson": 12,
+    "word": "だいすき",
+    "reading": "大好き",
+    "type": "な形容詞",
+    "meaning": "非常喜欢"
+  },
+  {
+    "lesson": 12,
+    "word": "いちばん",
+    "reading": "いちばん",
+    "type": "副詞",
+    "meaning": "最,第一"
+  },
+  {
+    "lesson": 12,
+    "word": "ず三五",
+    "reading": "ず三五",
+    "type": "副詞",
+    "meaning": "〜得多"
+  },
+  {
+    "lesson": 12,
+    "word": "ぽり",
+    "reading": "ぽり",
+    "type": "副詞",
+    "meaning": "仍然,还是"
+  },
+  {
+    "lesson": 12,
+    "word": "チョ至ヲンマ",
+    "reading": "チョ至ヲンマ",
+    "type": "固有名詞",
+    "meaning": "珠穆朗玛峰"
+  },
+  {
+    "lesson": 13,
+    "word": "荷物",
+    "reading": "にもつ",
+    "type": "名詞",
+    "meaning": "包裹"
+  },
+  {
+    "lesson": 13,
+    "word": "は布き",
+    "reading": "は布き",
+    "type": "名詞",
+    "meaning": "明信片"
+  },
+  {
+    "lesson": 13,
+    "word": "切手",
+    "reading": "きうT",
+    "type": "名詞",
+    "meaning": "邮票"
+  },
+  {
+    "lesson": 13,
+    "word": "ひきだし",
+    "reading": "引き出し",
+    "type": "名詞",
+    "meaning": "抽屉"
+  },
+  {
+    "lesson": 13,
+    "word": "アルバム",
+    "reading": "アルバム",
+    "type": "名詞",
+    "meaning": "相册"
+  },
+  {
+    "lesson": 13,
+    "word": "タパm",
+    "reading": "タパm",
+    "type": "名詞",
+    "meaning": "烟,烟草"
+  },
+  {
+    "lesson": 13,
+    "word": "漫画",
+    "reading": "ま兀顽",
+    "type": "名詞",
+    "meaning": "漫画"
+  },
+  {
+    "lesson": 13,
+    "word": "ガリージ",
+    "reading": "ガリージ",
+    "type": "名詞",
+    "meaning": "车库,汽车房"
+  },
+  {
+    "lesson": 13,
+    "word": "修理",
+    "reading": "うり",
+    "type": "名詞",
+    "meaning": "修理"
+  },
+  {
+    "lesson": 13,
+    "word": "居酒屋",
+    "reading": "いざかや",
+    "type": "名詞",
+    "meaning": "酒馆"
+  },
+  {
+    "lesson": 13,
+    "word": "生〜",
+    "reading": "なまビール",
+    "type": "名詞",
+    "meaning": "生啤"
+  },
+  {
+    "lesson": 13,
+    "word": "やきとり",
+    "reading": "焼き鳥",
+    "type": "名詞",
+    "meaning": "烤鸡肉串"
+  },
+  {
+    "lesson": 13,
+    "word": "からあげ",
+    "reading": "唐揚げ",
+    "type": "名詞",
+    "meaning": "炸鸡,油炸食品"
+  },
+  {
+    "lesson": 13,
+    "word": "にくじゃが",
+    "reading": "肉じゃが",
+    "type": "名詞",
+    "meaning": "土豆炖肉"
+  },
+  {
+    "lesson": 13,
+    "word": "ボーリング",
+    "reading": "ボーリング",
+    "type": "名詞",
+    "meaning": "保龄球"
+  },
+  {
+    "lesson": 13,
+    "word": "髪",
+    "reading": "かス",
+    "type": "名詞",
+    "meaning": "头发"
+  },
+  {
+    "lesson": 13,
+    "word": "ぞう像",
+    "reading": "ぞう像",
+    "type": "名詞",
+    "meaning": "象,大象"
+  },
+  {
+    "lesson": 13,
+    "word": "昼",
+    "reading": "ひM",
+    "type": "名詞",
+    "meaning": "白天，中午"
+  },
+  {
+    "lesson": 13,
+    "word": "ほか",
+    "reading": "ほか",
+    "type": "名詞",
+    "meaning": "另外，其他"
+  },
+  {
+    "lesson": 13,
+    "word": "かかります",
+    "reading": "かかります",
+    "type": "動詞1",
+    "meaning": "花费（时间,金钱）"
+  },
+  {
+    "lesson": 13,
+    "word": "さきます",
+    "reading": "咲きます",
+    "type": "動詞1",
+    "meaning": "花开"
+  },
+  {
+    "lesson": 13,
+    "word": "お汰ままIす",
+    "reading": "泳ぎます",
+    "type": "動詞1",
+    "meaning": "游泳"
+  },
+  {
+    "lesson": 13,
+    "word": "あそびます",
+    "reading": "遊びます",
+    "type": "動詞1",
+    "meaning": "玩,玩耍"
+  },
+  {
+    "lesson": 13,
+    "word": "すいます",
+    "reading": "吸います",
+    "type": "動詞1",
+    "meaning": "吸（烟）"
+  },
+  {
+    "lesson": 13,
+    "word": "きうます",
+    "reading": "切ります",
+    "type": "動詞1",
+    "meaning": "剪,切，割"
+  },
+  {
+    "lesson": 13,
+    "word": "だいたい",
+    "reading": "だいたい",
+    "type": "副詞",
+    "meaning": "大约,大概，大体"
+  },
+  {
+    "lesson": 13,
+    "word": "とう活えず",
+    "reading": "とう活えず",
+    "type": "副詞",
+    "meaning": "暂且"
+  },
+  {
+    "lesson": 14,
+    "word": "船便",
+    "reading": "ふなびん",
+    "type": "名詞",
+    "meaning": "海运"
+  },
+  {
+    "lesson": 14,
+    "word": "書類",
+    "reading": "しょるい",
+    "type": "名詞",
+    "meaning": "文件,文稿"
+  },
+  {
+    "lesson": 14,
+    "word": "原稿",
+    "reading": "げん義",
+    "type": "名詞",
+    "meaning": "稿子,原稿"
+  },
+  {
+    "lesson": 14,
+    "word": "記事",
+    "reading": "ぎじ",
+    "type": "名詞",
+    "meaning": "报道"
+  },
+  {
+    "lesson": 14,
+    "word": "マモ",
+    "reading": "マモ",
+    "type": "名詞",
+    "meaning": "记录"
+  },
+  {
+    "lesson": 14,
+    "word": "駅前",
+    "reading": "え譯え",
+    "type": "名詞",
+    "meaning": "车站ー带"
+  },
+  {
+    "lesson": 14,
+    "word": "橋",
+    "reading": "はて",
+    "type": "名詞",
+    "meaning": "桥,桥梁"
+  },
+  {
+    "lesson": 14,
+    "word": "角",
+    "reading": "ど",
+    "type": "名詞",
+    "meaning": "拐角"
+  },
+  {
+    "lesson": 14,
+    "word": "横断歩道",
+    "reading": "お2だんほどう",
+    "type": "名詞",
+    "meaning": "人行横道"
+  },
+  {
+    "lesson": 14,
+    "word": "右",
+    "reading": "みぎ",
+    "type": "名詞",
+    "meaning": "右,右边"
+  },
+  {
+    "lesson": 14,
+    "word": "ひだり佐",
+    "reading": "ひだり佐",
+    "type": "名詞",
+    "meaning": "左，左边"
+  },
+  {
+    "lesson": 14,
+    "word": "交差点",
+    "reading": "こうさてん",
+    "type": "名詞",
+    "meaning": "十字路口"
+  },
+  {
+    "lesson": 14,
+    "word": "道",
+    "reading": "みも",
+    "type": "名詞",
+    "meaning": "路,道路"
+  },
+  {
+    "lesson": 14,
+    "word": "ア",
+    "reading": "ア",
+    "type": "名詞",
+    "meaning": "门"
+  },
+  {
+    "lesson": 14,
+    "word": "電気",
+    "reading": "んき",
+    "type": "名詞",
+    "meaning": "电,电カ"
+  },
+  {
+    "lesson": 14,
+    "word": "太極拳",
+    "reading": "たいきよくけん",
+    "type": "名詞",
+    "meaning": "太极拳"
+  },
+  {
+    "lesson": 14,
+    "word": "あさこ’はん",
+    "reading": "朝ご飯",
+    "type": "名詞",
+    "meaning": "早饭"
+  },
+  {
+    "lesson": 14,
+    "word": "ばんごはん",
+    "reading": "晩ご飯",
+    "type": "名詞",
+    "meaning": "晚饭"
+  },
+  {
+    "lesson": 14,
+    "word": "バーベキュー",
+    "reading": "バーベキュー",
+    "type": "名詞",
+    "meaning": "户外烧烤"
+  },
+  {
+    "lesson": 14,
+    "word": "とおります",
+    "reading": "通ります",
+    "type": "動詞1",
+    "meaning": "通过,经过"
+  },
+  {
+    "lesson": 14,
+    "word": "いを言ます",
+    "reading": "急ぎます",
+    "type": "動詞1",
+    "meaning": "急,匆忙"
+  },
+  {
+    "lesson": 14,
+    "word": "おろします",
+    "reading": "下ろします",
+    "type": "動詞1",
+    "meaning": "取，卸货"
+  },
+  {
+    "lesson": 14,
+    "word": "えらびま’す",
+    "reading": "選びます",
+    "type": "動詞1",
+    "meaning": "挑选,选择"
+  },
+  {
+    "lesson": 14,
+    "word": "けします",
+    "reading": "消します",
+    "type": "動詞1",
+    "meaning": "关的）,消除，去除"
+  },
+  {
+    "lesson": 14,
+    "word": "あるきま'す",
+    "reading": "歩きます",
+    "type": "動詞1",
+    "meaning": "步行，行走"
+  },
+  {
+    "lesson": 14,
+    "word": "ま和ます",
+    "reading": "曲がります",
+    "type": "動詞1",
+    "meaning": "拐弯，曲折"
+  },
+  {
+    "lesson": 14,
+    "word": "あす薄す",
+    "reading": "洗います",
+    "type": "動詞1",
+    "meaning": "洗,洗涤"
+  },
+  {
+    "lesson": 14,
+    "word": "でます",
+    "reading": "出ます",
+    "type": "動詞2",
+    "meaning": "离开"
+  },
+  {
+    "lesson": 14,
+    "word": "す",
+    "reading": "出かけます",
+    "type": "動詞2",
+    "meaning": "外出,出门"
+  },
+  {
+    "lesson": 14,
+    "word": "つ楫す",
+    "reading": "つ楫す",
+    "type": "動詞2",
+    "meaning": "开（灯）"
+  },
+  {
+    "lesson": 14,
+    "word": "食事〜",
+    "reading": "しょくじします",
+    "type": "動詞3",
+    "meaning": "吃饭,用餐"
+  },
+  {
+    "lesson": 14,
+    "word": "整理〜",
+    "reading": "ぜいりします",
+    "type": "動詞3",
+    "meaning": "整理"
+  },
+  {
+    "lesson": 14,
+    "word": "ョピーします",
+    "reading": "ョピーします",
+    "type": "動詞3",
+    "meaning": "复印"
+  },
+  {
+    "lesson": 14,
+    "word": "く",
+    "reading": "暗い",
+    "type": "い形容詞",
+    "meaning": "黑暗,昏暗"
+  },
+  {
+    "lesson": 14,
+    "word": "大変",
+    "reading": "たE",
+    "type": "な形容詞",
+    "meaning": "够受的，不得了"
+  },
+  {
+    "lesson": 14,
+    "word": "なかなか",
+    "reading": "なかなか",
+    "type": "副詞",
+    "meaning": "相当,很，非常"
+  },
+  {
+    "lesson": 14,
+    "word": "こう",
+    "reading": "こう",
+    "type": "副詞",
+    "meaning": "这样，如此"
+  },
+  {
+    "lesson": 14,
+    "word": "ああ",
+    "reading": "ああ",
+    "type": "副詞",
+    "meaning": "那样"
+  },
+  {
+    "lesson": 14,
+    "word": "あとで",
+    "reading": "後で",
+    "type": "副詞",
+    "meaning": "过会儿"
+  },
+  {
+    "lesson": 14,
+    "word": "それふ石",
+    "reading": "それふ石",
+    "type": "接続詞",
+    "meaning": "然后;另外"
+  },
+  {
+    "lesson": 14,
+    "word": "わたりま'す",
+    "reading": "渡ります",
+    "type": "動詞1",
+    "meaning": "邮政编码"
+  },
+  {
+    "lesson": 15,
+    "word": "ボート",
+    "reading": "ボート",
+    "type": "名詞",
+    "meaning": "小船,小艇"
+  },
+  {
+    "lesson": 15,
+    "word": "ベンチ",
+    "reading": "ベンチ",
+    "type": "名詞",
+    "meaning": "长椅,长凳"
+  },
+  {
+    "lesson": 15,
+    "word": "市役所",
+    "reading": "しゃくしょ",
+    "type": "名詞",
+    "meaning": "市政府"
+  },
+  {
+    "lesson": 15,
+    "word": "携帯電話",
+    "reading": "けいたいでんわ",
+    "type": "名詞",
+    "meaning": "手机"
+  },
+  {
+    "lesson": 15,
+    "word": "禁煙",
+    "reading": "きんえん",
+    "type": "名詞",
+    "meaning": "禁止吸烟"
+  },
+  {
+    "lesson": 15,
+    "word": "風邪",
+    "reading": "かを",
+    "type": "名詞",
+    "meaning": "感冒"
+  },
+  {
+    "lesson": 15,
+    "word": "ねづ",
+    "reading": "ねづ",
+    "type": "名詞",
+    "meaning": "发烧,体温"
+  },
+  {
+    "lesson": 15,
+    "word": "睡眠",
+    "reading": "すいみん",
+    "type": "名詞",
+    "meaning": "睡眠"
+  },
+  {
+    "lesson": 15,
+    "word": "おふろ",
+    "reading": "お風呂",
+    "type": "名詞",
+    "meaning": "澡堂,浴室"
+  },
+  {
+    "lesson": 15,
+    "word": "やっきょく",
+    "reading": "やっきょく",
+    "type": "名詞",
+    "meaning": "药店"
+  },
+  {
+    "lesson": 15,
+    "word": "ーラー",
+    "reading": "ーラー",
+    "type": "名詞",
+    "meaning": "空调"
+  },
+  {
+    "lesson": 15,
+    "word": "火",
+    "reading": "び",
+    "type": "名詞",
+    "meaning": "火"
+  },
+  {
+    "lesson": 15,
+    "word": "気",
+    "reading": "き",
+    "type": "名詞",
+    "meaning": "精神，意识"
+  },
+  {
+    "lesson": 15,
+    "word": "うちあわせ",
+    "reading": "打ち合わせ",
+    "type": "名詞",
+    "meaning": "事先商量，碰头，商洽"
+  },
+  {
+    "lesson": 15,
+    "word": "無理",
+    "reading": "あり",
+    "type": "名詞",
+    "meaning": "勉强，难以办到"
+  },
+  {
+    "lesson": 15,
+    "word": "駐車禁止",
+    "reading": "ちゅうしやきんし",
+    "type": "名詞",
+    "meaning": "禁止停车"
+  },
+  {
+    "lesson": 15,
+    "word": "立入禁止",
+    "reading": "たぢいりきんし",
+    "type": "名詞",
+    "meaning": "禁止进入"
+  },
+  {
+    "lesson": 15,
+    "word": "火気厳禁",
+    "reading": "がきげ麗ん",
+    "type": "名詞",
+    "meaning": "严禁烟火"
+  },
+  {
+    "lesson": 15,
+    "word": "撮影禁止",
+    "reading": "さつえいきんし",
+    "type": "名詞",
+    "meaning": "禁止拍照"
+  },
+  {
+    "lesson": 15,
+    "word": "のW亲す",
+    "reading": "乗ります",
+    "type": "動詞1",
+    "meaning": "乘坐，乘"
+  },
+  {
+    "lesson": 15,
+    "word": "っが订ます",
+    "reading": "使います",
+    "type": "動詞1",
+    "meaning": "用，使用"
+  },
+  {
+    "lesson": 15,
+    "word": "すわります",
+    "reading": "座ります",
+    "type": "動詞1",
+    "meaning": "坐，落座"
+  },
+  {
+    "lesson": 15,
+    "word": "はいりま’す",
+    "reading": "入ります",
+    "type": "動詞1",
+    "meaning": "进入，加入"
+  },
+  {
+    "lesson": 15,
+    "word": "も元ます",
+    "reading": "申します",
+    "type": "動詞1",
+    "meaning": "是，说，讲，告诉"
+  },
+  {
+    "lesson": 15,
+    "word": "とうます",
+    "reading": "とうます",
+    "type": "動詞1",
+    "meaning": "取，取得"
+  },
+  {
+    "lesson": 15,
+    "word": "す",
+    "reading": "歌います",
+    "type": "動詞1",
+    "meaning": "唱,歌唱"
+  },
+  {
+    "lesson": 15,
+    "word": "つ忍在す",
+    "reading": "伝えます",
+    "type": "動詞2",
+    "meaning": "说，传达，转告"
+  },
+  {
+    "lesson": 15,
+    "word": "と而米す",
+    "reading": "止めます",
+    "type": "動詞2",
+    "meaning": "停，制止"
+  },
+  {
+    "lesson": 15,
+    "word": "あ辰がい",
+    "reading": "温かい",
+    "type": "い形容詞",
+    "meaning": "热乎，温暖"
+  },
+  {
+    "lesson": 15,
+    "word": "大丈夫",
+    "reading": "うぶ",
+    "type": "な形容詞",
+    "meaning": "没关系,放心"
+  },
+  {
+    "lesson": 15,
+    "word": "だ洛",
+    "reading": "だ洛",
+    "type": "な形容詞",
+    "meaning": "不行，不可以"
+  },
+  {
+    "lesson": 15,
+    "word": "十分",
+    "reading": "ん",
+    "type": "副詞",
+    "meaning": "好好地，充足地"
+  },
+  {
+    "lesson": 15,
+    "word": "も古Iろん",
+    "reading": "も古Iろん",
+    "type": "副詞",
+    "meaning": "当然，不用说"
+  },
+  {
+    "lesson": 15,
+    "word": "ゆる・り",
+    "reading": "ゆるり",
+    "type": "副詞",
+    "meaning": "好好地，安静地"
+  },
+  {
+    "lesson": 15,
+    "word": "もしもし",
+    "reading": "もしもし",
+    "type": "感嘆詞",
+    "meaning": "喂"
+  },
+  {
+    "lesson": 15,
+    "word": "え",
+    "reading": "え",
+    "type": "感嘆詞",
+    "meaning": "不，不是"
+  },
+  {
+    "lesson": 16,
+    "word": "操作",
+    "reading": "ぞうさ",
+    "type": "名詞",
+    "meaning": "操作,操纵"
+  },
+  {
+    "lesson": 16,
+    "word": "機械",
+    "reading": "きがい",
+    "type": "名詞",
+    "meaning": "机械,机器"
+  },
+  {
+    "lesson": 16,
+    "word": "旅行会社",
+    "reading": "りよ己う不いしゃ",
+    "type": "名詞",
+    "meaning": "旅行社"
+  },
+  {
+    "lesson": 16,
+    "word": "航空会社",
+    "reading": "こうくうがいしゃ",
+    "type": "名詞",
+    "meaning": "航空公司"
+  },
+  {
+    "lesson": 16,
+    "word": "営業部",
+    "reading": "え订ぎWうぶ",
+    "type": "名詞",
+    "meaning": "营业部"
+  },
+  {
+    "lesson": 16,
+    "word": "IT産業",
+    "reading": "アイティーさんぎよう",
+    "type": "名詞",
+    "meaning": "IT产业,信息技术产业"
+  },
+  {
+    "lesson": 16,
+    "word": "製品",
+    "reading": "せ布ん",
+    "type": "名詞",
+    "meaning": "产品"
+  },
+  {
+    "lesson": 16,
+    "word": "建築家",
+    "reading": "けんちくか",
+    "type": "名詞",
+    "meaning": "建筑师"
+  },
+  {
+    "lesson": 16,
+    "word": "設計",
+    "reading": "せっけい",
+    "type": "名詞",
+    "meaning": "设计"
+  },
+  {
+    "lesson": 16,
+    "word": "デをイン",
+    "reading": "デをイン",
+    "type": "名詞",
+    "meaning": "设计（图），（制作）图案"
+  },
+  {
+    "lesson": 16,
+    "word": "形",
+    "reading": "かえ百",
+    "type": "名詞",
+    "meaning": "造型，形状,形式"
+  },
+  {
+    "lesson": 16,
+    "word": "最新",
+    "reading": "さ布u",
+    "type": "名詞",
+    "meaning": "最新"
+  },
+  {
+    "lesson": 16,
+    "word": "ボクタイ",
+    "reading": "ボクタイ",
+    "type": "名詞",
+    "meaning": "领带"
+  },
+  {
+    "lesson": 16,
+    "word": "財布",
+    "reading": "いぶ",
+    "type": "名詞",
+    "meaning": "钱包"
+  },
+  {
+    "lesson": 16,
+    "word": "革",
+    "reading": "か旧",
+    "type": "名詞",
+    "meaning": "革，皮革"
+  },
+  {
+    "lesson": 16,
+    "word": "布",
+    "reading": "ぬ方",
+    "type": "名詞",
+    "meaning": "布，布匹"
+  },
+  {
+    "lesson": 16,
+    "word": "水筒",
+    "reading": "すいとう",
+    "type": "名詞",
+    "meaning": "水壶，水筒"
+  },
+  {
+    "lesson": 16,
+    "word": "緑",
+    "reading": "どり",
+    "type": "名詞",
+    "meaning": "绿，绿色"
+  },
+  {
+    "lesson": 16,
+    "word": "足",
+    "reading": "あじ",
+    "type": "名詞",
+    "meaning": "脚"
+  },
+  {
+    "lesson": 16,
+    "word": "指",
+    "reading": "ゆび",
+    "type": "名詞",
+    "meaning": "手指，指头"
+  },
+  {
+    "lesson": 16,
+    "word": "目",
+    "reading": "め",
+    "type": "名詞",
+    "meaning": "眼，眼睛"
+  },
+  {
+    "lesson": 16,
+    "word": "鼻",
+    "reading": "はな",
+    "type": "名詞",
+    "meaning": "鼻，鼻子"
+  },
+  {
+    "lesson": 16,
+    "word": "顔",
+    "reading": "か君",
+    "type": "名詞",
+    "meaning": "脸，颜面"
+  },
+  {
+    "lesson": 16,
+    "word": "如",
+    "reading": "あ天ま",
+    "type": "名詞",
+    "meaning": "头，头脑"
+  },
+  {
+    "lesson": 16,
+    "word": "I D 〜",
+    "reading": "アイディーガード",
+    "type": "名詞",
+    "meaning": "身份证件"
+  },
+  {
+    "lesson": 16,
+    "word": "まちが’い",
+    "reading": "間違い",
+    "type": "名詞",
+    "meaning": "错误,失误"
+  },
+  {
+    "lesson": 16,
+    "word": "問題",
+    "reading": "もんだい",
+    "type": "名詞",
+    "meaning": "问题"
+  },
+  {
+    "lesson": 16,
+    "word": "広告",
+    "reading": "こうこく",
+    "type": "名詞",
+    "meaning": "广告"
+  },
+  {
+    "lesson": 16,
+    "word": "看板",
+    "reading": "かんばん",
+    "type": "名詞",
+    "meaning": "牌子"
+  },
+  {
+    "lesson": 16,
+    "word": "展示場",
+    "reading": "てんじじよう",
+    "type": "名詞",
+    "meaning": "展览会场"
+  },
+  {
+    "lesson": 16,
+    "word": "入場料",
+    "reading": "にゅうじょうりょう",
+    "type": "名詞",
+    "meaning": "门票，进场费"
+  },
+  {
+    "lesson": 16,
+    "word": "ザービス",
+    "reading": "ザービス",
+    "type": "名詞",
+    "meaning": "服务"
+  },
+  {
+    "lesson": 16,
+    "word": "天井",
+    "reading": "てんじよう",
+    "type": "名詞",
+    "meaning": "天棚"
+  },
+  {
+    "lesson": 16,
+    "word": "警備",
+    "reading": "いび",
+    "type": "名詞",
+    "meaning": "戒备，警备"
+  },
+  {
+    "lesson": 16,
+    "word": "クリスマスツリ",
+    "reading": "クリスマスツリ",
+    "type": "名詞",
+    "meaning": "圣诞树"
+  },
+  {
+    "lesson": 16,
+    "word": "みなさん",
+    "reading": "皆さん",
+    "type": "名詞",
+    "meaning": "大家，诸位"
+  },
+  {
+    "lesson": 16,
+    "word": "子",
+    "reading": "こ",
+    "type": "名詞",
+    "meaning": "孩子"
+  },
+  {
+    "lesson": 16,
+    "word": "横",
+    "reading": "よそ",
+    "type": "名詞",
+    "meaning": "旁边,侧面"
+  },
+  {
+    "lesson": 16,
+    "word": "もちます",
+    "reading": "持ちます",
+    "type": "動詞1",
+    "meaning": "有，拥有,持有"
+  },
+  {
+    "lesson": 16,
+    "word": "すみます",
+    "reading": "住みます",
+    "type": "動詞1",
+    "meaning": "住，居住"
+  },
+  {
+    "lesson": 16,
+    "word": "し弗す",
+    "reading": "知ります",
+    "type": "動詞1",
+    "meaning": "认识，知道,了解"
+  },
+  {
+    "lesson": 16,
+    "word": "な・煎席Iす",
+    "reading": "直します",
+    "type": "動詞1",
+    "meaning": "改,修改,改正"
+  },
+  {
+    "lesson": 16,
+    "word": "かたづけます",
+    "reading": "片づけます",
+    "type": "動詞2",
+    "meaning": "收拾，整理"
+  },
+  {
+    "lesson": 16,
+    "word": "練習〜",
+    "reading": "れんしゆうします",
+    "type": "動詞3",
+    "meaning": "练习"
+  },
+  {
+    "lesson": 16,
+    "word": "結婚〜",
+    "reading": "す",
+    "type": "動詞3",
+    "meaning": "结婚"
+  },
+  {
+    "lesson": 16,
+    "word": "安心〜",
+    "reading": "す",
+    "type": "動詞3",
+    "meaning": "安心，放心"
+  },
+  {
+    "lesson": 16,
+    "word": "あか石仍",
+    "reading": "明るい",
+    "type": "い形容詞",
+    "meaning": "明亮，开朗"
+  },
+  {
+    "lesson": 16,
+    "word": "な矛1い",
+    "reading": "長い",
+    "type": "い形容詞",
+    "meaning": "长，长久，长远"
+  },
+  {
+    "lesson": 16,
+    "word": "みじがい",
+    "reading": "短い",
+    "type": "い形容詞",
+    "meaning": "短，短暂"
+  },
+  {
+    "lesson": 16,
+    "word": "か砂",
+    "reading": "軽い",
+    "type": "い形容詞",
+    "meaning": "轻 巧 ,轻 ,轻 松 ,轻 微"
+  },
+  {
+    "lesson": 16,
+    "word": "い",
+    "reading": "優しい",
+    "type": "い形容詞",
+    "meaning": "和 蔼 ，温 和 ，体贴"
+  },
+  {
+    "lesson": 16,
+    "word": "い",
+    "reading": "細い",
+    "type": "い形容詞",
+    "meaning": "小 ，细 长 ,纤 细"
+  },
+  {
+    "lesson": 16,
+    "word": "い",
+    "reading": "太い",
+    "type": "名詞",
+    "meaning": "粗 ，胖"
+  },
+  {
+    "lesson": 16,
+    "word": "い",
+    "reading": "黒い",
+    "type": "い形容詞",
+    "meaning": "黑 ，黑色"
+  },
+  {
+    "lesson": 16,
+    "word": "ク",
+    "reading": "ク",
+    "type": "な形容詞",
+    "meaning": "独特"
+  },
+  {
+    "lesson": 16,
+    "word": "安全",
+    "reading": "あ",
+    "type": "な形容詞",
+    "meaning": "安全"
+  },
+  {
+    "lesson": 16,
+    "word": "派手",
+    "reading": "で",
+    "type": "な形容詞",
+    "meaning": "耀 眼 ,花 哨"
+  },
+  {
+    "lesson": 16,
+    "word": "地味",
+    "reading": "み",
+    "type": "な形容詞",
+    "meaning": "朴 素 ,质 朴"
+  },
+  {
+    "lesson": 16,
+    "word": "厳重",
+    "reading": "う",
+    "type": "な形容詞",
+    "meaning": "森 严 ;严 格"
+  },
+  {
+    "lesson": 16,
+    "word": "あ",
+    "reading": "あ",
+    "type": "な形容詞",
+    "meaning": "认 真 ;严 肃"
+  },
+  {
+    "lesson": 16,
+    "word": "大切",
+    "reading": "う",
+    "type": "な形容詞",
+    "meaning": "重 要 ，珍贵"
+  },
+  {
+    "lesson": 16,
+    "word": "複雑",
+    "reading": "つ",
+    "type": "な形容詞",
+    "meaning": "复 杂 ,繁 杂"
+  },
+  {
+    "lesson": 16,
+    "word": "ゃ",
+    "reading": "ゃ",
+    "type": "副詞",
+    "meaning": "好好地，的 确 ，完全,"
+  },
+  {
+    "lesson": 16,
+    "word": "だ",
+    "reading": "だ",
+    "type": "副詞",
+    "meaning": "还 ，尚"
+  },
+  {
+    "lesson": 16,
+    "word": "ぐ",
+    "reading": "ぐ",
+    "type": "副詞",
+    "meaning": "马 上 ，立即"
+  },
+  {
+    "lesson": 16,
+    "word": "ん",
+    "reading": "ん",
+    "type": "副詞",
+    "meaning": "相当，非 常 ，很"
+  },
+  {
+    "lesson": 16,
+    "word": "ら",
+    "reading": "ら",
+    "type": "感嘆詞",
+    "meaning": "你 看 ，瞧 ,喂"
+  },
+  {
+    "lesson": 16,
+    "word": "日中電気",
+    "reading": "き",
+    "type": "固有名詞",
+    "meaning": "日中电器"
+  },
+  {
+    "lesson": 16,
+    "word": "〜人",
+    "reading": "ん",
+    "type": "名詞",
+    "meaning": "澳大利亚人"
+  },
+  {
+    "lesson": 17,
+    "word": "洋服",
+    "reading": "ようふく",
+    "type": "名詞",
+    "meaning": "西服"
+  },
+  {
+    "lesson": 17,
+    "word": "ゼーター",
+    "reading": "ゼーター",
+    "type": "名詞",
+    "meaning": "毛衣"
+  },
+  {
+    "lesson": 17,
+    "word": "ノートパソコン",
+    "reading": "ノートパソコン",
+    "type": "名詞",
+    "meaning": "笔记本电脑"
+  },
+  {
+    "lesson": 17,
+    "word": "パイク",
+    "reading": "パイク",
+    "type": "名詞",
+    "meaning": "摩托车"
+  },
+  {
+    "lesson": 17,
+    "word": "健康",
+    "reading": "けんこう",
+    "type": "名詞",
+    "meaning": "健康"
+  },
+  {
+    "lesson": 17,
+    "word": "恋愛",
+    "reading": "れんあい",
+    "type": "名詞",
+    "meaning": "恋爱"
+  },
+  {
+    "lesson": 17,
+    "word": "ラマ",
+    "reading": "ラマ",
+    "type": "名詞",
+    "meaning": "连续剧"
+  },
+  {
+    "lesson": 17,
+    "word": "相手",
+    "reading": "あいて",
+    "type": "名詞",
+    "meaning": "对象,对方"
+  },
+  {
+    "lesson": 17,
+    "word": "恋人",
+    "reading": "こいびと",
+    "type": "名詞",
+    "meaning": "恋人"
+  },
+  {
+    "lesson": 17,
+    "word": "す",
+    "reading": "始めます",
+    "type": "動詞2",
+    "meaning": "开始"
+  },
+  {
+    "lesson": 17,
+    "word": "連絡〜",
+    "reading": "れんらくし下す",
+    "type": "動詞3",
+    "meaning": "联系"
+  },
+  {
+    "lesson": 17,
+    "word": "ほじ1い",
+    "reading": "欲しい",
+    "type": "い形容詞",
+    "meaning": "想要"
+  },
+  {
+    "lesson": 17,
+    "word": "立派",
+    "reading": "りさぽ",
+    "type": "な形容詞",
+    "meaning": "美观，杰出"
+  },
+  {
+    "lesson": 17,
+    "word": "今度",
+    "reading": "ごんど",
+    "type": "副詞",
+    "meaning": "下次;这回"
+  },
+  {
+    "lesson": 17,
+    "word": "ひ",
+    "reading": "ひ",
+    "type": "副詞",
+    "meaning": "一定"
+  },
+  {
+    "lesson": 17,
+    "word": "ぞろそろ",
+    "reading": "ぞろそろ",
+    "type": "副詞",
+    "meaning": "快要"
+  },
+  {
+    "lesson": 17,
+    "word": "まず",
+    "reading": "まず",
+    "type": "副詞",
+    "meaning": "先,首先"
+  },
+  {
+    "lesson": 17,
+    "word": "ーベン",
+    "reading": "ーベン",
+    "type": "固有名詞",
+    "meaning": "贝多芬"
+  },
+  {
+    "lesson": 17,
+    "word": "パン",
+    "reading": "パン",
+    "type": "固有名詞",
+    "meaning": "肖邦"
+  },
+  {
+    "lesson": 17,
+    "word": "故宮",
+    "reading": "こきゅう",
+    "type": "固有名詞",
+    "meaning": "故宫"
+  },
+  {
+    "lesson": 17,
+    "word": "ヨ二曰ッパ",
+    "reading": "ヨ二曰ッパ",
+    "type": "固有名詞",
+    "meaning": "欧洲"
+  },
+  {
+    "lesson": 17,
+    "word": "香港",
+    "reading": "ポンコン",
+    "type": "固有名詞",
+    "meaning": "香港"
+  },
+  {
+    "lesson": 17,
+    "word": "ズイス",
+    "reading": "ズイス",
+    "type": "固有名詞",
+    "meaning": "瑞士"
+  },
+  {
+    "lesson": 17,
+    "word": "夏",
+    "reading": "なうt",
+    "type": "名詞",
+    "meaning": "夏天 〜中に"
+  },
+  {
+    "lesson": 17,
+    "word": "今年",
+    "reading": "ことし",
+    "type": "名詞",
+    "meaning": "今年"
+  },
+  {
+    "lesson": 18,
+    "word": "音",
+    "reading": "ど",
+    "type": "名詞",
+    "meaning": "声音,响声"
+  },
+  {
+    "lesson": 18,
+    "word": "声",
+    "reading": "え",
+    "type": "名詞",
+    "meaning": "声音"
+  },
+  {
+    "lesson": 18,
+    "word": "空気",
+    "reading": "ぐうき",
+    "type": "名詞",
+    "meaning": "空气"
+  },
+  {
+    "lesson": 18,
+    "word": "息子",
+    "reading": "むずぞ",
+    "type": "名詞",
+    "meaning": "儿子"
+  },
+  {
+    "lesson": 18,
+    "word": "医者",
+    "reading": "い",
+    "type": "名詞",
+    "meaning": "医生"
+  },
+  {
+    "lesson": 18,
+    "word": "おじょIうさん",
+    "reading": "お嬢さん",
+    "type": "名詞",
+    "meaning": "令爱"
+  },
+  {
+    "lesson": 18,
+    "word": "社会人",
+    "reading": "しやがいじん",
+    "type": "名詞",
+    "meaning": "社会的ー员,成人"
+  },
+  {
+    "lesson": 18,
+    "word": "旅 行 〜",
+    "reading": "りょこうガイド",
+    "type": "名詞",
+    "meaning": "旅行导游"
+  },
+  {
+    "lesson": 18,
+    "word": "学者",
+    "reading": "がぐK",
+    "type": "名詞",
+    "meaning": "学者"
+  },
+  {
+    "lesson": 18,
+    "word": "パイロット",
+    "reading": "パイロット",
+    "type": "名詞",
+    "meaning": "飞行员"
+  },
+  {
+    "lesson": 18,
+    "word": "デザイナー",
+    "reading": "デザイナー",
+    "type": "名詞",
+    "meaning": "设计者,设计家"
+  },
+  {
+    "lesson": 18,
+    "word": "タ彳7可一ビス",
+    "reading": "タ彳7可一ビス",
+    "type": "名詞",
+    "meaning": "时段廉价销售"
+  },
+  {
+    "lesson": 18,
+    "word": "新春〜",
+    "reading": "しんしゅんゼール",
+    "type": "名詞",
+    "meaning": "新年大甩卖"
+  },
+  {
+    "lesson": 18,
+    "word": "3割引",
+    "reading": "さ底りびき",
+    "type": "名詞",
+    "meaning": "七折"
+  },
+  {
+    "lesson": 18,
+    "word": "定価",
+    "reading": "て而",
+    "type": "名詞",
+    "meaning": "定价"
+  },
+  {
+    "lesson": 18,
+    "word": "半額",
+    "reading": "はんが",
+    "type": "名詞",
+    "meaning": "半价"
+  },
+  {
+    "lesson": 18,
+    "word": "値段",
+    "reading": "ねだん",
+    "type": "名詞",
+    "meaning": "价格"
+  },
+  {
+    "lesson": 18,
+    "word": "ツ",
+    "reading": "ツ",
+    "type": "名詞",
+    "meaning": "衬衫"
+  },
+  {
+    "lesson": 18,
+    "word": "スガート",
+    "reading": "スガート",
+    "type": "名詞",
+    "meaning": "裙子"
+  },
+  {
+    "lesson": 18,
+    "word": "色",
+    "reading": "いろ",
+    "type": "名詞",
+    "meaning": "颜色"
+  },
+  {
+    "lesson": 18,
+    "word": "赤",
+    "reading": "あか",
+    "type": "名詞",
+    "meaning": "红色"
+  },
+  {
+    "lesson": 18,
+    "word": "青",
+    "reading": "あお",
+    "type": "名詞",
+    "meaning": "蓝色"
+  },
+  {
+    "lesson": 18,
+    "word": "おしょうがつ’",
+    "reading": "お正月",
+    "type": "名詞",
+    "meaning": "过年,新年"
+  },
+  {
+    "lesson": 18,
+    "word": "時間",
+    "reading": "じがん",
+    "type": "名詞",
+    "meaning": "时间"
+  },
+  {
+    "lesson": 18,
+    "word": "将来",
+    "reading": "うらい",
+    "type": "名詞",
+    "meaning": "将来"
+  },
+  {
+    "lesson": 18,
+    "word": "準備",
+    "reading": "じめんび",
+    "type": "名詞",
+    "meaning": "准备"
+  },
+  {
+    "lesson": 18,
+    "word": "病気",
+    "reading": "びょうき",
+    "type": "名詞",
+    "meaning": "疾病"
+  },
+  {
+    "lesson": 18,
+    "word": "なりまIす",
+    "reading": "なりまIす",
+    "type": "動詞1",
+    "meaning": "变，当,变成成为"
+  },
+  {
+    "lesson": 18,
+    "word": "あぎます",
+    "reading": "開きます",
+    "type": "動詞1",
+    "meaning": "开"
+  },
+  {
+    "lesson": 18,
+    "word": "す",
+    "reading": "似合います",
+    "type": "動詞1",
+    "meaning": "适合，相称"
+  },
+  {
+    "lesson": 18,
+    "word": "うるさい",
+    "reading": "うるさい",
+    "type": "い形容詞",
+    "meaning": "闹,使人心烦"
+  },
+  {
+    "lesson": 18,
+    "word": "ランプル",
+    "reading": "ランプル",
+    "type": "な形容詞",
+    "meaning": "单纯,简洁"
+  },
+  {
+    "lesson": 18,
+    "word": "なく",
+    "reading": "間もなく",
+    "type": "副詞",
+    "meaning": "马上,一会儿,不久"
+  },
+  {
+    "lesson": 18,
+    "word": "もテデぐ",
+    "reading": "もテデぐ",
+    "type": "副詞",
+    "meaning": "马上"
+  },
+  {
+    "lesson": 18,
+    "word": "もっと",
+    "reading": "もっと",
+    "type": "副詞",
+    "meaning": "更加,更"
+  },
+  {
+    "lesson": 18,
+    "word": "ざあ",
+    "reading": "ざあ",
+    "type": "感嘆詞",
+    "meaning": "啊，喂"
+  },
+  {
+    "lesson": 19,
+    "word": "品物",
+    "reading": "しなもの",
+    "type": "名詞",
+    "meaning": "物品,商品"
+  },
+  {
+    "lesson": 19,
+    "word": "お話",
+    "reading": "お皿",
+    "type": "名詞",
+    "meaning": "盘子"
+  },
+  {
+    "lesson": 19,
+    "word": "ご双",
+    "reading": "ご双",
+    "type": "名詞",
+    "meaning": "垃圾"
+  },
+  {
+    "lesson": 19,
+    "word": "初心者",
+    "reading": "しょ1んしや",
+    "type": "名詞",
+    "meaning": "初学者"
+  },
+  {
+    "lesson": 19,
+    "word": "上級者",
+    "reading": "じよラ胡うしゃ",
+    "type": "名詞",
+    "meaning": "熟练者"
+  },
+  {
+    "lesson": 19,
+    "word": "高級",
+    "reading": "こうきゅう",
+    "type": "名詞",
+    "meaning": "高级"
+  },
+  {
+    "lesson": 19,
+    "word": "上級〜",
+    "reading": "じょうきゅうグラス",
+    "type": "名詞",
+    "meaning": "高级班"
+  },
+  {
+    "lesson": 19,
+    "word": "英会話",
+    "reading": "えいがいわ",
+    "type": "名詞",
+    "meaning": "英语会话"
+  },
+  {
+    "lesson": 19,
+    "word": "ース",
+    "reading": "ース",
+    "type": "名詞",
+    "meaning": "路线,滑道"
+  },
+  {
+    "lesson": 19,
+    "word": "スギー",
+    "reading": "スギー",
+    "type": "名詞",
+    "meaning": "滑雪"
+  },
+  {
+    "lesson": 19,
+    "word": "レポート",
+    "reading": "レポート",
+    "type": "名詞",
+    "meaning": "报告"
+  },
+  {
+    "lesson": 19,
+    "word": "パスポート",
+    "reading": "パスポート",
+    "type": "名詞",
+    "meaning": "护照"
+  },
+  {
+    "lesson": 19,
+    "word": "あど",
+    "reading": "あど",
+    "type": "名詞",
+    "meaning": "喉咙"
+  },
+  {
+    "lesson": 19,
+    "word": "さわります",
+    "reading": "触ります",
+    "type": "動詞1",
+    "meaning": "碰,触"
+  },
+  {
+    "lesson": 19,
+    "word": "ぬぎます",
+    "reading": "脱ぎます",
+    "type": "動詞1",
+    "meaning": "脱"
+  },
+  {
+    "lesson": 19,
+    "word": "す",
+    "reading": "返します",
+    "type": "動詞1",
+    "meaning": "归还"
+  },
+  {
+    "lesson": 19,
+    "word": "てつだいま’す",
+    "reading": "手伝います",
+    "type": "動詞1",
+    "meaning": "帮忙"
+  },
+  {
+    "lesson": 19,
+    "word": "はこびま’す",
+    "reading": "運びます",
+    "type": "動詞1",
+    "meaning": "搬运"
+  },
+  {
+    "lesson": 19,
+    "word": "なくします",
+    "reading": "なくします",
+    "type": "動詞1",
+    "meaning": "丢,丢失"
+  },
+  {
+    "lesson": 19,
+    "word": "おとします",
+    "reading": "落とします",
+    "type": "動詞1",
+    "meaning": "掉,使落下"
+  },
+  {
+    "lesson": 19,
+    "word": "残業〜",
+    "reading": "ざんぎょうします",
+    "type": "動詞3",
+    "meaning": "加班"
+  },
+  {
+    "lesson": 19,
+    "word": "心配〜",
+    "reading": "しんぱいします",
+    "type": "動詞3",
+    "meaning": "担心"
+  },
+  {
+    "lesson": 19,
+    "word": "本当",
+    "reading": "ほんとう",
+    "type": "な形容詞",
+    "meaning": "真的,真正"
+  },
+  {
+    "lesson": 19,
+    "word": "ほやく",
+    "reading": "早く",
+    "type": "副詞",
+    "meaning": "早点儿"
+  },
+  {
+    "lesson": 19,
+    "word": "ころびます",
+    "reading": "転びます",
+    "type": "動詞1",
+    "meaning": "摔,摔倒,跌倒"
+  },
+  {
+    "lesson": 19,
+    "word": "かわきます",
+    "reading": "渇きます",
+    "type": "動詞1",
+    "meaning": "渴"
+  },
+  {
+    "lesson": 19,
+    "word": "なおります",
+    "reading": "治ります",
+    "type": "動詞1",
+    "meaning": "痊愈,医好"
+  },
+  {
+    "lesson": 19,
+    "word": "すべります",
+    "reading": "滑ります",
+    "type": "動詞1",
+    "meaning": "滑，滑行"
+  },
+  {
+    "lesson": 19,
+    "word": "よびます",
+    "reading": "呼びます",
+    "type": "動詞1",
+    "meaning": "呼喊"
+  },
+  {
+    "lesson": 19,
+    "word": "やっと",
+    "reading": "やっと",
+    "type": "副詞",
+    "meaning": "好不容易,终于"
+  },
+  {
+    "lesson": 19,
+    "word": "だいぶ",
+    "reading": "だいぶ",
+    "type": "副詞",
+    "meaning": "很,相当地"
+  },
+  {
+    "lesson": 19,
+    "word": "はどめて",
+    "reading": "初めて",
+    "type": "副詞",
+    "meaning": "第一次"
+  },
+  {
+    "lesson": 19,
+    "word": "さぎ记",
+    "reading": "先に",
+    "type": "副詞",
+    "meaning": "先"
+  },
+  {
+    "lesson": 19,
+    "word": "山田",
+    "reading": "や疏",
+    "type": "固有名詞",
+    "meaning": "山田"
+  },
+  {
+    "lesson": 20,
+    "word": "趣味",
+    "reading": "み",
+    "type": "名詞",
+    "meaning": "爱好"
+  },
+  {
+    "lesson": 20,
+    "word": "特技",
+    "reading": "くぎ",
+    "type": "名詞",
+    "meaning": "特长,拿手的技术"
+  },
+  {
+    "lesson": 20,
+    "word": "興味",
+    "reading": "うみ",
+    "type": "名詞",
+    "meaning": "兴趣"
+  },
+  {
+    "lesson": 20,
+    "word": "夢",
+    "reading": "ゆあ1",
+    "type": "名詞",
+    "meaning": "梦;理想"
+  },
+  {
+    "lesson": 20,
+    "word": "ギター",
+    "reading": "ギター",
+    "type": "名詞",
+    "meaning": "吉他"
+  },
+  {
+    "lesson": 20,
+    "word": "胡弓",
+    "reading": "ごきゆう",
+    "type": "名詞",
+    "meaning": "胡琴"
+  },
+  {
+    "lesson": 20,
+    "word": "書道",
+    "reading": "しよどう",
+    "type": "名詞",
+    "meaning": "书法"
+  },
+  {
+    "lesson": 20,
+    "word": "つう",
+    "reading": "釣り",
+    "type": "名詞",
+    "meaning": "钓鱼"
+  },
+  {
+    "lesson": 20,
+    "word": "ドヲイブ",
+    "reading": "ドヲイブ",
+    "type": "名詞",
+    "meaning": "兜风,开汽车远游"
+  },
+  {
+    "lesson": 20,
+    "word": "あ表もの",
+    "reading": "編み物",
+    "type": "名詞",
+    "meaning": "编织;编织品"
+  },
+  {
+    "lesson": 20,
+    "word": "てづくり",
+    "reading": "手作り",
+    "type": "名詞",
+    "meaning": "手工做,自己做,手制"
+  },
+  {
+    "lesson": 20,
+    "word": "中華街",
+    "reading": "ちゅ司がい",
+    "type": "名詞",
+    "meaning": "中华街"
+  },
+  {
+    "lesson": 20,
+    "word": "中華料理",
+    "reading": "うり",
+    "type": "名詞",
+    "meaning": "中国菜"
+  },
+  {
+    "lesson": 20,
+    "word": "餃子",
+    "reading": "ギヨ二ザ",
+    "type": "名詞",
+    "meaning": "饺子"
+  },
+  {
+    "lesson": 20,
+    "word": "皮",
+    "reading": "かわ",
+    "type": "名詞",
+    "meaning": "皮"
+  },
+  {
+    "lesson": 20,
+    "word": "春節",
+    "reading": "しゆんせつ",
+    "type": "名詞",
+    "meaning": "春节"
+  },
+  {
+    "lesson": 20,
+    "word": "獅子舞",
+    "reading": "ししまい",
+    "type": "名詞",
+    "meaning": "狮子舞"
+  },
+  {
+    "lesson": 20,
+    "word": "寮",
+    "reading": "う",
+    "type": "名詞",
+    "meaning": "宿舍"
+  },
+  {
+    "lesson": 20,
+    "word": "洗濯機",
+    "reading": "せんたくき",
+    "type": "名詞",
+    "meaning": "洗衣机"
+  },
+  {
+    "lesson": 20,
+    "word": "ラ年ワー",
+    "reading": "ラ年ワー",
+    "type": "名詞",
+    "meaning": "淋浴"
+  },
+  {
+    "lesson": 20,
+    "word": "おなか",
+    "reading": "おなか",
+    "type": "名詞",
+    "meaning": "肚子"
+  },
+  {
+    "lesson": 20,
+    "word": "ふゆやすみ",
+    "reading": "冬休み",
+    "type": "名詞",
+    "meaning": "寒假"
+  },
+  {
+    "lesson": 20,
+    "word": "ギ耳Iンプ",
+    "reading": "ギ耳Iンプ",
+    "type": "名詞",
+    "meaning": "野营"
+  },
+  {
+    "lesson": 20,
+    "word": "みんな",
+    "reading": "みんな",
+    "type": "名詞",
+    "meaning": "大家"
+  },
+  {
+    "lesson": 20,
+    "word": "自分",
+    "reading": "じぶる",
+    "type": "名詞",
+    "meaning": "自己"
+  },
+  {
+    "lesson": 20,
+    "word": "全員",
+    "reading": "ぜ标る",
+    "type": "名詞",
+    "meaning": "全员"
+  },
+  {
+    "lesson": 20,
+    "word": "ひぎます",
+    "reading": "弾きます",
+    "type": "動詞1",
+    "meaning": "弹"
+  },
+  {
+    "lesson": 20,
+    "word": "すぎます",
+    "reading": "すぎます",
+    "type": "動詞1",
+    "meaning": "（肚子）饿,空"
+  },
+  {
+    "lesson": 20,
+    "word": "のぼ异す",
+    "reading": "登ります",
+    "type": "動詞1",
+    "meaning": "登,上"
+  },
+  {
+    "lesson": 20,
+    "word": "あつめます",
+    "reading": "集めます",
+    "type": "動詞2",
+    "meaning": "收集"
+  },
+  {
+    "lesson": 20,
+    "word": "あびます",
+    "reading": "浴びます",
+    "type": "動詞2",
+    "meaning": "淋;浇"
+  },
+  {
+    "lesson": 20,
+    "word": "ごちそうします",
+    "reading": "ごちそうします",
+    "type": "動詞3",
+    "meaning": "请客,摆盛宴"
+  },
+  {
+    "lesson": 20,
+    "word": "帰国〜",
+    "reading": "す",
+    "type": "動詞3",
+    "meaning": "回国"
+  },
+  {
+    "lesson": 20,
+    "word": "どくに",
+    "reading": "特に",
+    "type": "副詞",
+    "meaning": "特别"
+  },
+  {
+    "lesson": 21,
+    "word": "言葉",
+    "reading": "ことば",
+    "type": "名詞",
+    "meaning": "语言"
+  },
+  {
+    "lesson": 21,
+    "word": "メニ矛アドレス",
+    "reading": "メニ矛アドレス",
+    "type": "名詞",
+    "meaning": "邮件地址"
+  },
+  {
+    "lesson": 21,
+    "word": "連休",
+    "reading": "れんきゅう",
+    "type": "名詞",
+    "meaning": "连休"
+  },
+  {
+    "lesson": 21,
+    "word": "ゴールデンウィーク",
+    "reading": "ゴールデンウィーク",
+    "type": "名詞",
+    "meaning": "黄金周"
+  },
+  {
+    "lesson": 21,
+    "word": "お折",
+    "reading": "終わり",
+    "type": "名詞",
+    "meaning": "结束"
+  },
+  {
+    "lesson": 21,
+    "word": "休憩時間",
+    "reading": "きゆうけいじかん",
+    "type": "名詞",
+    "meaning": "休息时间"
+  },
+  {
+    "lesson": 21,
+    "word": "京劇",
+    "reading": "きようげき",
+    "type": "名詞",
+    "meaning": "京剧"
+  },
+  {
+    "lesson": 21,
+    "word": "切符",
+    "reading": "き云",
+    "type": "名詞",
+    "meaning": "票（券）"
+  },
+  {
+    "lesson": 21,
+    "word": "体",
+    "reading": "か有だ",
+    "type": "名詞",
+    "meaning": "身体"
+  },
+  {
+    "lesson": 21,
+    "word": "地震",
+    "reading": "じ顷",
+    "type": "名詞",
+    "meaning": "地震"
+  },
+  {
+    "lesson": 21,
+    "word": "泥棒",
+    "reading": "ど讃5",
+    "type": "名詞",
+    "meaning": "小偷,盗贼"
+  },
+  {
+    "lesson": 21,
+    "word": "駐車場",
+    "reading": "ちゅうしやじょう",
+    "type": "名詞",
+    "meaning": "停车场"
+  },
+  {
+    "lesson": 21,
+    "word": "わたします",
+    "reading": "渡します",
+    "type": "動詞1",
+    "meaning": "交给"
+  },
+  {
+    "lesson": 21,
+    "word": "おくれます",
+    "reading": "遅れます",
+    "type": "動詞2",
+    "meaning": "迟到"
+  },
+  {
+    "lesson": 21,
+    "word": "かんがえます",
+    "reading": "考えます",
+    "type": "動詞2",
+    "meaning": "考虑"
+  },
+  {
+    "lesson": 21,
+    "word": "しす诲す",
+    "reading": "調べます",
+    "type": "動詞2",
+    "meaning": "调查"
+  },
+  {
+    "lesson": 21,
+    "word": "きます",
+    "reading": "着ます",
+    "type": "動詞2",
+    "meaning": "穿"
+  },
+  {
+    "lesson": 21,
+    "word": "予約〜",
+    "reading": "よやくします",
+    "type": "動詞3",
+    "meaning": "预约,预定"
+  },
+  {
+    "lesson": 21,
+    "word": "感謝〜",
+    "reading": "がんしゃします",
+    "type": "動詞3",
+    "meaning": "感谢"
+  },
+  {
+    "lesson": 21,
+    "word": "運動〜",
+    "reading": "うんどうします",
+    "type": "動詞3",
+    "meaning": "运动"
+  },
+  {
+    "lesson": 21,
+    "word": "洗濯〜",
+    "reading": "す",
+    "type": "動詞3",
+    "meaning": "洗涤,洗"
+  },
+  {
+    "lesson": 21,
+    "word": "報告〜",
+    "reading": "ほうこくします",
+    "type": "動詞3",
+    "meaning": "报告"
+  },
+  {
+    "lesson": 21,
+    "word": "あぶない",
+    "reading": "危ない",
+    "type": "い形容詞",
+    "meaning": "危险"
+  },
+  {
+    "lesson": 21,
+    "word": "それ切も",
+    "reading": "それ切も",
+    "type": "接続詞",
+    "meaning": "还是,或者"
+  },
+  {
+    "lesson": 21,
+    "word": "東京〜",
+    "reading": "とうきょうダワー",
+    "type": "固有名詞",
+    "meaning": "东京塔"
+  },
+  {
+    "lesson": 22,
+    "word": "〜場",
+    "reading": "スキーじよう",
+    "type": "名詞",
+    "meaning": "滑雪场"
+  },
+  {
+    "lesson": 22,
+    "word": "うれじい",
+    "reading": "うれじい",
+    "type": "い形容詞",
+    "meaning": "高兴"
+  },
+  {
+    "lesson": 22,
+    "word": "送別会",
+    "reading": "そうべづかい",
+    "type": "名詞",
+    "meaning": "欢送会"
+  },
+  {
+    "lesson": 22,
+    "word": "ねむ宓",
+    "reading": "眠い",
+    "type": "い形容詞",
+    "meaning": "困倦"
+  },
+  {
+    "lesson": 22,
+    "word": "都合",
+    "reading": "つごう",
+    "type": "名詞",
+    "meaning": "方便;情况"
+  },
+  {
+    "lesson": 22,
+    "word": "おもい",
+    "reading": "重い",
+    "type": "い形容詞",
+    "meaning": "重，沉重"
+  },
+  {
+    "lesson": 22,
+    "word": "予定",
+    "reading": "よでい",
+    "type": "名詞",
+    "meaning": "预计,预定"
+  },
+  {
+    "lesson": 22,
+    "word": "急",
+    "reading": "きゅう",
+    "type": "な形容詞",
+    "meaning": "突然;紧急"
+  },
+  {
+    "lesson": 22,
+    "word": "おもちゃ",
+    "reading": "おもちゃ",
+    "type": "名詞",
+    "meaning": "玩具"
+  },
+  {
+    "lesson": 22,
+    "word": "まあまIあ",
+    "reading": "まあまIあ",
+    "type": "副詞",
+    "meaning": "大致,还算"
+  },
+  {
+    "lesson": 22,
+    "word": "火事",
+    "reading": "がじ",
+    "type": "名詞",
+    "meaning": "火灾"
+  },
+  {
+    "lesson": 22,
+    "word": "あんまり",
+    "reading": "あんまり",
+    "type": "副詞",
+    "meaning": "太,非常,过于"
+  },
+  {
+    "lesson": 22,
+    "word": "期間",
+    "reading": "ぎかん",
+    "type": "名詞",
+    "meaning": "时间,期间"
+  },
+  {
+    "lesson": 22,
+    "word": "ご初ん",
+    "reading": "ご初ん",
+    "type": "感嘆詞",
+    "meaning": "抱歉，请原谅"
+  },
+  {
+    "lesson": 22,
+    "word": "転勤",
+    "reading": "てんきん",
+    "type": "名詞",
+    "meaning": "调动工作 ラうん/"
+  },
+  {
+    "lesson": 22,
+    "word": "いや",
+    "reading": "いや",
+    "type": "感嘆詞",
+    "meaning": "不"
+  },
+  {
+    "lesson": 22,
+    "word": "携帯",
+    "reading": "けいたい",
+    "type": "名詞",
+    "meaning": "手机 弓1"
+  },
+  {
+    "lesson": 22,
+    "word": "ん",
+    "reading": "ん",
+    "type": "感嘆詞",
+    "meaning": "嗯"
+  },
+  {
+    "lesson": 22,
+    "word": "バ貝ントン",
+    "reading": "バ貝ントン",
+    "type": "名詞",
+    "meaning": "羽毛球"
+  },
+  {
+    "lesson": 22,
+    "word": "清水",
+    "reading": "じみず",
+    "type": "固有名詞",
+    "meaning": "清水"
+  },
+  {
+    "lesson": 22,
+    "word": "ラデット",
+    "reading": "ラデット",
+    "type": "名詞",
+    "meaning": "球拍"
+  },
+  {
+    "lesson": 22,
+    "word": "太田",
+    "reading": "おおた",
+    "type": "固有名詞",
+    "meaning": "太田"
+  },
+  {
+    "lesson": 22,
+    "word": "おくさん",
+    "reading": "奥さん",
+    "type": "名詞",
+    "meaning": "夫人,（别人的）爱人"
+  },
+  {
+    "lesson": 22,
+    "word": "モーツァルト",
+    "reading": "モーツァルト",
+    "type": "固有名詞",
+    "meaning": "莫扎特"
+  },
+  {
+    "lesson": 22,
+    "word": "歌手",
+    "reading": "がしゅ",
+    "type": "名詞",
+    "meaning": "歌手 ディズニーラ‘"
+  },
+  {
+    "lesson": 22,
+    "word": "ンド",
+    "reading": "ンド",
+    "type": "固有名詞",
+    "meaning": "迪斯尼乐园"
+  },
+  {
+    "lesson": 22,
+    "word": "大統領",
+    "reading": "だ魅うりょう",
+    "type": "名詞",
+    "meaning": "总统"
+  },
+  {
+    "lesson": 22,
+    "word": "や弗す",
+    "reading": "や弗す",
+    "type": "動詞1",
+    "meaning": "做"
+  },
+  {
+    "lesson": 23,
+    "word": "週末",
+    "reading": "しゅうまつ",
+    "type": "名詞",
+    "meaning": "周末"
+  },
+  {
+    "lesson": 23,
+    "word": "ス另二K",
+    "reading": "ス另二K",
+    "type": "名詞",
+    "meaning": "滑冰,溜冰"
+  },
+  {
+    "lesson": 23,
+    "word": "味",
+    "reading": "あじ",
+    "type": "名詞",
+    "meaning": "口味,（食物的）味道"
+  },
+  {
+    "lesson": 23,
+    "word": "毎回",
+    "reading": "まい和",
+    "type": "名詞",
+    "meaning": "每次,每回"
+  },
+  {
+    "lesson": 23,
+    "word": "通勤",
+    "reading": "つ",
+    "type": "名詞",
+    "meaning": "上下班,通勤"
+  },
+  {
+    "lesson": 23,
+    "word": "船",
+    "reading": "ぶね",
+    "type": "名詞",
+    "meaning": "船"
+  },
+  {
+    "lesson": 23,
+    "word": "生地",
+    "reading": "ぎじ",
+    "type": "名詞",
+    "meaning": "布料，衣料"
+  },
+  {
+    "lesson": 23,
+    "word": "閉店時刻",
+    "reading": "へいてんじこく",
+    "type": "名詞",
+    "meaning": "关门时间"
+  },
+  {
+    "lesson": 23,
+    "word": "卒業式",
+    "reading": "そう義うしき",
+    "type": "名詞",
+    "meaning": "毕业典礼"
+  },
+  {
+    "lesson": 23,
+    "word": "ち顽程す",
+    "reading": "違います",
+    "type": "動詞1",
+    "meaning": "不同，不一样"
+  },
+  {
+    "lesson": 23,
+    "word": "こ後す",
+    "reading": "込みます",
+    "type": "動詞1",
+    "meaning": "拥挤，混杂"
+  },
+  {
+    "lesson": 23,
+    "word": "い",
+    "reading": "濃い",
+    "type": "い形容詞",
+    "meaning": "（口味）重;浓"
+  },
+  {
+    "lesson": 23,
+    "word": "東京駅",
+    "reading": "うえき",
+    "type": "固有名詞",
+    "meaning": "东京站"
+  },
+  {
+    "lesson": 24,
+    "word": "バイキング",
+    "reading": "バイキング",
+    "type": "名詞",
+    "meaning": "郊游,远足"
+  },
+  {
+    "lesson": 24,
+    "word": "みおくり",
+    "reading": "見送り",
+    "type": "名詞",
+    "meaning": "送行，送别"
+  },
+  {
+    "lesson": 24,
+    "word": "間",
+    "reading": "あ床",
+    "type": "名詞",
+    "meaning": "时间,期间"
+  },
+  {
+    "lesson": 24,
+    "word": "すごい",
+    "reading": "すごい",
+    "type": "副詞",
+    "meaning": "惊人的，了不起"
+  },
+  {
+    "lesson": 24,
+    "word": "ミうとう",
+    "reading": "ミうとう",
+    "type": "副詞",
+    "meaning": "终于，终究,到底"
+  },
+  {
+    "lesson": 24,
+    "word": "かならず",
+    "reading": "必ず",
+    "type": "副詞",
+    "meaning": "一定，必定"
+  },
+  {
+    "lesson": 24,
+    "word": "ぜったいに",
+    "reading": "絶対に",
+    "type": "副詞",
+    "meaning": "绝对"
+  },
+  {
+    "lesson": 24,
+    "word": "馬",
+    "reading": "ぱ",
+    "type": "固有名詞",
+    "meaning": "马"
+  },
+  {
+    "lesson": 24,
+    "word": "法律",
+    "reading": "ほうりつ",
+    "type": "名詞",
+    "meaning": "法律"
+  },
+  {
+    "lesson": 24,
+    "word": "お时ます",
+    "reading": "思います",
+    "type": "動詞1",
+    "meaning": "想,思考"
+  },
+  {
+    "lesson": 24,
+    "word": "い确す",
+    "reading": "言います",
+    "type": "動詞1",
+    "meaning": "说,讲"
+  },
+  {
+    "lesson": 24,
+    "word": "さ布虽す",
+    "reading": "探します",
+    "type": "動詞1",
+    "meaning": "找,寻找,寻求"
+  },
+  {
+    "lesson": 24,
+    "word": "わ成羨す",
+    "reading": "笑います",
+    "type": "動詞1",
+    "meaning": "笑"
+  },
+  {
+    "lesson": 24,
+    "word": "や确す",
+    "reading": "や确す",
+    "type": "動詞2",
+    "meaning": "戒,停止,放弃"
+  },
+  {
+    "lesson": 24,
+    "word": "き福す",
+    "reading": "決めます",
+    "type": "動詞2",
+    "meaning": "决定"
+  },
+  {
+    "lesson": 24,
+    "word": "寝坊〜",
+    "reading": "ねぼうします",
+    "type": "動詞3",
+    "meaning": "睡懒觉"
+  },
+  {
+    "lesson": 24,
+    "word": "外出〜",
+    "reading": "がいしゅっします",
+    "type": "動詞3",
+    "meaning": "外出，出去"
+  },
+  {
+    "lesson": 24,
+    "word": "研究〜",
+    "reading": "けんきゅうします",
+    "type": "動詞3",
+    "meaning": "研究"
+  },
+  {
+    "lesson": 24,
+    "word": "おあじい",
+    "reading": "おあじい",
+    "type": "い形容詞",
+    "meaning": "可笑,滑稽"
+  },
+  {
+    "lesson": 24,
+    "word": "いっぱい",
+    "reading": "いっぱい",
+    "type": "副詞",
+    "meaning": "满"
+  }
+]
