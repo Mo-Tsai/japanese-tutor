@@ -2102,9 +2102,9 @@ function speakCurrent() {
 function speakExample() {
   const item = getCurrentItem();
   if (!item?.sentence) return;
-  // Clean ruby markers for TTS
-  const clean = item.sentence.replace(/[^\u3040-\u30FF\u4E00-\u9FFF\s。、！？…]/g, '').trim();
-  speak(clean || item.sentence.replace(/\|[^ ]*/g, '').replace(/ /g, ''));
+  // Extract base text only: "人|ひと" -> "人", strip furigana readings
+  const clean = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
+  speak(clean);
 }
 
 function setSpeed(s) {
