@@ -130,8 +130,19 @@
   .example-jp ruby { margin: 0 1px; }
   .example-jp ruby rt { font-size: 0.5em; color: var(--muted); font-family: 'Noto Serif JP', serif; font-weight: 300; text-align: center; }
   .example-meaning { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
-  .example-meaning-en { font-size: 0.7rem; color: var(--border); font-style: italic; margin-top: 1px; }
-  .word-meaning-en { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 1px; }
+  .example-meaning-en { font-size: 0.7rem; color: var(--muted); font-style: italic; }
+  .word-meaning-en { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+  .en-speak-row { display: flex; align-items: center; gap: 4px; justify-content: center; }
+  .btn-speak-en { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 0 2px; opacity: 0.45; line-height: 1; transition: opacity 0.15s; }
+  .btn-speak-en:hover { opacity: 1; }
+  /* Toggle switches */
+  .ctrl-toggles { display: flex; align-items: center; gap: 14px; justify-content: center; margin-bottom: 10px; }
+  .tog-switch { display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; user-select: none; }
+  .tog-switch input { display: none; }
+  .tog-track { width: 30px; height: 16px; background: rgba(0,0,0,0.1); border-radius: 8px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .tog-track::after { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .tog-switch input:checked + .tog-track { background: var(--accent); }
+  .tog-switch input:checked + .tog-track::after { transform: translateX(14px); }
   .example-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--border); letter-spacing: 0.1em; margin-bottom: 4px; text-transform: uppercase; }
 
   /* PLAY BUTTON */
@@ -369,7 +380,10 @@
 
           <div class="sentence-jp" id="sentenceJp">載入中…</div>
           <div class="sentence-meaning" id="sentenceMeaning"></div>
-          <div class="word-meaning-en" id="wordMeaningEn"></div>
+          <div class="en-speak-row" id="enWordRow" style="display:none;">
+            <span class="word-meaning-en" id="wordMeaningEn"></span>
+            <button class="btn-speak-en" onclick="speakEn('word')" title="Read in English">🔊</button>
+          </div>
           <div class="sentence-type" id="sentenceType"></div>
 
           <!-- Example sentence (shows below word) -->
@@ -377,7 +391,10 @@
             <div class="example-label">例句</div>
             <div class="example-jp" id="exampleJp"></div>
             <div class="example-meaning" id="exampleMeaning"></div>
-            <div class="example-meaning-en" id="exampleMeaningEn"></div>
+            <div class="en-speak-row" id="enSentRow" style="display:none;">
+              <span class="example-meaning-en" id="exampleMeaningEn"></span>
+              <button class="btn-speak-en" onclick="speakEn('sentence')" title="Read in English">🔊</button>
+            </div>
           </div>
         </div>
       </div>
@@ -385,6 +402,18 @@
       <div class="play-area">
         <button class="btn-play" id="btnPlay" onclick="speakCurrent()">🔊</button>
         <div class="play-label" id="playLabel">點擊朗讀</div>
+        <div class="ctrl-toggles">
+          <label class="tog-switch">
+            <input type="checkbox" id="loopToggle" onchange="toggleLoop()">
+            <div class="tog-track"></div>
+            Loop
+          </label>
+          <label class="tog-switch">
+            <input type="checkbox" id="cnToggle" onchange="toggleCnMode()">
+            <div class="tog-track"></div>
+            中日
+          </label>
+        </div>
         <div class="speed-row">
           <span class="speed-label">速度</span>
           <button class="speed-btn" onclick="setSpeed(0.6)" id="spd06">慢</button>
@@ -419,7 +448,6 @@
         <button class="btn" onclick="toggleExample()" id="btnToggleEx">顯示例句</button>
         <button class="btn primary" onclick="speakCurrent()">▶ 朗讀</button>
         <button class="btn" onclick="speakExample()" id="btnSpeakEx" style="display:none;">▶ 例句</button>
-        <button class="btn" id="btnLoop" onclick="toggleLoop()">🔁 連播</button>
       </div>
     </div>
   </div>
@@ -1723,6 +1751,7 @@ let state = {
   speed: 0.85,
   showExample: false,
   isLooping: false,
+  cnMode: false,
   settings: { claudeKey: '' },
   generatedItems: [],
   practiceQueue: [],  // for srs mode
@@ -1858,7 +1887,14 @@ function loadCurrentCard() {
   // Render main word
   document.getElementById('sentenceJp').innerHTML = renderRuby(item.ruby, item.jp);
   document.getElementById('sentenceMeaning').textContent = item.meaning;
-  document.getElementById('wordMeaningEn').textContent = item.meaningEn || '';
+  // English word meaning — show immediately if available, fetch from Jisho if not
+  const _setEnWord = () => {
+    const en = item.meaningEn || '';
+    document.getElementById('wordMeaningEn').textContent = en;
+    document.getElementById('enWordRow').style.display = en ? 'flex' : 'none';
+  };
+  _setEnWord();
+  if (!item.meaningEn) fetchEnglish(item).then(_setEnWord);
   document.getElementById('sentenceBadge').textContent = item.jlpt || '—';
   document.getElementById('sentenceType').textContent = item.type || '';
 
@@ -1886,7 +1922,9 @@ function loadCurrentCard() {
     document.getElementById('exampleBlock').style.display = 'block';
     document.getElementById('exampleJp').innerHTML = renderRuby(item.sentence, item.sentence.replace(/\|[^ ]*/g, '').replace(/[^ ]*\|/g, ''));
     document.getElementById('exampleMeaning').textContent = item.sentenceMeaning || '';
-    document.getElementById('exampleMeaningEn').textContent = item.sentenceMeaningEn || '';
+    const sentEn = item.sentenceMeaningEn || '';
+    document.getElementById('exampleMeaningEn').textContent = sentEn;
+    document.getElementById('enSentRow').style.display = sentEn ? 'flex' : 'none';
   } else {
     document.getElementById('exampleBlock').style.display = 'none';
   }
@@ -2104,18 +2142,85 @@ function getCurrentItem() {
 function speakCurrent() {
   const item = getCurrentItem();
   if (!item) return;
-  speak(item.jp, () => {
-    if (state.isLooping) {
-      setTimeout(() => { nextCard(); setTimeout(speakCurrent, 400); }, 800);
-    }
-  });
+  let rep = 0;
+  function round() {
+    speak(item.jp, () => {
+      rep++;
+      if (rep < 3) {
+        setTimeout(round, 500);
+      } else if (state.cnMode && item.meaning) {
+        setTimeout(() => speakChinese(item.meaning, _afterSpeak), 400);
+      } else {
+        _afterSpeak();
+      }
+    });
+  }
+  round();
+}
+
+function _afterSpeak() {
+  if (state.isLooping) {
+    setTimeout(() => { nextCard(); setTimeout(speakCurrent, 400); }, 800);
+  }
 }
 
 function toggleLoop() {
-  state.isLooping = !state.isLooping;
-  const btn = document.getElementById('btnLoop');
-  btn.classList.toggle('primary', state.isLooping);
-  btn.textContent = state.isLooping ? '🔁 連播中' : '🔁 連播';
+  state.isLooping = document.getElementById('loopToggle').checked;
+}
+
+function toggleCnMode() {
+  state.cnMode = document.getElementById('cnToggle').checked;
+}
+
+// English TTS — Web Speech API, no key needed
+function speakEn(which) {
+  const item = getCurrentItem();
+  if (!item) return;
+  const text = which === 'word' ? item.meaningEn : item.sentenceMeaningEn;
+  if (!text) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'en-US';
+  utt.rate = 0.9;
+  window.speechSynthesis.speak(utt);
+}
+
+// Chinese TTS — Azure with zh-TW voice
+async function speakChinese(text, onEnd) {
+  const key = localStorage.getItem('azureKey') || '';
+  const region = localStorage.getItem('azureRegion') || 'japaneast';
+  if (!key) { if (onEnd) onEnd(); return; }
+  try {
+    const token = await _getAzureToken(key, region);
+    const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='zh-TW'><voice name='zh-TW-HsiaoYuNeural'>${_xmlEsc(text)}</voice></speak>`;
+    const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' },
+      body: ssml
+    });
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.onended = () => { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+    audio.play();
+  } catch(e) { if (onEnd) onEnd(); }
+}
+
+// Jisho.org — fetch English meaning for cards that don't have it
+const _enCache = (() => { try { return JSON.parse(localStorage.getItem('jptutor_en_v1') || '{}'); } catch(e) { return {}; } })();
+
+async function fetchEnglish(item) {
+  if (item.meaningEn) return;
+  if (_enCache[item.jp] !== undefined) { if (_enCache[item.jp]) item.meaningEn = _enCache[item.jp]; return; }
+  try {
+    const res = await fetch(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(item.jp)}`);
+    const data = await res.json();
+    const defs = data?.data?.[0]?.senses?.[0]?.english_definitions;
+    const en = defs?.length ? defs.slice(0, 2).join('; ') : '';
+    _enCache[item.jp] = en;
+    localStorage.setItem('jptutor_en_v1', JSON.stringify(_enCache));
+    if (en) item.meaningEn = en;
+  } catch(e) { _enCache[item.jp] = ''; }
 }
 
 function speakExample() {
