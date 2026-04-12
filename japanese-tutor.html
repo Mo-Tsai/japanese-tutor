@@ -536,6 +536,15 @@
       </div>
       <div id="scanResults"></div>
     </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-label">🔍 Loop Debug Log</div>
+      <div style="display:flex; gap:8px; margin-bottom:10px;">
+        <button class="btn" onclick="$id('loopLog').textContent=''; _loopLogLines=[];">清除</button>
+        <span id="loopLogStatus" style="font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); align-self:center;"></span>
+      </div>
+      <div id="loopLog" style="font-family:'DM Mono',monospace; font-size:0.68rem; line-height:1.6; background:var(--bg); border-radius:8px; padding:10px; max-height:300px; overflow-y:auto; white-space:pre-wrap; word-break:break-all;"></div>
+    </div>
   </div>
 
   <!-- SETTINGS -->
@@ -1728,6 +1737,20 @@ function intervalLabel(days) {
 // ===== HELPERS =====
 const $id = id => document.getElementById(id);
 
+// Loop debug logger — writes to console AND on-screen panel (visible on mobile)
+let _loopLogLines = [];
+function _dbg(msg) {
+  const t = new Date().toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const line = `${t} ${msg}`;
+  console.log('[L]', msg);
+  _loopLogLines.push(line);
+  if (_loopLogLines.length > 80) _loopLogLines.shift();
+  const el = document.getElementById('loopLog');
+  if (el) { el.textContent = _loopLogLines.join('\n'); el.scrollTop = el.scrollHeight; }
+  const st = document.getElementById('loopLogStatus');
+  if (st) st.textContent = `${_loopLogLines.length} 行`;
+}
+
 // ===== STATE =====
 let _azureToken = null, _azureTokenExpiry = 0;
 let _currentAudio = null;
@@ -1966,6 +1989,7 @@ function _resetExampleMode() {
 
 function _stopAudio() {
   _speakVersion++; // abort any in-flight speak loop
+  _dbg(`_stopAudio → ver bumped to ${_speakVersion}`);
   if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
   _speakEndUI();
 }
@@ -2183,8 +2207,8 @@ async function speak(text, onEnd, verSnap) {
     // force-continue after 12s so the loop never gets stuck
     const _safetyTimer = setTimeout(() => _done(), 12000);
 
-    audio.addEventListener('ended', () => { console.log(`[L] audio ended ver=${verSnap}`); _done(); });
-    audio.addEventListener('error', (e) => { console.log(`[L] audio error ver=${verSnap}`, e?.message); _done('音訊播放失敗'); });
+    audio.addEventListener('ended', () => { _dbg(`audio ended ver=${verSnap}`); _done(); });
+    audio.addEventListener('error', (e) => { _dbg(`audio ERROR ver=${verSnap} ${e?.message||''}`); _done('音訊播放失敗'); });
 
     // Catch play() rejection (iOS autoplay policy)
     const p = audio.play();
@@ -2213,7 +2237,7 @@ function speakCurrent() {
   // Bump version — any in-flight callbacks from a previous call will abort
   _speakVersion++;
   const myVer = _speakVersion;
-  console.log(`[L] speakCurrent ver=${myVer} card=${state.currentIndex} jp=${getCurrentItem()?.jp}`);
+  _dbg(`speakCurrent ver=${myVer} card=${state.currentIndex} jp=${getCurrentItem()?.jp}`);
 
   // Reset to word mode if example was showing
   if (state.showExample) {
@@ -2280,8 +2304,8 @@ function _loopNextCard() {
 }
 
 function _afterSpeak(ver, wasExample) {
-  console.log(`[L] _afterSpeak ver=${ver} cur=${_speakVersion} ex=${wasExample} looping=${state.isLooping}`);
-  if (ver !== undefined && _speakVersion !== ver) { console.log(`[L] _afterSpeak ABORT stale`); return; }
+  _dbg(`_afterSpeak ver=${ver} cur=${_speakVersion} ex=${wasExample} looping=${state.isLooping}`);
+  if (ver !== undefined && _speakVersion !== ver) { _dbg(`ABORT stale ver=${ver} cur=${_speakVersion}`); return; }
   if (state.isLooping) {
     // Remember example mode BEFORE _loopNextCard resets it
     const playExample = wasExample || state.showExample;
