@@ -2131,11 +2131,14 @@ async function speak(text, onEnd, verSnap) {
   // Stop any currently playing audio
   if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
 
+  // Show loading state immediately so toggleSpeak() knows we're busy
+  _speakPlayUI();
+
   try {
     const token = await _getAzureToken(key, region);
 
-    // FIX Bug 2: check version after async fetch — abort if we're stale
-    if (verSnap !== undefined && _speakVersion !== verSnap) { if (onEnd) onEnd(); return; }
+    // Check version after async fetch — abort if we're stale
+    if (verSnap !== undefined && _speakVersion !== verSnap) { _speakEndUI(); if (onEnd) onEnd(); return; }
 
     const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(text)}</prosody></voice></speak>`;
     const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
@@ -2150,14 +2153,14 @@ async function speak(text, onEnd, verSnap) {
     if (!res.ok) throw new Error('TTS 請求失敗 ' + res.status);
     const blob = await res.blob();
 
-    // FIX Bug 2: check version again after second async
-    if (verSnap !== undefined && _speakVersion !== verSnap) { if (onEnd) onEnd(); return; }
+    // Check version again after second async — abort if stale
+    if (verSnap !== undefined && _speakVersion !== verSnap) { _speakEndUI(); if (onEnd) onEnd(); return; }
 
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     _currentAudio = audio;
 
-    // FIX Bug 1: once-guard so onEnded / onerror / play().catch never double-fire onEnd
+    // Once-guard so onended / onerror / play().catch never double-fire onEnd
     let _ended = false;
     const _done = (err) => {
       if (_ended) return; _ended = true;
@@ -2169,10 +2172,7 @@ async function speak(text, onEnd, verSnap) {
     audio.onended = () => _done();
     audio.onerror = () => _done('音訊播放失敗');
 
-    // FIX Bug 6: show play UI only right before actual play
-    _speakPlayUI();
-
-    // FIX Bug 4: catch play() rejection (iOS autoplay policy)
+    // Catch play() rejection (iOS autoplay policy)
     const p = audio.play();
     if (p) p.catch(e => {
       if (e.name !== 'AbortError') _done('播放失敗：需先點擊畫面解鎖音訊');
@@ -2329,7 +2329,8 @@ async function speakChinese(text, onEnd) {
 }
 
 // Jisho.org — fetch English meaning for cards that don't have it
-const _enCache = (() => { try { return JSON.parse(localStorage.getItem('jptutor_en_v1') || '{}'); } catch(e) { return {}; } })();
+// v2: purges v1 cache which incorrectly stored network-timeout failures as ''
+const _enCache = (() => { try { return JSON.parse(localStorage.getItem('jptutor_en_v2') || '{}'); } catch(e) { return {}; } })();
 
 async function fetchEnglish(item) {
   if (item.meaningEn) return;
@@ -2343,9 +2344,16 @@ async function fetchEnglish(item) {
     const defs = data?.data?.[0]?.senses?.[0]?.english_definitions;
     const en = defs?.length ? defs.slice(0, 2).join('; ') : '';
     _enCache[item.jp] = en;
-    localStorage.setItem('jptutor_en_v1', JSON.stringify(_enCache));
+    localStorage.setItem('jptutor_en_v2', JSON.stringify(_enCache));
     if (en) item.meaningEn = en;
-  } catch(e) { _enCache[item.jp] = ''; } // timeout or network error → cache as empty
+  } catch(e) {
+    // Only cache genuine "no data" (HTTP success but empty result).
+    // AbortError = timeout, TypeError = network failure → DON'T cache, allow retry.
+    if (e.name !== 'AbortError' && !(e instanceof TypeError)) {
+      _enCache[item.jp] = '';
+      localStorage.setItem('jptutor_en_v2', JSON.stringify(_enCache));
+    }
+  }
 }
 
 function speakExample() {
