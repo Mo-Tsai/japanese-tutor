@@ -266,9 +266,9 @@
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* FLAG BUTTON */
-  .btn-flag { position: absolute; bottom: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 0.62rem; padding: 3px 9px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); transition: all 0.15s; letter-spacing: 0.04em; }
-  .btn-flag:hover { border-color: var(--bad); color: var(--bad); }
-  .btn-flag.flagged { border-color: var(--bad); color: var(--bad); background: rgba(192,57,43,0.06); }
+  .btn-flag { position: absolute; top: 8px; right: 44px; font-size: 0.75rem; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer; color: var(--border); transition: color 0.15s; padding: 0; line-height: 1; }
+  .btn-flag:hover { color: var(--bad); }
+  .btn-flag.flagged { color: var(--bad); }
 
   /* DEBUG SECTION */
   .debug-row { padding: 10px 12px; border: 1px solid var(--border); background: #fff; display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
@@ -317,10 +317,6 @@
       <span class="hud-val orange" id="hudDue">—</span>
       <span>待複習</span>
     </div>
-    <div class="hud-stat">
-      <span class="hud-val" id="hudFlagged" style="color:var(--bad);">—</span>
-      <span>已標記</span>
-    </div>
   </div>
 
   <nav class="nav-tabs">
@@ -328,7 +324,6 @@
     <button class="nav-tab" onclick="switchSection('library')">題庫</button>
     <button class="nav-tab" onclick="switchSection('stats')">統計</button>
     <button class="nav-tab" onclick="switchSection('generate')">AI</button>
-    <button class="nav-tab" onclick="switchSection('debug')">除錯</button>
     <button class="nav-tab" onclick="switchSection('settings')">設定</button>
   </nav>
 </header>
@@ -592,7 +587,11 @@
     </div>
 
 
-    <div class="card" style="margin-top:16px;">
+    <div style="margin-top:16px; text-align:right;">
+      <button class="btn" style="font-size:0.58rem; color:var(--border); border-color:var(--border);" onclick="switchSection('debug')">除錯工具</button>
+    </div>
+
+    <div class="card" style="margin-top:8px;">
       <div class="card-label">SRS 說明</div>
       <div style="font-size:0.8rem; color:var(--muted); line-height:2;">
         切換到「SRS 模式」後，每張卡可評分：<br>
@@ -2152,8 +2151,6 @@ function updateHUD() {
   document.getElementById('hudTotal').textContent = total;
   document.getElementById('hudMastered').textContent = mastered;
   document.getElementById('hudDue').textContent = due;
-  const hf = document.getElementById('hudFlagged');
-  if (hf) hf.textContent = state.flaggedCards.size || '—';
 }
 
 // ===== LIBRARY =====
@@ -2438,7 +2435,8 @@ function updateFlagBtn(id) {
   if (!btn) return;
   const flagged = state.flaggedCards.has(id);
   btn.classList.toggle('flagged', flagged);
-  btn.textContent = flagged ? '🚩 已標記' : '🚩';
+  btn.textContent = '🚩';
+  btn.title = flagged ? '已標記（點擊取消）' : '回報問題';
 }
 
 function flagFromDebug(id, btn) {
@@ -2631,7 +2629,7 @@ function switchSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['practice','library','stats','generate','debug','settings'][i] === name);
+    t.classList.toggle('active', ['practice','library','stats','generate','settings'][i] === name);
   });
   if (name === 'stats') renderStats();
   if (name === 'library') renderLibrary();
