@@ -2201,9 +2201,8 @@ async function speak(text, onEnd, verSnap) {
       if (err) showToast(err);
       if (onEnd) onEnd();
     };
-    // Safety timeout: if audio.onended never fires (iOS background/lock screen),
-    // force-continue after 12s so loop never stalls
-    const _safetyTimer = setTimeout(() => _done(), 12000);
+    // Safety timeout: if audio.onended never fires, force-continue after 5s
+    const _safetyTimer = setTimeout(() => { _dbg(`safetyTimer fired ver=${verSnap}`); _done(); }, 5000);
 
     audio.onended = () => { _dbg(`ended ver=${verSnap}`); _done(); };
     audio.onerror = () => { _dbg(`error ver=${verSnap}`); _done('音訊播放失敗'); };
@@ -2211,14 +2210,18 @@ async function speak(text, onEnd, verSnap) {
     // Show play UI right before actual play (original working order)
     _speakPlayUI();
 
-    // iOS Safari rejects audio.play() when page is backgrounded (NotAllowedError).
-    // In that case the audio is still playing — just silently ignore the rejection
-    // so the loop continues. Only abort on AbortError (we paused it intentionally).
     const p = audio.play();
     if (p) p.catch(e => {
       _dbg(`play() rejected: ${e.name}`);
-      if (e.name === 'AbortError') _done(); // we stopped it on purpose
-      // NotAllowedError / NotSupportedError on iOS background: audio still plays, ignore
+      // Always call _done() on rejection so loop doesn't stall waiting for onended.
+      // Don't show toast for NotAllowedError (iOS background) — just silently advance.
+      if (e.name === 'NotAllowedError' || e.name === 'NotSupportedError') {
+        _done(); // silent advance, no toast
+      } else if (e.name !== 'AbortError') {
+        _done('播放失敗：需先點擊畫面解鎖音訊');
+      } else {
+        _done(); // AbortError = we stopped it intentionally
+      }
     });
   } catch (e) {
     _currentAudio = null;
