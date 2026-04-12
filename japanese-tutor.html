@@ -35,6 +35,7 @@
     min-height: 100vh;
     max-width: 480px;
     margin: 0 auto;
+    padding-bottom: 145px;
   }
 
   header {
@@ -50,21 +51,7 @@
   header h1 { font-family: 'Shippori Mincho', serif; font-size: 1.3rem; letter-spacing: 0.08em; }
   .header-sub { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.12em; }
 
-  /* Progress HUD */
-  .hud { display: flex; gap: 14px; align-items: center; margin-left: auto; flex-wrap: wrap; }
-  .hud-stat { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.06em; display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .hud-val { font-size: 0.9rem; font-weight: 400; color: var(--ink); line-height: 1; }
-  .hud-val.green { color: var(--good); }
-  .hud-val.orange { color: var(--warn); }
-
-  .nav-tabs { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .nav-tab { padding: 6px 14px; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.06em; cursor: pointer; background: transparent; border: none; border-right: 1px solid var(--border); color: var(--muted); transition: all 0.15s; }
-  .nav-tab:last-child { border-right: none; }
-  .nav-tab.active { background: var(--accent); color: #fff; }
-  .nav-tab:hover:not(.active) { background: var(--paper2); }
-
   main { padding: 16px 14px; }
-  body { padding-bottom: 145px; }
   .section { display: none; }
   .section.active { display: block; }
 
@@ -138,7 +125,6 @@
   .btn-speak-en { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 0 2px; opacity: 0.45; line-height: 1; transition: opacity 0.15s; }
   .btn-speak-en:hover { opacity: 1; }
   /* Toggle switches */
-  .ctrl-toggles { display: flex; align-items: center; gap: 14px; justify-content: center; margin-bottom: 10px; }
   .tog-switch { display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; user-select: none; }
   .tog-switch input { display: none; }
   .tog-track { width: 30px; height: 16px; background: rgba(0,0,0,0.1); border-radius: 8px; position: relative; transition: background 0.2s; flex-shrink: 0; }
@@ -147,23 +133,7 @@
   .tog-switch input:checked + .tog-track::after { transform: translateX(14px); }
   .example-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--border); letter-spacing: 0.1em; margin-bottom: 4px; text-transform: uppercase; }
 
-  /* PLAY BUTTON */
-  .play-area { text-align: center; margin: 6px 0 14px; }
-  .btn-play {
-    width: 68px; height: 68px; border-radius: 50%;
-    border: 2px solid var(--accent); background: var(--paper);
-    cursor: pointer; font-size: 1.6rem; transition: all 0.2s;
-    display: inline-flex; align-items: center; justify-content: center;
-    box-shadow: 0 2px 10px rgba(201,114,126,0.15);
-  }
-  .btn-play:hover { background: var(--paper2); transform: scale(1.05); }
-  .btn-play.playing { border-color: var(--good); animation: pulse-green 1s infinite; }
-  @keyframes pulse-green { 0%,100%{box-shadow:0 0 0 0 rgba(45,106,79,0.3)} 50%{box-shadow:0 0 0 12px rgba(45,106,79,0)} }
-  .play-label { font-family: 'DM Mono', monospace; font-size: 0.64rem; color: var(--muted); margin-top: 6px; letter-spacing: 0.06em; }
-
   /* SPEED */
-  .speed-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
-  .speed-label { font-family: 'DM Mono', monospace; font-size: 0.62rem; color: var(--muted); letter-spacing: 0.06em; }
   .speed-btn { font-family: 'DM Mono', monospace; font-size: 0.63rem; padding: 4px 11px; border: 1px solid var(--border); border-radius: 20px; background: transparent; cursor: pointer; color: var(--muted); transition: all 0.12s; }
   .speed-btn.active,.speed-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
@@ -186,7 +156,6 @@
   .srs-btn.easy:hover { background: var(--gold); color: #fff; }
 
   /* NAV */
-  .practice-nav { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
   .btn { font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.06em; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; transition: all 0.15s; color: var(--ink); }
   .btn:hover { background: var(--paper2); border-color: var(--muted); }
   .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
@@ -432,7 +401,7 @@
   <div class="section" id="section-library">
     <div class="search-row">
       <input class="search-input" id="searchInput" placeholder="搜尋單字、讀音、中文…" oninput="renderLibrary()">
-      <button class="btn" onclick="document.getElementById('searchInput').value='';renderLibrary()">✕</button>
+      <button class="btn" onclick="$id('searchInput').value='';renderLibrary()">✕</button>
     </div>
 
     <div class="category-tabs">
@@ -1756,7 +1725,14 @@ function intervalLabel(days) {
   return `${Math.round(days/30)}月`;
 }
 
+// ===== HELPERS =====
+const $id = id => document.getElementById(id);
+
 // ===== STATE =====
+let _azureToken = null, _azureTokenExpiry = 0;
+let _currentAudio = null;
+let _speakVersion = 0;
+
 let state = {
   allItems: [],       // embedded + custom
   customItems: [],    // user-added only
@@ -1796,20 +1772,17 @@ function initData() {
   const ss = localStorage.getItem('jptutor_settings');
   if (ss) {
     state.settings = { ...state.settings, ...JSON.parse(ss) };
-    const ck = document.getElementById('claudeKey');
+    const ck = $id('claudeKey');
     if (ck && state.settings.claudeKey) ck.value = state.settings.claudeKey;
   }
 
   // Azure settings
-  const azKey = localStorage.getItem('azureKey') || '';
-  const azRegion = localStorage.getItem('azureRegion') || 'japaneast';
-  const azVoice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
-  const ki = document.getElementById('azureKeyInput');
-  const ri = document.getElementById('azureRegionInput');
-  const vs = document.getElementById('azureVoiceSelect');
-  if (ki) ki.value = azKey;
-  if (ri) ri.value = azRegion;
-  if (vs) vs.value = azVoice;
+  const ki = $id('azureKeyInput');
+  const ri = $id('azureRegionInput');
+  const vs = $id('azureVoiceSelect');
+  if (ki) ki.value = localStorage.getItem('azureKey') || '';
+  if (ri) ri.value = localStorage.getItem('azureRegion') || 'japaneast';
+  if (vs) vs.value = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
 
   updateStatusDots();
 }
@@ -1874,106 +1847,96 @@ function buildSRSQueue() {
 function loadCurrentCard() {
   speechSynthesis.cancel && speechSynthesis.cancel();
 
-  let items = practiceItems();
+  const items = practiceItems();
   if (!items.length) {
-    document.getElementById('sentenceJp').innerHTML = '—';
-    document.getElementById('sentenceMeaning').textContent = '無題目';
-    document.getElementById('sentenceCounter').textContent = '0 / 0';
-    document.getElementById('sentenceBadge').textContent = '—';
+    $id('sentenceJp').innerHTML = '—';
+    $id('sentenceMeaning').textContent = '無題目';
+    $id('sentenceCounter').textContent = '0 / 0';
+    $id('sentenceBadge').textContent = '—';
     return;
   }
 
   let item;
   if (state.mode === 'srs') {
     if (!state.practiceQueue.length) {
-      document.getElementById('sentenceJp').innerHTML = '✓ 今日完成';
-      document.getElementById('sentenceMeaning').textContent = '所有到期單字已複習完畢';
-      document.getElementById('sentenceCounter').textContent = '—';
-      document.getElementById('srsIndicator').textContent = '';
-      document.getElementById('srsRating').style.display = 'none';
-      document.getElementById('exampleBlock').style.display = 'none';
+      $id('sentenceJp').innerHTML = '✓ 今日完成';
+      $id('sentenceMeaning').textContent = '所有到期單字已複習完畢';
+      $id('sentenceCounter').textContent = '—';
+      $id('srsIndicator').textContent = '';
+      $id('srsRating').style.display = 'none';
+      $id('exampleBlock').style.display = 'none';
       return;
     }
     item = items.find(i => i.id === state.practiceQueue[0]);
     if (!item) { state.practiceQueue.shift(); loadCurrentCard(); return; }
-    document.getElementById('sentenceCounter').textContent = `待複習 ${state.practiceQueue.length}`;
+    $id('sentenceCounter').textContent = `待複習 ${state.practiceQueue.length}`;
   } else {
     if (state.currentIndex >= items.length) state.currentIndex = 0;
     item = items[state.currentIndex];
-    document.getElementById('sentenceCounter').textContent = `${state.currentIndex + 1} / ${items.length}`;
+    $id('sentenceCounter').textContent = `${state.currentIndex + 1} / ${items.length}`;
   }
 
   // Render main word
-  document.getElementById('sentenceJp').innerHTML = renderRuby(item.ruby, item.jp);
-  document.getElementById('sentenceMeaning').textContent = item.meaning;
+  $id('sentenceJp').innerHTML = renderRuby(item.ruby, item.jp);
+  $id('sentenceMeaning').textContent = item.meaning;
+
   // English word meaning — show immediately if available, fetch from Jisho if not
   const _setEnWord = () => {
     const en = item.meaningEn || '';
-    document.getElementById('wordMeaningEn').textContent = en;
-    document.getElementById('enWordRow').style.display = en ? 'flex' : 'none';
+    $id('wordMeaningEn').textContent = en;
+    $id('enWordRow').style.display = en ? 'flex' : 'none';
   };
-  // Check localStorage cache synchronously before rendering
   if (!item.meaningEn && _enCache[item.jp]) item.meaningEn = _enCache[item.jp];
   _setEnWord();
-  // If still no English, fetch from Jisho quietly (no placeholder flash)
   if (!item.meaningEn) fetchEnglish(item).then(_setEnWord);
-  document.getElementById('sentenceBadge').textContent = item.jlpt || '—';
-  document.getElementById('sentenceType').textContent = item.type || '';
+
+  $id('sentenceBadge').textContent = item.jlpt || '—';
+  $id('sentenceType').textContent = item.type || '';
 
   // SRS indicator
   const srsD = state.srsData[item.id];
-  if (srsD) {
-    const mc = srsD.masteredCount || 0;
-    const dots = '●'.repeat(Math.min(mc, 5)) + '○'.repeat(Math.max(0, 5 - mc));
-    document.getElementById('srsIndicator').textContent = dots;
-  } else {
-    document.getElementById('srsIndicator').textContent = '○○○○○';
-  }
+  const mc = srsD ? (srsD.masteredCount || 0) : 0;
+  $id('srsIndicator').textContent = srsD
+    ? '●'.repeat(Math.min(mc, 5)) + '○'.repeat(Math.max(0, 5 - mc))
+    : '○○○○○';
 
   // Border color based on SRS status
-  const disp = document.getElementById('sentenceDisplay');
+  const disp = $id('sentenceDisplay');
   disp.className = 'sentence-display';
-  if (srsD?.nextReview && new Date(srsD.nextReview) < new Date()) {
-    disp.classList.add('srs-due');
-  } else if (!srsD) {
-    disp.classList.add('srs-new');
-  }
+  if (srsD?.nextReview && new Date(srsD.nextReview) < new Date()) disp.classList.add('srs-due');
+  else if (!srsD) disp.classList.add('srs-new');
 
   // Example sentence
   if (item.sentence && state.showExample) {
-    document.getElementById('exampleBlock').style.display = 'block';
-    document.getElementById('exampleJp').innerHTML = renderRuby(item.sentence, item.sentence.replace(/\|[^ ]*/g, '').replace(/[^ ]*\|/g, ''));
-    document.getElementById('exampleMeaning').textContent = item.sentenceMeaning || '';
+    $id('exampleBlock').style.display = 'block';
+    $id('exampleJp').innerHTML = renderRuby(item.sentence, item.sentence.replace(/\|[^ ]*/g, '').replace(/[^ ]*\|/g, ''));
+    $id('exampleMeaning').textContent = item.sentenceMeaning || '';
     const sentEn = item.sentenceMeaningEn || '';
-    document.getElementById('exampleMeaningEn').textContent = sentEn;
-    document.getElementById('enSentRow').style.display = sentEn ? 'flex' : 'none';
+    $id('exampleMeaningEn').textContent = sentEn;
+    $id('enSentRow').style.display = sentEn ? 'flex' : 'none';
   } else {
-    document.getElementById('exampleBlock').style.display = 'none';
+    $id('exampleBlock').style.display = 'none';
   }
 
   // SRS rating buttons
   if (state.mode === 'srs') {
-    document.getElementById('srsRating').style.display = 'flex';
-    // Preview intervals
+    $id('srsRating').style.display = 'flex';
     const curr = state.srsData[item.id] || { ef: 2.5, interval: 1, reps: 0 };
-    document.getElementById('intAgain').textContent = '明天';
-    document.getElementById('intHard').textContent = intervalLabel(srsNextInterval(curr, 1).interval);
-    document.getElementById('intGood').textContent = intervalLabel(srsNextInterval(curr, 2).interval);
-    document.getElementById('intEasy').textContent = intervalLabel(srsNextInterval(curr, 3).interval);
+    $id('intAgain').textContent = '明天';
+    $id('intHard').textContent = intervalLabel(srsNextInterval(curr, 1).interval);
+    $id('intGood').textContent = intervalLabel(srsNextInterval(curr, 2).interval);
+    $id('intEasy').textContent = intervalLabel(srsNextInterval(curr, 3).interval);
   } else {
-    document.getElementById('srsRating').style.display = 'none';
+    $id('srsRating').style.display = 'none';
   }
 
-  // Example button (always show if card has a sentence)
-  document.getElementById('btnSpeakEx').style.display = item.sentence ? '' : 'none';
+  $id('btnSpeakEx').style.display = item.sentence ? '' : 'none';
 
   // Reset play btn
-  const btnPlay = document.getElementById('btnPlay');
+  const btnPlay = $id('btnPlay');
   if (btnPlay) { btnPlay.classList.remove('playing'); btnPlay.textContent = state.x3Mode ? '▶ 單字 ×3+例' : '▶ 單字'; }
 
-  // Update flag button
   updateFlagBtn(item.id);
-
   updateHUD();
 }
 
@@ -2066,8 +2029,8 @@ function toggleExample() {
 }
 
 function _setExampleMode(on) {
-  const wordBtn = document.getElementById('btnPlay');
-  const sentBtn = document.getElementById('btnSpeakEx');
+  const wordBtn = $id('btnPlay');
+  const sentBtn = $id('btnSpeakEx');
   if (wordBtn) wordBtn.classList.toggle('example-mode', on);
   if (sentBtn) sentBtn.classList.toggle('example-mode', on);
 }
@@ -2102,21 +2065,7 @@ function renderRuby(rubyStr, jpStr) {
   }).join('');
 }
 
-// ===== EXAMPLE SENTENCE RUBY (different format: "あの 人|ひと は...") =====
-function renderSentenceRuby(sentenceStr) {
-  if (!sentenceStr) return '';
-  return sentenceStr.split(' ').map(token => {
-    if (token.includes('|')) {
-      const [base, rt] = token.split('|');
-      return `<ruby>${base}<rt>${rt}</rt></ruby>`;
-    }
-    return token;
-  }).join('');
-}
-
 // ===== AZURE TTS =====
-let _azureToken = null, _azureTokenExpiry = 0;
-
 function _xmlEsc(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -2141,16 +2090,14 @@ async function _getAzureToken(key, region) {
 }
 
 function _speakPlayUI() {
-  const btn = document.getElementById('btnPlay');
+  const btn = $id('btnPlay');
   if (btn) { btn.classList.add('playing'); btn.textContent = '■ 停止'; }
 }
 
 function _speakEndUI() {
-  const btn = document.getElementById('btnPlay');
+  const btn = $id('btnPlay');
   if (btn) { btn.classList.remove('playing'); btn.textContent = state.x3Mode ? '▶ 單字 ×3+例' : '▶ 單字'; }
 }
-
-let _currentAudio = null;
 
 async function speak(text, onEnd) {
   const key = localStorage.getItem('azureKey') || '';
@@ -2204,8 +2151,6 @@ function getCurrentItem() {
   return items[state.currentIndex];
 }
 
-let _speakVersion = 0;
-
 function speakCurrent() {
   // Bump version — any in-flight callbacks from a previous call will abort
   _speakVersion++;
@@ -2235,7 +2180,7 @@ function speakCurrent() {
     }
   }
 
-  function speakExample() {
+  function _speakExampleInRound() {
     if (_speakVersion !== myVer) return;
     if (item.sentence) {
       const clean = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
@@ -2253,7 +2198,7 @@ function speakCurrent() {
       if (rep < reps) {
         setTimeout(round, 500);
       } else if (state.x3Mode) {
-        speakExample();
+        _speakExampleInRound();
       } else {
         afterAll();
       }
@@ -2274,15 +2219,15 @@ function _afterSpeak(ver) {
 }
 
 function toggleLoop() {
-  state.isLooping = document.getElementById('loopToggle').checked;
+  state.isLooping = $id('loopToggle').checked;
 }
 
 function toggleCnMode() {
-  state.cnMode = document.getElementById('cnToggle').checked;
+  state.cnMode = $id('cnToggle').checked;
 }
 
 function toggleX3Mode() {
-  state.x3Mode = document.getElementById('x3Toggle').checked;
+  state.x3Mode = $id('x3Toggle').checked;
   _speakEndUI(); // update button text immediately
 }
 
@@ -2349,7 +2294,7 @@ function setSpeed(s) {
   state.speed = s;
   document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
   const map = { 0.6: 'spd06', 0.85: 'spd085', 1.0: 'spd10' };
-  if (map[s]) document.getElementById(map[s]).classList.add('active');
+  if (map[s]) $id(map[s]).classList.add('active');
 }
 
 // ===== SWIPE =====
@@ -2387,7 +2332,7 @@ document.addEventListener('keydown', e => {
 // ===== HUD =====
 function updateHUD() {
   const items = practiceItems();
-  const counter = document.getElementById('headerCounter');
+  const counter = $id('headerCounter');
   if (counter) counter.textContent = `${state.currentIndex + 1} / ${items.length}`;
 }
 
@@ -2401,8 +2346,8 @@ function switchCategory(cat) {
 }
 
 function renderLibrary() {
-  const list = document.getElementById('itemList');
-  const query = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+  const list = $id('itemList');
+  const query = ($id('searchInput')?.value || '').trim().toLowerCase();
 
   let items = filteredItems();
   if (query) {
@@ -2451,19 +2396,19 @@ function practiceItem(id) {
   if (idx !== -1) state.currentIndex = idx;
   state.mode = 'normal';
   document.querySelectorAll('[id^="mode"]').forEach(b => b.classList.remove('active'));
-  document.getElementById('modeNormal').classList.add('active');
+  $id('modeNormal').classList.add('active');
   switchSection('practice');
   loadCurrentCard();
 }
 
 function addItem() {
-  const jp = document.getElementById('inputJp').value.trim();
-  const reading = document.getElementById('inputReading').value.trim();
-  const meaning = document.getElementById('inputMeaning').value.trim();
-  const ruby = document.getElementById('inputRuby').value.trim();
-  const sentence = document.getElementById('inputSentence').value.trim();
-  const sentenceMeaning = document.getElementById('inputSentenceMeaning').value.trim();
-  const jlpt = document.getElementById('inputJlpt').value;
+  const jp = $id('inputJp').value.trim();
+  const reading = $id('inputReading').value.trim();
+  const meaning = $id('inputMeaning').value.trim();
+  const ruby = $id('inputRuby').value.trim();
+  const sentence = $id('inputSentence').value.trim();
+  const sentenceMeaning = $id('inputSentenceMeaning').value.trim();
+  const jlpt = $id('inputJlpt').value;
   if (!jp || !meaning) { showToast('日文和中文意思為必填'); return; }
   const item = {
     id: 'u_' + Date.now(),
@@ -2475,7 +2420,7 @@ function addItem() {
   saveCustom();
   renderLibrary();
   ['inputJp','inputReading','inputMeaning','inputRuby','inputSentence','inputSentenceMeaning'].forEach(id => {
-    document.getElementById(id).value = '';
+    $id(id).value = '';
   });
   showToast('已新增：' + jp);
 }
@@ -2515,7 +2460,7 @@ function renderStats() {
 
   const pct = total > 0 ? Math.round(mastered / total * 100) : 0;
 
-  document.getElementById('statsGrid').innerHTML = `
+  $id('statsGrid').innerHTML = `
     <div class="stat-box">
       <div class="stat-num">${total}</div>
       <div class="stat-desc">總單字數</div>
@@ -2553,13 +2498,13 @@ function renderStats() {
         <span class="level-count">${lvMastered} / ${lvItems.length}</span>
       </div>`;
   }).join('');
-  document.getElementById('levelBars').innerHTML = barsHtml;
+  $id('levelBars').innerHTML = barsHtml;
 
   // Due list
   const dueItems = state.allItems
     .filter(i => isDue(state.srsData[i.id] || {}))
     .slice(0, 10);
-  document.getElementById('dueList').innerHTML = dueItems.length
+  $id('dueList').innerHTML = dueItems.length
     ? dueItems.map(i => `<span style="margin-right:12px;">${i.jp}</span>`).join('')
       + (due > 10 ? `<span style="color:var(--muted)">…+${due-10}筆</span>` : '')
     : '✓ 今日無待複習';
@@ -2568,15 +2513,15 @@ function renderStats() {
 // ===== AI GENERATE =====
 async function generateItems() {
   if (!state.settings.claudeKey) { showToast('請先填入 Claude API Key'); return; }
-  const topic = document.getElementById('genTopic').value.trim() || '日常生活';
-  const level = document.getElementById('genLevel').value;
-  const type = document.getElementById('genType').value;
-  const count = document.getElementById('genCount').value;
+  const topic = $id('genTopic').value.trim() || '日常生活';
+  const level = $id('genLevel').value;
+  const type = $id('genType').value;
+  const count = $id('genCount').value;
   const typeLabel = type === 'sentence' ? '句子' : '單字';
 
-  document.getElementById('genLoading').style.display = 'block';
-  document.getElementById('genResults').innerHTML = '';
-  document.getElementById('genActions').style.display = 'none';
+  $id('genLoading').style.display = 'block';
+  $id('genResults').innerHTML = '';
+  $id('genActions').style.display = 'none';
   state.generatedItems = [];
 
   const prompt = `你是日語教材設計師。請生成 ${count} 個日語${typeLabel}，主題「${topic}」，難度 JLPT ${level}。
@@ -2604,13 +2549,13 @@ sentence 格式同 ruby 格式。`;
     }));
     renderGenerated();
   } catch (e) {
-    document.getElementById('genResults').innerHTML = `<div style="color:var(--bad);font-size:0.82rem;padding:12px;">生成失敗：${e.message}</div>`;
+    $id('genResults').innerHTML = `<div style="color:var(--bad);font-size:0.82rem;padding:12px;">生成失敗：${e.message}</div>`;
   }
-  document.getElementById('genLoading').style.display = 'none';
+  $id('genLoading').style.display = 'none';
 }
 
 function renderGenerated() {
-  const container = document.getElementById('genResults');
+  const container = $id('genResults');
   if (!state.generatedItems.length) { container.innerHTML = '<div style="color:var(--muted);padding:12px;">無結果</div>'; return; }
   container.innerHTML = state.generatedItems.map((item, idx) => `
     <div class="gen-item">
@@ -2620,27 +2565,23 @@ function renderGenerated() {
       <div class="item-tag">${item.jlpt}</div>
       <button class="btn-sm play" onclick="speak(${JSON.stringify(item.jp)})">▶</button>
     </div>`).join('');
-  document.getElementById('genActions').style.display = 'flex';
+  $id('genActions').style.display = 'flex';
 }
 
-function addAllGenerated() {
+function _addGeneratedItems(selectedOnly) {
   const existing = new Set(state.allItems.map(i => i.jp));
-  const toAdd = state.generatedItems.filter(i => !existing.has(i.jp));
+  const toAdd = state.generatedItems.filter(i => (!selectedOnly || i.selected) && !existing.has(i.jp));
   state.customItems.push(...toAdd); saveCustom(); renderLibrary();
   showToast(`已加入 ${toAdd.length} 個題目`); clearGenerated();
 }
 
-function addSelectedGenerated() {
-  const existing = new Set(state.allItems.map(i => i.jp));
-  const toAdd = state.generatedItems.filter(i => i.selected && !existing.has(i.jp));
-  state.customItems.push(...toAdd); saveCustom(); renderLibrary();
-  showToast(`已加入 ${toAdd.length} 個題目`); clearGenerated();
-}
+function addAllGenerated() { _addGeneratedItems(false); }
+function addSelectedGenerated() { _addGeneratedItems(true); }
 
 function clearGenerated() {
   state.generatedItems = [];
-  document.getElementById('genResults').innerHTML = '';
-  document.getElementById('genActions').style.display = 'none';
+  $id('genResults').innerHTML = '';
+  $id('genActions').style.display = 'none';
 }
 
 // ===== FLAG =====
@@ -2669,7 +2610,7 @@ function toggleFlag() {
 }
 
 function updateFlagBtn(id) {
-  const btn = document.getElementById('btnFlag');
+  const btn = $id('btnFlag');
   if (!btn) return;
   const flagged = state.flaggedCards.has(id);
   btn.classList.toggle('flagged', flagged);
@@ -2698,20 +2639,18 @@ function unflagCard(id, row) {
   saveFlagged();
   updateHUD();
   if (row) row.remove();
-  if (!state.flaggedCards.size) {
-    document.getElementById('flaggedList').innerHTML = '<div style="padding:14px; color:var(--muted); font-family:\'DM Mono\',monospace; font-size:0.78rem;">尚無標記卡片</div>';
-  }
+  if (!state.flaggedCards.size) renderFlagged();
 }
 
 // ===== DEBUG =====
 function renderDebug() {
   renderFlagged();
-  document.getElementById('scanResults').innerHTML = '';
-  document.getElementById('scanStatus').textContent = '';
+  $id('scanResults').innerHTML = '';
+  $id('scanStatus').textContent = '';
 }
 
 function renderFlagged() {
-  const list = document.getElementById('flaggedList');
+  const list = $id('flaggedList');
   if (!list) return;
   const flaggedItems = state.allItems.filter(i => state.flaggedCards.has(i.id));
   if (!flaggedItems.length) {
@@ -2772,8 +2711,8 @@ function scanAllCards() {
     if (cardIssues.length) issues.push({ card, issues: cardIssues });
   });
 
-  const status = document.getElementById('scanStatus');
-  const container = document.getElementById('scanResults');
+  const status = $id('scanStatus');
+  const container = $id('scanResults');
   status.textContent = issues.length ? `發現 ${issues.length} 張問題卡` : '✓ 全部通過';
   status.style.color = issues.length ? 'var(--warn)' : 'var(--good)';
 
@@ -2803,9 +2742,9 @@ function scanAllCards() {
 
 // ===== SETTINGS =====
 function saveSettings() {
-  const key = document.getElementById('azureKeyInput').value.trim();
-  const region = document.getElementById('azureRegionInput').value.trim() || 'japaneast';
-  const voice = document.getElementById('azureVoiceSelect').value;
+  const key = $id('azureKeyInput').value.trim();
+  const region = $id('azureRegionInput').value.trim() || 'japaneast';
+  const voice = $id('azureVoiceSelect').value;
   localStorage.setItem('azureKey', key);
   localStorage.setItem('azureRegion', region);
   localStorage.setItem('azureVoice', voice);
@@ -2815,14 +2754,14 @@ function saveSettings() {
 }
 
 function saveClaude() {
-  state.settings.claudeKey = document.getElementById('claudeKey').value.trim();
+  state.settings.claudeKey = $id('claudeKey').value.trim();
   localStorage.setItem('jptutor_settings', JSON.stringify(state.settings));
   updateStatusDots();
   showToast('Claude Key 已儲存');
 }
 
 async function testAzure() {
-  const status = document.getElementById('ttsStatus');
+  const status = $id('ttsStatus');
   status.textContent = '測試中…';
   status.style.color = 'var(--muted)';
   saveSettings();
@@ -2842,7 +2781,7 @@ async function testAzure() {
 }
 
 async function testClaude() {
-  const result = document.getElementById('testResult');
+  const result = $id('testResult');
   result.innerHTML = '<span class="loading-text">測試中…</span>';
   if (!state.settings.claudeKey) { result.innerHTML = '— API Key 未填入'; return; }
   try {
@@ -2856,22 +2795,22 @@ async function testClaude() {
 }
 
 function updateStatusDots() {
-  const dA = document.getElementById('dotAzure');
+  const dA = $id('dotAzure');
   if (dA) dA.className = 'status-dot ' + (localStorage.getItem('azureKey') ? 'ok' : '');
-  const dC = document.getElementById('dotClaude');
+  const dC = $id('dotClaude');
   if (dC) dC.className = 'status-dot ' + (state.settings.claudeKey ? 'ok' : '');
 }
 
 // ===== NAV =====
 function switchSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  const sec = document.getElementById('section-' + name);
+  const sec = $id('section-' + name);
   if (sec) sec.classList.add('active');
   const labelMap = { practice:'練習', library:'題庫', stats:'統計', settings:'設定' };
   document.querySelectorAll('.tab-btn-bottom').forEach(t => {
     t.classList.toggle('active', t.textContent.trim() === labelMap[name]);
   });
-  const ctrl = document.getElementById('practiceCtrl');
+  const ctrl = $id('practiceCtrl');
   if (ctrl) ctrl.style.display = name === 'practice' ? '' : 'none';
   if (name === 'stats') renderStats();
   if (name === 'library') renderLibrary();
@@ -2880,7 +2819,7 @@ function switchSection(name) {
 
 // ===== TOAST =====
 function showToast(msg) {
-  const t = document.getElementById('toast');
+  const t = $id('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
