@@ -2211,11 +2211,14 @@ async function speak(text, onEnd, verSnap) {
     // Show play UI right before actual play (original working order)
     _speakPlayUI();
 
+    // iOS Safari rejects audio.play() when page is backgrounded (NotAllowedError).
+    // In that case the audio is still playing — just silently ignore the rejection
+    // so the loop continues. Only abort on AbortError (we paused it intentionally).
     const p = audio.play();
     if (p) p.catch(e => {
       _dbg(`play() rejected: ${e.name}`);
-      if (e.name !== 'AbortError') _done('播放失敗：需先點擊畫面解鎖音訊');
-      else _done();
+      if (e.name === 'AbortError') _done(); // we stopped it on purpose
+      // NotAllowedError / NotSupportedError on iOS background: audio still plays, ignore
     });
   } catch (e) {
     _currentAudio = null;
