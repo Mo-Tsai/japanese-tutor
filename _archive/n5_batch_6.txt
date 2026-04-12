@@ -1,0 +1,72 @@
+テスト	テスト	test
+でも	でも	but
+出る	でる	to appear
+テレビ	テレビ	television
+電車	でんしゃ	electric train
+電話	でんわ	a telephone
+戸	と	door (Japanese style)
+～度	～ど	counter for occurrences; ~ degree; ~ point
+ドア	ドア	door (Western style)
+どう	どう	how
+どうぞ	どうぞ	please
+動物	どうぶつ	animal
+どうも	どうも	Thank you; somehow; no matter how hard one may try
+十	(〜を) とお	ten (~)
+遠い	とおい	far (away)
+十日	とおか	ten days; tenth day of the month
+～時	～とき	at the time of ~
+時計	とけい	a watch; a clock
+どこ	どこ	where
+年	とし	year
+図書館	としょかん	library
+どちら	どちら	which (one) (way); where (polite)
+どっち	どっち	which one
+とても	とても	very (much)
+どなた	どなた	who
+どの	どの	which
+飛ぶ	とぶ	to fly
+止まる	とまる	to come to a halt
+土曜日	どようび	Saturday
+鳥	とり	chicken (lit.
+鶏肉	とりにく	chicken meat
+取る	とる	to take (a class); to get (a grade)
+撮る	とる	to take (a photo)
+どれ	どれ	which one
+ない	ない	there isn't
+ナイフ	ナイフ	knife
+長い	ながい	long
+鳴く	なく	to make sound (animal)
+無くす	なくす	to lose something
+なぜ	なぜ	why (same as どうして)
+夏	なつ	summer
+夏休み	なつやすみ	summer vacation
+～など	～など	et cetera
+七つ	ななつ	seven things
+七日	なのか	seven days; seventh day (of the month)
+名前	なまえ	name
+習う	ならう	to learn
+並ぶ	ならぶ	to line up
+並べる	ならべる	to put (things) side by side; to line up
+なる	なる	to become
+何～	なん～	what sort of ~
+二	に	two
+西	にし	west
+～日	～にち	~ day of the month
+日曜日	にちようび	Sunday
+ニュース	ニュース	news
+～人	～にん	counter for people
+脱ぐ	ぬぐ	to take off (clothes)
+温い	ぬるい	lukewarm
+ネクタイ	ネクタイ	tie
+寝る	ねる	to sleep; to go to sleep; to go to bed
+～年	～ねん	~ years
+ノート	ノート	notebook
+登る	のぼる	to climb
+飲み物	のみもの	drink
+飲む	のむ	to drink
+乗る	のる	to get on
+歯	は	tooth
+はい	はい	yes
+～杯	～はい	counter for cupfuls
+灰皿	はいざら	ashtray
+入る	はいる	to enter

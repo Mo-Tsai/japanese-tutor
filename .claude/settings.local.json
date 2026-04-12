@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(du -sh \"/c/Users/user/我的雲端硬碟/自動化測試資料夾/Japanese-tutor/\"*.html)",
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:mo-tsai.github.io)",
+      "Bash(curl -s \"https://raw.githubusercontent.com/Mo-Tsai/japanese-flashcard/main/manifest.json\")",
+      "Bash(curl -sL \"https://raw.githubusercontent.com/Mo-Tsai/japanese-flashcard/main/apple-touch-icon.png\" -o \"/c/Users/user/我的雲端硬碟/自動化測試資料夾/Japanese-tutor/apple-touch-icon.png\")"
+    ]
+  }
+}

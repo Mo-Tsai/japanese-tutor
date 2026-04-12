@@ -1,0 +1,4 @@
+N5 reference set: 569 words, 559 readings
+After migration: N5=600, N4=357, total=957
+cards_data.js written.
+Copied to repo.
