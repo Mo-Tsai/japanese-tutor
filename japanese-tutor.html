@@ -37,17 +37,16 @@
 
   header {
     border-bottom: 1px solid var(--border);
-    padding: 12px 24px;
+    padding: 11px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
     background: var(--paper);
     position: sticky; top: 0; z-index: 100;
-    flex-wrap: wrap;
     box-shadow: 0 1px 8px rgba(0,0,0,0.04);
   }
-  header h1 { font-family: 'Shippori Mincho', serif; font-size: 1.3rem; letter-spacing: 0.08em; }
-  .header-sub { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.12em; }
+  .header-left { display: flex; align-items: baseline; gap: 8px; }
+  header h1 { font-family: 'Shippori Mincho', serif; font-size: 1.15rem; letter-spacing: 0.06em; }
+  .header-sub { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.1em; }
 
   /* Progress HUD */
   .hud { display: flex; gap: 14px; align-items: center; margin-left: auto; flex-wrap: wrap; }
@@ -97,9 +96,10 @@
   .sentence-display.srs-due { border-color: var(--warn); }
   .sentence-display.srs-new { border-color: var(--accent); }
 
-  .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
-  .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); }
-  .srs-indicator { position: absolute; bottom: 10px; right: 14px; font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--muted); }
+  .card-top-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; width: 100%; }
+  .sentence-badge { font-family: 'DM Mono', monospace; font-size: 0.56rem; letter-spacing: 0.08em; padding: 2px 9px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); text-transform: uppercase; flex-shrink: 0; }
+  .sentence-counter { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); margin-left: auto; }
+  .srs-indicator { font-family: 'DM Mono', monospace; font-size: 0.55rem; color: var(--muted); letter-spacing: 0.02em; }
 
   .sentence-jp {
     font-family: 'Shippori Mincho', serif;
@@ -283,7 +283,7 @@
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* FLAG BUTTON */
-  .btn-flag { position: absolute; top: 8px; right: 44px; font-size: 0.75rem; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer; color: var(--border); transition: color 0.15s; padding: 0; line-height: 1; }
+  .btn-flag { font-size: 0.75rem; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer; color: var(--border); transition: color 0.15s; padding: 0; line-height: 1; flex-shrink: 0; }
   .btn-flag:hover { color: var(--bad); }
   .btn-flag.flagged { color: var(--bad); }
 
@@ -300,83 +300,78 @@
   ::-webkit-scrollbar-track { background: var(--paper); }
   ::-webkit-scrollbar-thumb { background: var(--border); }
 
+  /* ── BOTTOM BAR ── */
+  body { padding-bottom: 158px; }
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: var(--paper); border-top: 1px solid var(--border);
+    padding: 10px 18px 14px;
+    box-shadow: 0 -2px 14px rgba(0,0,0,0.06);
+    z-index: 200;
+  }
+  .ctrl-row-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .speed-group { display: flex; gap: 4px; align-items: center; }
+  .nav-row-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+  .btn-nav-bar { width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 999px; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.82rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.12s; }
+  .btn-nav-bar:hover { background: var(--paper2); }
+  .btn-word-bar { flex: 1.4; height: 38px; background: var(--accent); color: #fff; border: none; border-radius: 999px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; transition: filter 0.12s; }
+  .btn-word-bar:hover { filter: brightness(1.08); }
+  .btn-word-bar.playing { background: var(--good); }
+  .btn-sent-bar { flex: 1; height: 38px; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 999px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.04em; transition: all 0.12s; }
+  .btn-sent-bar:hover { background: var(--paper2); }
+  .tab-bar-bottom { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .tab-btn-bottom { flex: 1; padding: 7px 0; font-family: 'DM Mono', monospace; font-size: 0.66rem; letter-spacing: 0.06em; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
+  .tab-btn-bottom:last-child { border-right: none; }
+  .tab-btn-bottom.active { background: var(--accent); color: #fff; }
+
   /* MOBILE */
   @media (max-width: 600px) {
     header { padding: 10px 14px; gap: 8px; }
     header h1 { font-size: 1.1rem; }
-    .hud { gap: 10px; }
-    .hud-stat { font-size: 0.55rem; }
-    .nav-tab { padding: 6px 10px; font-size: 0.62rem; }
     main { padding: 16px 12px; }
     .sentence-jp { font-size: 1.5rem; }
     .srs-btn { padding: 10px 8px; font-size: 0.62rem; }
     .add-form { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
+    .bottom-bar { padding: 8px 12px 12px; }
   }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>日語練習所</h1>
-  <span class="header-sub">JAPANESE TUTOR v2</span>
-
-  <div class="hud">
-    <div class="hud-stat">
-      <span class="hud-val" id="hudTotal">—</span>
-      <span>總計</span>
-    </div>
-    <div class="hud-stat">
-      <span class="hud-val green" id="hudMastered">—</span>
-      <span>已掌握</span>
-    </div>
-    <div class="hud-stat">
-      <span class="hud-val orange" id="hudDue">—</span>
-      <span>待複習</span>
-    </div>
+  <div class="header-left">
+    <h1>日語練習所</h1>
+    <span class="header-sub">標準日本語</span>
   </div>
-
-  <nav class="nav-tabs">
-    <button class="nav-tab active" onclick="switchSection('practice')">練習</button>
-    <button class="nav-tab" onclick="switchSection('library')">題庫</button>
-    <button class="nav-tab" onclick="switchSection('stats')">統計</button>
-    <button class="nav-tab" onclick="switchSection('generate')">AI</button>
-    <button class="nav-tab" onclick="switchSection('settings')">設定</button>
-  </nav>
+  <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted); margin-left:auto;">— / —</span>
 </header>
 
 <main>
 
   <!-- PRACTICE -->
   <div class="section active" id="section-practice">
-    <div class="card">
-      <div style="display:flex; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
-        <div class="card-label" style="margin-bottom:0; flex:1;">當前練習</div>
-
-        <!-- Filter bar -->
+      <div style="display:flex; align-items:center; margin-bottom:12px; gap:8px; flex-wrap:wrap;">
         <div class="filter-bar" style="margin-bottom:0;">
-          <span class="filter-label">JLPT</span>
           <button class="filter-btn active" onclick="setLevelFilter('all')">全部</button>
           <button class="filter-btn" onclick="setLevelFilter('N5')">N5</button>
           <button class="filter-btn" onclick="setLevelFilter('N4')">N4</button>
         </div>
-
-        <div class="mode-row">
-          <span class="mode-label">模式</span>
-          <div class="toggle-wrap">
-            <button class="toggle-btn active" onclick="setMode('normal')" id="modeNormal">順序</button>
-            <button class="toggle-btn" onclick="setMode('srs')" id="modeSRS">SRS</button>
-            <button class="toggle-btn" onclick="setMode('random')" id="modeRandom">隨機</button>
-          </div>
+        <div class="toggle-wrap" style="margin-left:auto;">
+          <button class="toggle-btn active" onclick="setMode('normal')" id="modeNormal">順序</button>
+          <button class="toggle-btn" onclick="setMode('srs')" id="modeSRS">SRS</button>
+          <button class="toggle-btn" onclick="setMode('random')" id="modeRandom">隨機</button>
         </div>
       </div>
 
       <div class="flashcard-wrap" id="flashcardWrap">
         <div class="sentence-display" id="sentenceDisplay">
-          <span class="sentence-badge" id="sentenceBadge">—</span>
-          <span class="sentence-counter" id="sentenceCounter">1 / 1</span>
-          <span class="srs-indicator" id="srsIndicator"></span>
-          <button class="btn-flag" id="btnFlag" onclick="toggleFlag()" title="回報問題">🚩</button>
+          <div class="card-top-row">
+            <span class="sentence-badge" id="sentenceBadge">—</span>
+            <span class="srs-indicator" id="srsIndicator"></span>
+            <span class="sentence-counter" id="sentenceCounter">1 / 1</span>
+            <button class="btn-flag" id="btnFlag" onclick="toggleFlag()" title="回報問題">🚩</button>
+          </div>
 
           <div class="sentence-jp" id="sentenceJp">載入中…</div>
           <div class="sentence-meaning" id="sentenceMeaning"></div>
@@ -396,29 +391,6 @@
               <button class="btn-speak-en" onclick="speakEn('sentence')" title="Read in English">🔊</button>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="play-area">
-        <button class="btn-play" id="btnPlay" onclick="speakCurrent()">🔊</button>
-        <div class="play-label" id="playLabel">點擊朗讀</div>
-        <div class="ctrl-toggles">
-          <label class="tog-switch">
-            <input type="checkbox" id="loopToggle" onchange="toggleLoop()">
-            <div class="tog-track"></div>
-            Loop
-          </label>
-          <label class="tog-switch">
-            <input type="checkbox" id="cnToggle" onchange="toggleCnMode()">
-            <div class="tog-track"></div>
-            中日
-          </label>
-        </div>
-        <div class="speed-row">
-          <span class="speed-label">速度</span>
-          <button class="speed-btn" onclick="setSpeed(0.6)" id="spd06">慢</button>
-          <button class="speed-btn active" onclick="setSpeed(0.85)" id="spd085">中</button>
-          <button class="speed-btn" onclick="setSpeed(1.0)" id="spd10">正常</button>
         </div>
       </div>
 
@@ -442,14 +414,6 @@
         </button>
       </div>
 
-      <div class="practice-nav">
-        <button class="btn" onclick="prevCard()">← 上一題</button>
-        <button class="btn" onclick="nextCard()">下一題 →</button>
-        <button class="btn" onclick="toggleExample()" id="btnToggleEx">顯示例句</button>
-        <button class="btn primary" onclick="speakCurrent()">▶ 朗讀</button>
-        <button class="btn" onclick="speakExample()" id="btnSpeakEx" style="display:none;">▶ 例句</button>
-      </div>
-    </div>
   </div>
 
   <!-- LIBRARY -->
@@ -1749,7 +1713,7 @@ let state = {
   mode: 'normal',     // 'normal'|'srs'|'random'
   currentCategory: 'all',
   speed: 0.85,
-  showExample: false,
+  showExample: true,
   isLooping: false,
   cnMode: false,
   settings: { claudeKey: '' },
@@ -1943,12 +1907,11 @@ function loadCurrentCard() {
   }
 
   // Example button
-  document.getElementById('btnSpeakEx').style.display = (item.sentence && state.showExample) ? 'inline-block' : 'none';
+  document.getElementById('btnSpeakEx').style.display = item.sentence ? 'flex' : 'none';
 
   // Reset play btn
   document.getElementById('btnPlay').classList.remove('playing');
-  document.getElementById('btnPlay').textContent = '🔊';
-  document.getElementById('playLabel').textContent = '點擊朗讀';
+  document.getElementById('btnPlay').textContent = '▶ 單字 ×3';
 
   // Update flag button
   updateFlagBtn(item.id);
@@ -2082,15 +2045,13 @@ async function _getAzureToken(key, region) {
 }
 
 function _speakPlayUI() {
-  document.getElementById('btnPlay').classList.add('playing');
-  document.getElementById('btnPlay').textContent = '🔉';
-  document.getElementById('playLabel').textContent = '播放中…';
+  const btn = document.getElementById('btnPlay');
+  if (btn) { btn.classList.add('playing'); btn.textContent = '■ 停止'; }
 }
 
 function _speakEndUI() {
-  document.getElementById('btnPlay').classList.remove('playing');
-  document.getElementById('btnPlay').textContent = '🔊';
-  document.getElementById('playLabel').textContent = '點擊朗讀';
+  const btn = document.getElementById('btnPlay');
+  if (btn) { btn.classList.remove('playing'); btn.textContent = '▶ 單字 ×3'; }
 }
 
 async function speak(text, onEnd) {
@@ -2272,13 +2233,10 @@ document.addEventListener('keydown', e => {
 
 // ===== HUD =====
 function updateHUD() {
-  const total = state.allItems.length;
-  const mastered = state.allItems.filter(i => (state.srsData[i.id]?.masteredCount || 0) >= 5).length;
-  const due = state.allItems.filter(i => isDue(state.srsData[i.id] || {})).length;
-
-  document.getElementById('hudTotal').textContent = total;
-  document.getElementById('hudMastered').textContent = mastered;
-  document.getElementById('hudDue').textContent = due;
+  const items = practiceItems();
+  const total = items.length;
+  const counter = document.getElementById('headerCounter');
+  if (counter) counter.textContent = `${(state.currentIndex + 1)} / ${total}`;
 }
 
 // ===== LIBRARY =====
@@ -2755,10 +2713,13 @@ function updateStatusDots() {
 // ===== NAV =====
 function switchSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('section-' + name).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['practice','library','stats','generate','settings'][i] === name);
+  const sec = document.getElementById('section-' + name);
+  if (sec) sec.classList.add('active');
+  document.querySelectorAll('.tab-btn-bottom').forEach(t => {
+    t.classList.toggle('active', t.textContent.trim() === {practice:'練習',library:'題庫',stats:'統計',settings:'設定'}[name]);
   });
+  const ctrl = document.getElementById('practiceCtrl');
+  if (ctrl) ctrl.style.display = name === 'practice' ? '' : 'none';
   if (name === 'stats') renderStats();
   if (name === 'library') renderLibrary();
   if (name === 'debug') renderDebug();
@@ -2782,5 +2743,44 @@ function init() {
 
 init();
 </script>
+
+<!-- ── BOTTOM BAR ── -->
+<div class="bottom-bar" id="bottomBar">
+  <!-- Practice controls (hidden on other sections) -->
+  <div id="practiceCtrl">
+    <div class="ctrl-row-bar">
+      <div class="tog-group">
+        <label class="tog-switch">
+          <input type="checkbox" id="loopToggle" onchange="toggleLoop()">
+          <div class="tog-track"></div>
+          連播
+        </label>
+        <label class="tog-switch">
+          <input type="checkbox" id="cnToggle" onchange="toggleCnMode()">
+          <div class="tog-track"></div>
+          中日
+        </label>
+      </div>
+      <div class="speed-group">
+        <button class="speed-btn" onclick="setSpeed(0.6)" id="spd06">慢</button>
+        <button class="speed-btn active" onclick="setSpeed(0.85)" id="spd085">中</button>
+        <button class="speed-btn" onclick="setSpeed(1.0)" id="spd10">快</button>
+      </div>
+    </div>
+    <div class="nav-row-bar">
+      <button class="btn-nav-bar" onclick="prevCard()">◀</button>
+      <button class="btn-word-bar" id="btnPlay" onclick="speakCurrent()">▶ 單字 ×3</button>
+      <button class="btn-sent-bar" id="btnSpeakEx" onclick="speakExample()" style="display:none;">▶ 例句</button>
+      <button class="btn-nav-bar" onclick="nextCard()">▶</button>
+    </div>
+  </div>
+  <!-- Tab bar -->
+  <div class="tab-bar-bottom">
+    <button class="tab-btn-bottom active" onclick="switchSection('practice')">練習</button>
+    <button class="tab-btn-bottom" onclick="switchSection('library')">題庫</button>
+    <button class="tab-btn-bottom" onclick="switchSection('stats')">統計</button>
+    <button class="tab-btn-bottom" onclick="switchSection('settings')">設定</button>
+  </div>
+</div>
 </body>
 </html>
