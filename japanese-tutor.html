@@ -609,7 +609,7 @@
         <label class="tog-switch">
           <input type="checkbox" id="x3Toggle" onchange="toggleX3Mode()">
           <div class="tog-track"></div>
-          ×3+例
+          ×3
         </label>
       </div>
       <div class="speed-group">
@@ -1930,11 +1930,13 @@ function loadCurrentCard() {
     $id('srsRating').style.display = 'none';
   }
 
-  $id('btnSpeakEx').style.display = item.sentence ? '' : 'none';
+  const _exBtn = $id('btnSpeakEx');
+  _exBtn.style.display = item.sentence ? '' : 'none';
+  _exBtn.textContent = state.x3Mode ? '▶ 例句 ×3' : '▶ 例句';
 
   // Reset play btn
   const btnPlay = $id('btnPlay');
-  if (btnPlay) { btnPlay.classList.remove('playing'); btnPlay.textContent = state.x3Mode ? '▶ 單字 ×3+例' : '▶ 單字'; }
+  if (btnPlay) { btnPlay.classList.remove('playing'); btnPlay.textContent = state.x3Mode ? '▶ 單字 ×3' : '▶ 單字'; }
 
   updateFlagBtn(item.id);
   updateHUD();
@@ -2096,7 +2098,7 @@ function _speakPlayUI() {
 
 function _speakEndUI() {
   const btn = $id('btnPlay');
-  if (btn) { btn.classList.remove('playing'); btn.textContent = state.x3Mode ? '▶ 單字 ×3+例' : '▶ 單字'; }
+  if (btn) { btn.classList.remove('playing'); btn.textContent = state.x3Mode ? '▶ 單字 ×3' : '▶ 單字'; }
 }
 
 async function speak(text, onEnd) {
@@ -2228,7 +2230,9 @@ function toggleCnMode() {
 
 function toggleX3Mode() {
   state.x3Mode = $id('x3Toggle').checked;
-  _speakEndUI(); // update button text immediately
+  _speakEndUI();
+  const ex = $id('btnSpeakEx');
+  if (ex) ex.textContent = state.x3Mode ? '▶ 例句 ×3' : '▶ 例句';
 }
 
 // English TTS — Web Speech API, no key needed
@@ -2285,9 +2289,20 @@ async function fetchEnglish(item) {
 function speakExample() {
   const item = getCurrentItem();
   if (!item?.sentence) return;
-  // Extract base text only: "人|ひと" -> "人", strip furigana readings
+  _speakVersion++;
+  const myVer = _speakVersion;
   const clean = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
-  speak(clean);
+  const reps = state.x3Mode ? 3 : 1;
+  let rep = 0;
+  function round() {
+    if (_speakVersion !== myVer) return;
+    speak(clean, () => {
+      if (_speakVersion !== myVer) return;
+      rep++;
+      if (rep < reps) setTimeout(round, 500); else _afterSpeak(myVer);
+    });
+  }
+  round();
 }
 
 function setSpeed(s) {
