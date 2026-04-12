@@ -1880,15 +1880,21 @@ function loadCurrentCard() {
   $id('sentenceJp').innerHTML = renderRuby(item.ruby, item.jp);
   $id('sentenceMeaning').textContent = item.meaning;
 
-  // English word meaning — show immediately if available, fetch from Jisho if not
+  // English word meaning
+  if (!item.meaningEn && _enCache[item.jp]) item.meaningEn = _enCache[item.jp];
+  const _itemId = item.id;
   const _setEnWord = () => {
+    if (getCurrentItem()?.id !== _itemId) return; // stale: user moved on
     const en = item.meaningEn || '';
     $id('wordMeaningEn').textContent = en;
     $id('enWordRow').style.display = en ? 'flex' : 'none';
   };
-  if (!item.meaningEn && _enCache[item.jp]) item.meaningEn = _enCache[item.jp];
   _setEnWord();
-  if (!item.meaningEn) fetchEnglish(item).then(_setEnWord);
+  if (!item.meaningEn) {
+    $id('wordMeaningEn').textContent = '…';
+    $id('enWordRow').style.display = 'flex';
+    fetchEnglish(item).then(_setEnWord);
+  }
 
   $id('sentenceBadge').textContent = item.jlpt || '—';
   $id('sentenceType').textContent = item.type || '';
@@ -2135,11 +2141,17 @@ async function speak(text, onEnd) {
     _currentAudio = audio;
     audio.onended = () => { _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url); if (onEnd) onEnd(); };
     audio.onerror = () => { _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url); showToast('音訊播放失敗'); if (onEnd) onEnd(); };
-    audio.play();
+    // Catch play() Promise rejection (autoplay policy on mobile)
+    const p = audio.play();
+    if (p) p.catch(e => {
+      _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url);
+      if (e.name !== 'AbortError') showToast('播放失敗：' + e.message);
+      if (onEnd) onEnd();
+    });
   } catch (e) {
     _currentAudio = null;
     _speakEndUI();
-    _azureToken = null; // reset token on error
+    _azureToken = null;
     showToast('語音失敗：' + e.message);
     if (onEnd) onEnd();
   }
@@ -2209,12 +2221,24 @@ function speakCurrent() {
   round();
 }
 
+// Loop-only advance: audio already ended naturally, skip _stopAudio so version stays clean
+function _loopNextCard() {
+  _resetExampleMode();
+  const items = practiceItems();
+  if (state.mode === 'random') {
+    state.currentIndex = Math.floor(Math.random() * items.length);
+  } else {
+    state.currentIndex = (state.currentIndex + 1) % items.length;
+  }
+  loadCurrentCard();
+}
+
 function _afterSpeak(ver) {
   if (ver !== undefined && _speakVersion !== ver) return;
   if (state.isLooping) {
     setTimeout(() => {
       if (ver !== undefined && _speakVersion !== ver) return;
-      nextCard();
+      _loopNextCard();
       setTimeout(speakCurrent, 400);
     }, 800);
   }
@@ -2276,14 +2300,17 @@ async function fetchEnglish(item) {
   if (item.meaningEn) return;
   if (_enCache[item.jp] !== undefined) { if (_enCache[item.jp]) item.meaningEn = _enCache[item.jp]; return; }
   try {
-    const res = await fetch(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(item.jp)}`);
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), 5000); // 5s timeout
+    const res = await fetch(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(item.jp)}`, { signal: ctrl.signal });
+    clearTimeout(tid);
     const data = await res.json();
     const defs = data?.data?.[0]?.senses?.[0]?.english_definitions;
     const en = defs?.length ? defs.slice(0, 2).join('; ') : '';
     _enCache[item.jp] = en;
     localStorage.setItem('jptutor_en_v1', JSON.stringify(_enCache));
     if (en) item.meaningEn = en;
-  } catch(e) { _enCache[item.jp] = ''; }
+  } catch(e) { _enCache[item.jp] = ''; } // timeout or network error → cache as empty
 }
 
 function speakExample() {
