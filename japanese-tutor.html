@@ -2216,18 +2216,25 @@ async function speak(text, onEnd, verSnap) {
       if (e.name === 'AbortError') {
         _done(); // intentionally stopped
       } else if (e.name === 'NotAllowedError') {
-        // iOS: page is backgrounded, audio.play() rejected but we should wait
-        // for user to return before continuing — visibilitychange will handle it
+        // iOS: backgrounded — audio.play() rejected. Wait for user to return.
+        // visibilitychange is unreliable on iOS; touchstart is the most reliable signal.
         clearTimeout(_safetyTimer);
-        _dbg('backgrounded — waiting for visibilitychange');
-        const _onVisible = () => {
-          if (document.visibilityState !== 'visible') return;
-          document.removeEventListener('visibilitychange', _onVisible);
+        _dbg('backgrounded — waiting for touch/focus/visibility');
+        let _resumed = false;
+        const _retry = () => {
+          if (_resumed) return; _resumed = true;
+          document.removeEventListener('touchstart', _retry);
+          document.removeEventListener('visibilitychange', _retry);
+          window.removeEventListener('focus', _retry);
           _dbg('returned to foreground, retrying play()');
           const p2 = audio.play();
           if (p2) p2.catch(() => _done());
         };
-        document.addEventListener('visibilitychange', _onVisible);
+        document.addEventListener('touchstart', _retry, { passive: true });
+        document.addEventListener('visibilitychange', _retry);
+        window.addEventListener('focus', _retry);
+        // 60s ultimate backstop so loop never hangs forever
+        setTimeout(() => _retry(), 60000);
       } else {
         _done('播放失敗：需先點擊畫面解鎖音訊');
       }
