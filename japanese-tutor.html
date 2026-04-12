@@ -1917,9 +1917,19 @@ function loadCurrentCard() {
     $id('exampleBlock').style.display = 'block';
     $id('exampleJp').innerHTML = renderRuby(item.sentence, item.sentence.replace(/\|[^ ]*/g, '').replace(/[^ ]*\|/g, ''));
     $id('exampleMeaning').textContent = item.sentenceMeaning || '';
-    const sentEn = item.sentenceMeaningEn || '';
-    $id('exampleMeaningEn').textContent = sentEn;
-    $id('enSentRow').style.display = sentEn ? 'flex' : 'none';
+    const _sentItemId = item.id;
+    const _setSentEn = () => {
+      if (getCurrentItem()?.id !== _sentItemId) return;
+      const sentEn = item.sentenceMeaningEn || '';
+      $id('exampleMeaningEn').textContent = sentEn;
+      $id('enSentRow').style.display = sentEn ? 'flex' : 'none';
+    };
+    _setSentEn();
+    if (!item.sentenceMeaningEn && item.sentenceMeaning) {
+      $id('exampleMeaningEn').textContent = '…';
+      $id('enSentRow').style.display = 'flex';
+      fetchSentenceEnglish(item).then(_setSentEn);
+    }
   } else {
     $id('exampleBlock').style.display = 'none';
   }
@@ -2162,9 +2172,6 @@ async function speak(text, onEnd, verSnap) {
 
     // Once-guard so onended / onerror / play().catch / safety timer never double-fire onEnd
     let _ended = false;
-    // Safety timeout: if audio.onended never fires (iOS background / lock screen bug),
-    // force-continue after 12s so the loop never gets stuck
-    const _safetyTimer = setTimeout(() => _done(), 12000);
     const _done = (err) => {
       if (_ended) return; _ended = true;
       clearTimeout(_safetyTimer);
@@ -2172,6 +2179,9 @@ async function speak(text, onEnd, verSnap) {
       if (err) showToast(err);
       if (onEnd) onEnd();
     };
+    // Safety timeout: if audio.onended never fires (iOS background / lock screen bug),
+    // force-continue after 12s so the loop never gets stuck
+    const _safetyTimer = setTimeout(() => _done(), 12000);
 
     audio.addEventListener('ended', () => _done());
     audio.addEventListener('error', () => _done('音訊播放失敗'));
@@ -2336,29 +2346,43 @@ async function speakChinese(text, onEnd) {
 // v2 cache key (v1 had Jisho CORS failures stored as '' which blocked retries)
 const _enCache = (() => { try { return JSON.parse(localStorage.getItem('jptutor_en_v2') || '{}'); } catch(e) { return {}; } })();
 
-async function fetchEnglish(item) {
-  if (item.meaningEn) return;
-  if (_enCache[item.jp] !== undefined) { if (_enCache[item.jp]) item.meaningEn = _enCache[item.jp]; return; }
+async function _fetchMyMemory(text, langpair, cacheKey) {
+  if (_enCache[cacheKey] !== undefined) return _enCache[cacheKey];
   try {
     const ctrl = new AbortController();
     const tid = setTimeout(() => ctrl.abort(), 8000);
-    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(item.jp)}&langpair=ja|en`, { signal: ctrl.signal });
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${langpair}`, { signal: ctrl.signal });
     clearTimeout(tid);
     const data = await res.json();
     const raw = data?.responseData?.translatedText || '';
-    // MyMemory sometimes echoes back the original Japanese when it has no result
-    const isValid = raw && raw !== item.jp && data?.responseStatus === 200;
+    const isValid = raw && raw !== text && data?.responseStatus === 200;
     const en = isValid ? raw : '';
-    _enCache[item.jp] = en;
+    _enCache[cacheKey] = en;
     localStorage.setItem('jptutor_en_v2', JSON.stringify(_enCache));
-    if (en) item.meaningEn = en;
+    return en;
   } catch(e) {
-    // AbortError = timeout, TypeError = network failure → don't cache, allow retry
     if (e.name !== 'AbortError' && !(e instanceof TypeError)) {
-      _enCache[item.jp] = '';
+      _enCache[cacheKey] = '';
       localStorage.setItem('jptutor_en_v2', JSON.stringify(_enCache));
     }
+    return '';
   }
+}
+
+async function fetchEnglish(item) {
+  if (item.meaningEn) return;
+  const en = await _fetchMyMemory(item.jp, 'ja|en', item.jp);
+  if (en) item.meaningEn = en;
+}
+
+async function fetchSentenceEnglish(item) {
+  if (item.sentenceMeaningEn) return;
+  // Translate from Chinese meaning (more accurate than raw Japanese sentence)
+  const src = item.sentenceMeaning || '';
+  if (!src) return;
+  const cacheKey = '__sent__' + item.id;
+  const en = await _fetchMyMemory(src, 'zh|en', cacheKey);
+  if (en) item.sentenceMeaningEn = en;
 }
 
 function speakExample() {
