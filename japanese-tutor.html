@@ -1737,6 +1737,42 @@ function intervalLabel(days) {
 // ===== HELPERS =====
 const $id = id => document.getElementById(id);
 
+// ===== PRE-FETCH NEXT CARD =====
+// Fetch next card's TTS blob while current audio plays.
+// Allows immediate audio.play() in onended → iOS treats as media continuation → background works.
+let _pf = { url: null, jp: null, ver: null };
+function _clearPrefetch() {
+  if (_pf.url) { try { URL.revokeObjectURL(_pf.url); } catch(e){} }
+  _pf = { url: null, jp: null, ver: null };
+}
+async function _prefetchNext(ver) {
+  if (!state.isLooping || state.mode === 'srs') return;
+  const items = practiceItems();
+  const nextIdx = state.mode === 'random'
+    ? Math.floor(Math.random() * items.length)
+    : (state.currentIndex + 1) % items.length;
+  const nextItem = items[nextIdx];
+  if (!nextItem || _pf.jp === nextItem.jp) return;
+  const key = localStorage.getItem('azureKey') || '';
+  const region = localStorage.getItem('azureRegion') || 'japaneast';
+  const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
+  if (!key) return;
+  _clearPrefetch();
+  _pf.jp = nextItem.jp; _pf.ver = ver;
+  try {
+    const token = await _getAzureToken(key, region);
+    if (_speakVersion !== ver) { _clearPrefetch(); return; }
+    const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(nextItem.jp)}</prosody></voice></speak>`;
+    const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+      method: 'POST', headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' }, body: ssml
+    });
+    if (!res.ok || _speakVersion !== ver) { _clearPrefetch(); return; }
+    const blob = await res.blob();
+    if (_speakVersion !== ver) { _clearPrefetch(); return; }
+    _pf.url = URL.createObjectURL(blob);
+    _dbg(`pf✓ ${nextItem.jp}`);
+  } catch(e) { _clearPrefetch(); _dbg(`pf✗ ${e.message}`); }
+}
 
 // Loop debug logger — writes to console AND on-screen panel (visible on mobile)
 let _loopLogLines = [];
@@ -2210,6 +2246,9 @@ async function speak(text, onEnd, verSnap) {
     // Show play UI right before actual play (original working order)
     _speakPlayUI();
 
+    // While this card plays, pre-fetch next card's TTS blob in background
+    _prefetchNext(verSnap);
+
     const p = audio.play();
     if (p) p.catch(e => {
       _dbg(`play() rejected: ${e.name}`);
@@ -2330,13 +2369,11 @@ function _afterSpeak(ver, wasExample) {
   _dbg(`_afterSpeak ver=${ver} cur=${_speakVersion} ex=${wasExample} looping=${state.isLooping}`);
   if (ver !== undefined && _speakVersion !== ver) { _dbg(`ABORT stale ver=${ver} cur=${_speakVersion}`); return; }
   if (state.isLooping) {
-    // Remember example mode BEFORE _loopNextCard resets it
     const playExample = wasExample || state.showExample;
     setTimeout(() => {
       if (ver !== undefined && _speakVersion !== ver) return;
       _loopNextCard();
       if (playExample) {
-        // Stay in example mode: re-show example then speak it
         setTimeout(() => {
           if (ver !== undefined && _speakVersion !== ver) return;
           state.showExample = true;
@@ -2344,7 +2381,42 @@ function _afterSpeak(ver, wasExample) {
           _setExampleMode(true);
           setTimeout(speakExample, 200);
         }, 400);
+      } else if (_pf.url && _pf.ver === ver) {
+        // Pre-fetch ready: play immediately — no async gap, iOS allows this as media continuation
+        _dbg(`pf▶ ${_pf.jp}`);
+        const pfUrl = _pf.url;
+        _clearPrefetch();
+        _speakVersion++;
+        const myVer = _speakVersion;
+        const pfAudio = new Audio(pfUrl);
+        _currentAudio = pfAudio;
+        let _pfEnded = false;
+        const _pfDone = (err) => {
+          if (_pfEnded) return; _pfEnded = true;
+          clearTimeout(_pfSt);
+          _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(pfUrl);
+          if (err) showToast(err);
+          _afterSpeak(myVer);
+        };
+        const _pfSt = setTimeout(() => { _dbg(`pf safety`); _pfDone(); }, 12000);
+        pfAudio.onended = () => { _dbg(`pf ended`); _pfDone(); };
+        pfAudio.onerror = () => _pfDone('音訊播放失敗');
+        _speakPlayUI();
+        _prefetchNext(myVer); // pre-fetch the card after next
+        const pp = pfAudio.play();
+        if (pp) pp.catch(e => {
+          _dbg(`pf play rejected: ${e.name}`);
+          if (e.name === 'AbortError') _pfDone();
+          else if (e.name === 'NotAllowedError') {
+            clearTimeout(_pfSt);
+            const _r = () => { document.removeEventListener('touchstart', _r); pfAudio.play().catch(() => _pfDone()); };
+            document.addEventListener('touchstart', _r, { once: true, passive: true });
+            setTimeout(_r, 60000);
+          } else _pfDone();
+        });
       } else {
+        // Pre-fetch not ready: fall back to normal async speak
+        _dbg(`pf not ready, falling back`);
         setTimeout(speakCurrent, 400);
       }
     }, 800);
