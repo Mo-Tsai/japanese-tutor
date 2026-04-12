@@ -2183,8 +2183,8 @@ async function speak(text, onEnd, verSnap) {
     // force-continue after 12s so the loop never gets stuck
     const _safetyTimer = setTimeout(() => _done(), 12000);
 
-    audio.addEventListener('ended', () => _done());
-    audio.addEventListener('error', () => _done('音訊播放失敗'));
+    audio.addEventListener('ended', () => { console.log(`[L] audio ended ver=${verSnap}`); _done(); });
+    audio.addEventListener('error', (e) => { console.log(`[L] audio error ver=${verSnap}`, e?.message); _done('音訊播放失敗'); });
 
     // Catch play() rejection (iOS autoplay policy)
     const p = audio.play();
@@ -2213,6 +2213,7 @@ function speakCurrent() {
   // Bump version — any in-flight callbacks from a previous call will abort
   _speakVersion++;
   const myVer = _speakVersion;
+  console.log(`[L] speakCurrent ver=${myVer} card=${state.currentIndex} jp=${getCurrentItem()?.jp}`);
 
   // Reset to word mode if example was showing
   if (state.showExample) {
@@ -2278,13 +2279,27 @@ function _loopNextCard() {
   loadCurrentCard();
 }
 
-function _afterSpeak(ver) {
-  if (ver !== undefined && _speakVersion !== ver) return;
+function _afterSpeak(ver, wasExample) {
+  console.log(`[L] _afterSpeak ver=${ver} cur=${_speakVersion} ex=${wasExample} looping=${state.isLooping}`);
+  if (ver !== undefined && _speakVersion !== ver) { console.log(`[L] _afterSpeak ABORT stale`); return; }
   if (state.isLooping) {
+    // Remember example mode BEFORE _loopNextCard resets it
+    const playExample = wasExample || state.showExample;
     setTimeout(() => {
       if (ver !== undefined && _speakVersion !== ver) return;
       _loopNextCard();
-      setTimeout(speakCurrent, 400);
+      if (playExample) {
+        // Stay in example mode: re-show example then speak it
+        setTimeout(() => {
+          if (ver !== undefined && _speakVersion !== ver) return;
+          state.showExample = true;
+          loadCurrentCard();
+          _setExampleMode(true);
+          setTimeout(speakExample, 200);
+        }, 400);
+      } else {
+        setTimeout(speakCurrent, 400);
+      }
     }, 800);
   }
 }
@@ -2398,7 +2413,7 @@ function speakExample() {
     speak(clean, () => {
       if (_speakVersion !== myVer) return;
       rep++;
-      if (rep < reps) setTimeout(round, 500); else _afterSpeak(myVer);
+      if (rep < reps) setTimeout(round, 500); else _afterSpeak(myVer, true); // wasExample=true
     }, myVer);
   }
   round();
