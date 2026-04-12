@@ -1738,30 +1738,35 @@ function intervalLabel(days) {
 const $id = id => document.getElementById(id);
 
 // ===== iOS AUDIO UNLOCK =====
-// iOS Safari blocks audio.play() in setTimeout/async callbacks unless AudioContext
-// has been resumed during a user gesture. We resume it on first tap/click.
-let _audioCtx = null;
-function _ensureAudioCtx() {
-  if (_audioCtx) return;
+// iOS Safari only allows audio.play() from within a synchronous user gesture.
+// The only reliable workaround: reuse ONE Audio element that was unlocked during
+// the first gesture (iOS unlocks a specific element instance, not new ones).
+let _audioEl = null;
+let _audioElUnlocked = false;
+
+function _getAudioEl() {
+  if (!_audioEl) {
+    _audioEl = new Audio();
+    _audioEl.preload = 'auto';
+  }
+  return _audioEl;
+}
+
+function _unlockAudio() {
+  if (_audioElUnlocked) return;
   try {
-    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    // Play a silent buffer to fully unlock
-    const buf = _audioCtx.createBuffer(1, 1, 22050);
-    const src = _audioCtx.createBufferSource();
-    src.buffer = buf;
-    src.connect(_audioCtx.destination);
-    src.start(0);
+    const el = _getAudioEl();
+    // Play silence to unlock this element instance
+    el.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAA' +
+             'EAAQAARKwAAIhYAQACABAAZGF0YQQAAAAAAA==';
+    const p = el.play();
+    if (p) p.then(() => { el.pause(); el.src = ''; _audioElUnlocked = true; })
+             .catch(() => {});
   } catch(e) {}
 }
-// Resume on every user gesture (iOS suspends ctx between interactions)
-document.addEventListener('touchstart', () => {
-  _ensureAudioCtx();
-  if (_audioCtx?.state === 'suspended') _audioCtx.resume();
-}, { passive: true });
-document.addEventListener('click', () => {
-  _ensureAudioCtx();
-  if (_audioCtx?.state === 'suspended') _audioCtx.resume();
-}, { passive: true });
+
+document.addEventListener('touchstart', _unlockAudio, { passive: true });
+document.addEventListener('click', _unlockAudio, { passive: true });
 
 // Loop debug logger — writes to console AND on-screen panel (visible on mobile)
 let _loopLogLines = [];
@@ -2016,7 +2021,7 @@ function _resetExampleMode() {
 function _stopAudio() {
   _speakVersion++; // abort any in-flight speak loop
   _dbg(`_stopAudio → ver bumped to ${_speakVersion}`);
-  if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
+  if (_currentAudio) { try { _currentAudio.pause(); _currentAudio.src = ''; } catch(e){} _currentAudio = null; }
   _speakEndUI();
 }
 
@@ -2189,7 +2194,7 @@ async function speak(text, onEnd, verSnap) {
   }
 
   // Stop any currently playing audio
-  if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
+  if (_currentAudio) { try { _currentAudio.pause(); _currentAudio.src = ''; } catch(e){} _currentAudio = null; }
 
   // Show loading state immediately so toggleSpeak() knows we're busy
   _speakPlayUI();
@@ -2217,7 +2222,16 @@ async function speak(text, onEnd, verSnap) {
     if (verSnap !== undefined && _speakVersion !== verSnap) { _speakEndUI(); if (onEnd) onEnd(); return; }
 
     const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
+    // Reuse the unlocked Audio element (iOS only allows play() on an element
+    // that was already play()ed during a user gesture — new Audio() creates
+    // a fresh locked element every time)
+    const audio = _getAudioEl();
+    // Remove any old listeners before reusing
+    const oldClone = audio.cloneNode(false);
+    audio.parentNode?.replaceChild(oldClone, audio);
+    // cloneNode doesn't work well for Audio — just reassign src and re-add listeners
+    audio.src = url;
+    audio.load();
     _currentAudio = audio;
 
     // Once-guard so onended / onerror / play().catch / safety timer never double-fire onEnd
@@ -2233,11 +2247,12 @@ async function speak(text, onEnd, verSnap) {
     // force-continue after 12s so the loop never gets stuck
     const _safetyTimer = setTimeout(() => _done(), 12000);
 
-    audio.addEventListener('ended', () => { _dbg(`audio ended ver=${verSnap}`); _done(); });
-    audio.addEventListener('error', (e) => { _dbg(`audio ERROR ver=${verSnap} ${e?.message||''}`); _done('音訊播放失敗'); });
+    // Use one-time listeners to avoid accumulation across reuses
+    const _onEnded = () => { _dbg(`audio ended ver=${verSnap}`); _done(); };
+    const _onError = (e) => { _dbg(`audio ERROR ver=${verSnap} ${e?.message||''}`); _done('音訊播放失敗'); };
+    audio.addEventListener('ended', _onEnded, { once: true });
+    audio.addEventListener('error', _onError, { once: true });
 
-    // Resume AudioContext before play() to handle iOS autoplay restrictions
-    if (_audioCtx?.state === 'suspended') await _audioCtx.resume();
     const p = audio.play();
     if (p) p.catch(e => {
       if (e.name !== 'AbortError') _done('播放失敗：需先點擊畫面解鎖音訊');
