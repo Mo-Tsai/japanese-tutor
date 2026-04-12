@@ -1912,13 +1912,11 @@ function loadCurrentCard() {
     document.getElementById('wordMeaningEn').textContent = en;
     document.getElementById('enWordRow').style.display = en ? 'flex' : 'none';
   };
+  // Check localStorage cache synchronously before rendering
+  if (!item.meaningEn && _enCache[item.jp]) item.meaningEn = _enCache[item.jp];
   _setEnWord();
-  if (!item.meaningEn) {
-    // Show loading placeholder while Jisho fetches
-    document.getElementById('wordMeaningEn').textContent = '…';
-    document.getElementById('enWordRow').style.display = 'flex';
-    fetchEnglish(item).then(_setEnWord);
-  }
+  // If still no English, fetch from Jisho quietly (no placeholder flash)
+  if (!item.meaningEn) fetchEnglish(item).then(_setEnWord);
   document.getElementById('sentenceBadge').textContent = item.jlpt || '—';
   document.getElementById('sentenceType').textContent = item.type || '';
 
