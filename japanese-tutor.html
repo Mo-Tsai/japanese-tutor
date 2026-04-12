@@ -259,6 +259,20 @@
   #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--ink); color: var(--paper); font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.06em; padding: 9px 18px; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 999; }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* FLAG BUTTON */
+  .btn-flag { position: absolute; bottom: 10px; left: 14px; font-family: 'DM Mono', monospace; font-size: 0.62rem; padding: 3px 9px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); transition: all 0.15s; letter-spacing: 0.04em; }
+  .btn-flag:hover { border-color: var(--bad); color: var(--bad); }
+  .btn-flag.flagged { border-color: var(--bad); color: var(--bad); background: rgba(192,57,43,0.06); }
+
+  /* DEBUG SECTION */
+  .debug-row { padding: 10px 12px; border: 1px solid var(--border); background: #fff; display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+  .debug-row.flagged-row { border-left: 3px solid var(--bad); }
+  .debug-row.scan-row { border-left: 3px solid var(--warn); }
+  .debug-id { font-family: 'DM Mono', monospace; font-size: 0.56rem; color: var(--border); }
+  .debug-word { font-family: 'Shippori Mincho', serif; font-size: 0.95rem; }
+  .debug-issue { font-size: 0.68rem; color: var(--warn); font-family: 'DM Mono', monospace; }
+  .debug-actions { display: flex; gap: 4px; margin-top: 2px; flex-wrap: wrap; }
+
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--paper); }
   ::-webkit-scrollbar-thumb { background: var(--border); }
@@ -297,6 +311,10 @@
       <span class="hud-val orange" id="hudDue">—</span>
       <span>待複習</span>
     </div>
+    <div class="hud-stat">
+      <span class="hud-val" id="hudFlagged" style="color:var(--bad);">—</span>
+      <span>已標記</span>
+    </div>
   </div>
 
   <nav class="nav-tabs">
@@ -304,6 +322,7 @@
     <button class="nav-tab" onclick="switchSection('library')">題庫</button>
     <button class="nav-tab" onclick="switchSection('stats')">統計</button>
     <button class="nav-tab" onclick="switchSection('generate')">AI</button>
+    <button class="nav-tab" onclick="switchSection('debug')">除錯</button>
     <button class="nav-tab" onclick="switchSection('settings')">設定</button>
   </nav>
 </header>
@@ -339,6 +358,7 @@
           <span class="sentence-badge" id="sentenceBadge">—</span>
           <span class="sentence-counter" id="sentenceCounter">1 / 1</span>
           <span class="srs-indicator" id="srsIndicator"></span>
+          <button class="btn-flag" id="btnFlag" onclick="toggleFlag()" title="回報問題">🚩</button>
 
           <div class="sentence-jp" id="sentenceJp">載入中…</div>
           <div class="sentence-meaning" id="sentenceMeaning"></div>
@@ -515,6 +535,23 @@
         <button class="btn" onclick="addSelectedGenerated()">加入勾選</button>
         <button class="btn" onclick="clearGenerated()">清除</button>
       </div>
+    </div>
+  </div>
+
+  <!-- DEBUG -->
+  <div class="section" id="section-debug">
+    <div class="card">
+      <div class="card-label">🚩 已標記卡片</div>
+      <div id="flaggedList"><div style="padding:14px; color:var(--muted); font-family:'DM Mono',monospace; font-size:0.78rem;">尚無標記卡片</div></div>
+    </div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-label">自動掃描</div>
+      <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;">
+        <button class="btn primary" onclick="scanAllCards()">▶ 掃描全部 1041 張</button>
+        <span id="scanStatus" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted);"></span>
+      </div>
+      <div id="scanResults"></div>
     </div>
   </div>
 
@@ -1655,6 +1692,7 @@ let state = {
   allItems: [],       // embedded + custom
   customItems: [],    // user-added only
   srsData: {},        // { id: { ef, interval, reps, nextReview, masteredCount } }
+  flaggedCards: new Set(), // flagged card ids
   currentIndex: 0,
   levelFilter: 'all', // 'all'|'N5'|'N4'
   mode: 'normal',     // 'normal'|'srs'|'random'
@@ -1678,6 +1716,9 @@ function initData() {
   // Load SRS data
   const srs = localStorage.getItem('jptutor_srs_v1');
   state.srsData = srs ? JSON.parse(srs) : {};
+
+  // Load flagged
+  loadFlagged();
 
   // Settings
   const ss = localStorage.getItem('jptutor_settings');
@@ -1832,6 +1873,9 @@ function loadCurrentCard() {
   document.getElementById('btnPlay').classList.remove('playing');
   document.getElementById('btnPlay').textContent = '🔊';
   document.getElementById('playLabel').textContent = '點擊朗讀';
+
+  // Update flag button
+  updateFlagBtn(item.id);
 
   updateHUD();
 }
@@ -2052,6 +2096,8 @@ function updateHUD() {
   document.getElementById('hudTotal').textContent = total;
   document.getElementById('hudMastered').textContent = mastered;
   document.getElementById('hudDue').textContent = due;
+  const hf = document.getElementById('hudFlagged');
+  if (hf) hf.textContent = state.flaggedCards.size || '—';
 }
 
 // ===== LIBRARY =====
@@ -2306,6 +2352,163 @@ function clearGenerated() {
   document.getElementById('genActions').style.display = 'none';
 }
 
+// ===== FLAG =====
+function loadFlagged() {
+  const saved = localStorage.getItem('jptutor_flagged_v1');
+  state.flaggedCards = saved ? new Set(JSON.parse(saved)) : new Set();
+}
+
+function saveFlagged() {
+  localStorage.setItem('jptutor_flagged_v1', JSON.stringify([...state.flaggedCards]));
+}
+
+function toggleFlag() {
+  const item = getCurrentItem();
+  if (!item) return;
+  if (state.flaggedCards.has(item.id)) {
+    state.flaggedCards.delete(item.id);
+    showToast('已取消標記：' + item.jp);
+  } else {
+    state.flaggedCards.add(item.id);
+    showToast('🚩 已標記：' + item.jp);
+  }
+  saveFlagged();
+  updateFlagBtn(item.id);
+  updateHUD();
+}
+
+function updateFlagBtn(id) {
+  const btn = document.getElementById('btnFlag');
+  if (!btn) return;
+  const flagged = state.flaggedCards.has(id);
+  btn.classList.toggle('flagged', flagged);
+  btn.textContent = flagged ? '🚩 已標記' : '🚩';
+}
+
+function flagFromDebug(id, btn) {
+  if (state.flaggedCards.has(id)) {
+    state.flaggedCards.delete(id);
+    btn.textContent = '🚩 標記';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  } else {
+    state.flaggedCards.add(id);
+    btn.textContent = '取消標記';
+    btn.style.color = 'var(--bad)';
+    btn.style.borderColor = 'var(--bad)';
+  }
+  saveFlagged();
+  updateHUD();
+}
+
+function unflagCard(id, row) {
+  state.flaggedCards.delete(id);
+  saveFlagged();
+  updateHUD();
+  if (row) row.remove();
+  if (!state.flaggedCards.size) {
+    document.getElementById('flaggedList').innerHTML = '<div style="padding:14px; color:var(--muted); font-family:\'DM Mono\',monospace; font-size:0.78rem;">尚無標記卡片</div>';
+  }
+}
+
+// ===== DEBUG =====
+function renderDebug() {
+  renderFlagged();
+  document.getElementById('scanResults').innerHTML = '';
+  document.getElementById('scanStatus').textContent = '';
+}
+
+function renderFlagged() {
+  const list = document.getElementById('flaggedList');
+  if (!list) return;
+  const flaggedItems = state.allItems.filter(i => state.flaggedCards.has(i.id));
+  if (!flaggedItems.length) {
+    list.innerHTML = '<div style="padding:14px; color:var(--muted); font-family:\'DM Mono\',monospace; font-size:0.78rem;">尚無標記卡片</div>';
+    return;
+  }
+  list.innerHTML = flaggedItems.map(card => `
+    <div class="debug-row flagged-row">
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span class="debug-id">${card.id}</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.58rem; padding:1px 6px; border:1px solid var(--border); color:var(--muted);">${card.jlpt || '—'}</span>
+      </div>
+      <div class="debug-word">${card.jp} <span style="font-size:0.7rem; color:var(--muted); font-family:'Noto Serif JP',serif;"> ${card.reading}</span> <span style="font-size:0.72rem; color:var(--muted);">${card.meaning}</span></div>
+      <div style="font-size:0.72rem; color:var(--muted); margin-top:1px;">${card.sentence || '（無例句）'}</div>
+      <div style="font-size:0.68rem; color:var(--muted);">${card.sentenceMeaning || ''}</div>
+      <div class="debug-actions">
+        <button class="btn-sm play" onclick="speak(${JSON.stringify(card.jp)})">▶ 朗讀</button>
+        <button class="btn-sm" onclick="practiceItem(${JSON.stringify(card.id)})">前往練習</button>
+        <button class="btn-sm danger" onclick="unflagCard(${JSON.stringify(card.id)}, this.closest('.debug-row'))">✕ 取消標記</button>
+      </div>
+    </div>`).join('');
+}
+
+function scanAllCards() {
+  const issues = [];
+  EMBEDDED_WORDS.forEach(card => {
+    const cardIssues = [];
+
+    if (!card.jp) cardIssues.push('jp 為空');
+    if (!card.reading) cardIssues.push('reading 為空');
+    if (!card.meaning) cardIssues.push('meaning 為空');
+    if (!card.sentence) cardIssues.push('sentence 為空');
+    if (!card.sentenceMeaning) cardIssues.push('sentenceMeaning 為空');
+    if (card.sentence && !card.sentenceMeaning) cardIssues.push('有例句但缺中文翻譯');
+
+    if (card.ruby && card.ruby !== card.jp && card.ruby.includes('|')) {
+      card.ruby.split(' ').forEach(token => {
+        if (token.includes('|')) {
+          const parts = token.split('|');
+          if (parts.length !== 2 || !parts[0] || !parts[1]) {
+            cardIssues.push(`ruby 格式異常：「${token}」`);
+          }
+        }
+      });
+    }
+
+    if (card.sentence && card.sentence.includes('|')) {
+      card.sentence.split(' ').forEach(token => {
+        if (token.includes('|')) {
+          const parts = token.split('|');
+          if (parts.length !== 2 || !parts[0] || !parts[1]) {
+            cardIssues.push(`例句 ruby 格式異常：「${token}」`);
+          }
+        }
+      });
+    }
+
+    if (cardIssues.length) issues.push({ card, issues: cardIssues });
+  });
+
+  const status = document.getElementById('scanStatus');
+  const container = document.getElementById('scanResults');
+  status.textContent = issues.length ? `發現 ${issues.length} 張問題卡` : '✓ 全部通過';
+  status.style.color = issues.length ? 'var(--warn)' : 'var(--good)';
+
+  if (!issues.length) {
+    container.innerHTML = '<div style="padding:14px; color:var(--good); font-family:\'DM Mono\',monospace; font-size:0.78rem;">✓ 全部 1041 張通過，未發現格式問題</div>';
+    return;
+  }
+
+  container.innerHTML = issues.map(({ card, issues }) => `
+    <div class="debug-row scan-row">
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <span class="debug-id">${card.id}</span>
+        <span style="font-family:'DM Mono',monospace; font-size:0.58rem; padding:1px 6px; border:1px solid var(--border); color:var(--muted);">${card.jlpt || '—'}</span>
+        ${state.flaggedCards.has(card.id) ? '<span style="color:var(--bad); font-size:0.6rem; font-family:\'DM Mono\',monospace;">🚩 已標記</span>' : ''}
+      </div>
+      <div class="debug-word">${card.jp} <span style="font-size:0.7rem; color:var(--muted); font-family:'Noto Serif JP',serif;"> ${card.reading}</span> <span style="font-size:0.72rem; color:var(--muted);">${card.meaning}</span></div>
+      ${issues.map(i => `<div class="debug-issue">⚠ ${i}</div>`).join('')}
+      <div class="debug-actions">
+        <button class="btn-sm play" onclick="speak(${JSON.stringify(card.jp)})">▶ 朗讀</button>
+        <button class="btn-sm" onclick="practiceItem(${JSON.stringify(card.id)})">前往練習</button>
+        <button class="btn-sm" id="flagBtn_${card.id}" onclick="flagFromDebug(${JSON.stringify(card.id)}, this)" style="${state.flaggedCards.has(card.id) ? 'color:var(--bad);border-color:var(--bad);' : ''}">
+          ${state.flaggedCards.has(card.id) ? '取消標記' : '🚩 標記'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
 // ===== SETTINGS =====
 function saveSettings() {
   state.settings.claudeKey = document.getElementById('claudeKey').value.trim();
@@ -2338,10 +2541,11 @@ function switchSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('section-' + name).classList.add('active');
   document.querySelectorAll('.nav-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['practice','library','stats','generate','settings'][i] === name);
+    t.classList.toggle('active', ['practice','library','stats','generate','debug','settings'][i] === name);
   });
   if (name === 'stats') renderStats();
   if (name === 'library') renderLibrary();
+  if (name === 'debug') renderDebug();
 }
 
 // ===== TOAST =====
