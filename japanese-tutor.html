@@ -2385,7 +2385,8 @@ function _afterSpeak(ver, wasExample) {
         // Pre-fetch ready: play immediately — no async gap, iOS allows this as media continuation
         _dbg(`pf▶ ${_pf.jp}`);
         const pfUrl = _pf.url;
-        _clearPrefetch();
+        // Don't revoke URL here — we still need it. Just reset state.
+        _pf = { url: null, jp: null, ver: null };
         _speakVersion++;
         const myVer = _speakVersion;
         const pfAudio = new Audio(pfUrl);
