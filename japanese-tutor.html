@@ -2166,14 +2166,11 @@ async function speak(text, onEnd, verSnap) {
   // Stop any currently playing audio
   if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
 
-  // Show loading state immediately so toggleSpeak() knows we're busy
-  _speakPlayUI();
-
   try {
     const token = await _getAzureToken(key, region);
 
     // Check version after async fetch — abort if we're stale
-    if (verSnap !== undefined && _speakVersion !== verSnap) { _speakEndUI(); if (onEnd) onEnd(); return; }
+    if (verSnap !== undefined && _speakVersion !== verSnap) { if (onEnd) onEnd(); return; }
 
     const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(text)}</prosody></voice></speak>`;
     const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
@@ -2189,7 +2186,7 @@ async function speak(text, onEnd, verSnap) {
     const blob = await res.blob();
 
     // Check version again after second async — abort if stale
-    if (verSnap !== undefined && _speakVersion !== verSnap) { _speakEndUI(); if (onEnd) onEnd(); return; }
+    if (verSnap !== undefined && _speakVersion !== verSnap) { if (onEnd) onEnd(); return; }
 
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
@@ -2208,8 +2205,11 @@ async function speak(text, onEnd, verSnap) {
     // force-continue after 12s so loop never stalls
     const _safetyTimer = setTimeout(() => _done(), 12000);
 
-    audio.addEventListener('ended', () => { _dbg(`ended ver=${verSnap}`); _done(); }, { once: true });
-    audio.addEventListener('error', () => { _dbg(`error ver=${verSnap}`); _done('音訊播放失敗'); }, { once: true });
+    audio.onended = () => { _dbg(`ended ver=${verSnap}`); _done(); };
+    audio.onerror = () => { _dbg(`error ver=${verSnap}`); _done('音訊播放失敗'); };
+
+    // Show play UI right before actual play (original working order)
+    _speakPlayUI();
 
     const p = audio.play();
     if (p) p.catch(e => {
