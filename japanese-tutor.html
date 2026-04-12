@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>日語練習所</title>
+<link rel="icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="日語練習所">
+<link rel="manifest" href="manifest.json">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Mono:wght@300;400&family=Shippori+Mincho:wght@400;600&display=swap');
 
@@ -585,21 +591,6 @@
       <div id="ttsStatus" style="margin-top:10px; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);"></div>
     </div>
 
-    <div class="card" style="margin-top:14px;">
-      <div class="card-label">Claude API（AI 生成用，選填）</div>
-      <div class="settings-grid">
-        <div class="setting-row">
-          <label class="setting-label">API Key <span class="status-dot" id="dotClaude"></span></label>
-          <input type="password" class="setting-input" id="claudeKey" placeholder="sk-ant-…">
-          <div class="setting-hint">console.anthropic.com → API Keys</div>
-        </div>
-      </div>
-      <div style="display:flex; gap:8px; margin-top:12px;">
-        <button class="btn" onclick="saveClaude()">儲存</button>
-        <button class="btn" onclick="testClaude()">測試連線</button>
-      </div>
-      <div id="testResult" style="margin-top:10px; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);"></div>
-    </div>
 
     <div class="card" style="margin-top:16px;">
       <div class="card-label">SRS 說明</div>
