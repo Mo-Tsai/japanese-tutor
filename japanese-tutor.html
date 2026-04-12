@@ -558,11 +558,35 @@
   <!-- SETTINGS -->
   <div class="section" id="section-settings">
     <div class="card">
-      <div class="card-label">語音播放（瀏覽器內建）</div>
-      <div class="tts-status" id="ttsStatus">檢測中…</div>
+      <div class="card-label">Azure TTS 語音設定</div>
+      <div class="settings-grid">
+        <div class="setting-row">
+          <label class="setting-label">Subscription Key <span class="status-dot" id="dotAzure"></span></label>
+          <input type="password" class="setting-input" id="azureKeyInput" placeholder="貼上 Azure Key…">
+          <div class="setting-hint">portal.azure.com → 語音服務 → 金鑰和端點</div>
+        </div>
+        <div class="setting-row">
+          <label class="setting-label">Region</label>
+          <input class="setting-input" id="azureRegionInput" placeholder="japaneast">
+          <div class="setting-hint">預設：japaneast</div>
+        </div>
+        <div class="setting-row">
+          <label class="setting-label">語音</label>
+          <select class="setting-input" id="azureVoiceSelect">
+            <option value="ja-JP-NanamiNeural">Nanami（女）</option>
+            <option value="ja-JP-KeitaNeural">Keita（男）</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button class="btn primary" onclick="saveSettings()">儲存</button>
+        <button class="btn" onclick="testAzure()">測試語音</button>
+      </div>
+      <div id="ttsStatus" style="margin-top:10px; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);"></div>
     </div>
-    <div class="card">
-      <div class="card-label">Claude API（AI 生成用）</div>
+
+    <div class="card" style="margin-top:14px;">
+      <div class="card-label">Claude API（AI 生成用，選填）</div>
       <div class="settings-grid">
         <div class="setting-row">
           <label class="setting-label">API Key <span class="status-dot" id="dotClaude"></span></label>
@@ -570,12 +594,12 @@
           <div class="setting-hint">console.anthropic.com → API Keys</div>
         </div>
       </div>
+      <div style="display:flex; gap:8px; margin-top:12px;">
+        <button class="btn" onclick="saveClaude()">儲存</button>
+        <button class="btn" onclick="testClaude()">測試連線</button>
+      </div>
+      <div id="testResult" style="margin-top:10px; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);"></div>
     </div>
-    <div style="display:flex; gap:8px; margin-top:4px;">
-      <button class="btn primary" onclick="saveSettings()">儲存</button>
-      <button class="btn" onclick="testClaude()">測試連線</button>
-    </div>
-    <div id="testResult" style="margin-top:12px; font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);"></div>
 
     <div class="card" style="margin-top:16px;">
       <div class="card-label">SRS 說明</div>
@@ -1726,8 +1750,20 @@ function initData() {
     state.settings = { ...state.settings, ...JSON.parse(ss) };
     const ck = document.getElementById('claudeKey');
     if (ck && state.settings.claudeKey) ck.value = state.settings.claudeKey;
-    updateStatusDots();
   }
+
+  // Azure settings
+  const azKey = localStorage.getItem('azureKey') || '';
+  const azRegion = localStorage.getItem('azureRegion') || 'japaneast';
+  const azVoice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
+  const ki = document.getElementById('azureKeyInput');
+  const ri = document.getElementById('azureRegionInput');
+  const vs = document.getElementById('azureVoiceSelect');
+  if (ki) ki.value = azKey;
+  if (ri) ri.value = azRegion;
+  if (vs) vs.value = azVoice;
+
+  updateStatusDots();
 }
 
 function saveCustom() {
@@ -1979,51 +2015,80 @@ function renderSentenceRuby(sentenceStr) {
   }).join('');
 }
 
-// ===== TTS =====
-let ttsVoice = null;
+// ===== AZURE TTS =====
+let _azureToken = null, _azureTokenExpiry = 0;
 
-function initTTS() {
-  const status = document.getElementById('ttsStatus');
-  if (!('speechSynthesis' in window)) {
-    status.textContent = '✗ 此瀏覽器不支援語音';
-    return;
-  }
-  const loadVoices = () => {
-    const voices = speechSynthesis.getVoices();
-    const jaVoices = voices.filter(v => v.lang.startsWith('ja'));
-    if (jaVoices.length) {
-      ttsVoice = jaVoices.find(v => v.name.includes('Kyoko') || v.name.includes('O-Ren') || v.name.includes('Female')) || jaVoices[0];
-      status.innerHTML = `✓ 語音就緒：<strong>${ttsVoice.name}</strong>（共 ${jaVoices.length} 個日語語音）`;
-      status.style.color = 'var(--good)';
-    } else {
-      status.textContent = '— 未偵測到日語語音，請確認系統已安裝日語語言包';
-      status.style.color = 'var(--warn)';
-    }
-  };
-  if (speechSynthesis.getVoices().length) loadVoices();
-  else speechSynthesis.onvoiceschanged = loadVoices;
+function _xmlEsc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function speak(text, onEnd) {
-  if (!('speechSynthesis' in window)) { showToast('此瀏覽器不支援語音'); return; }
-  speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'ja-JP';
-  utter.rate = state.speed;
-  utter.pitch = 1.0;
-  if (ttsVoice) utter.voice = ttsVoice;
-  utter.onstart = () => {
-    document.getElementById('btnPlay').classList.add('playing');
-    document.getElementById('btnPlay').textContent = '🔉';
-    document.getElementById('playLabel').textContent = '播放中…';
-  };
-  utter.onend = utter.onerror = () => {
-    document.getElementById('btnPlay').classList.remove('playing');
-    document.getElementById('btnPlay').textContent = '🔊';
-    document.getElementById('playLabel').textContent = '點擊朗讀';
+function _ssmlRate() {
+  if (state.speed <= 0.65) return '-30%';
+  if (state.speed <= 0.88) return '-10%';
+  return '0%';
+}
+
+async function _getAzureToken(key, region) {
+  const now = Date.now();
+  if (_azureToken && now < _azureTokenExpiry) return _azureToken;
+  const res = await fetch(`https://${region}.api.cognitive.microsoft.com/sts/v1.0/issueToken`, {
+    method: 'POST',
+    headers: { 'Ocp-Apim-Subscription-Key': key }
+  });
+  if (!res.ok) throw new Error('Token 取得失敗 ' + res.status);
+  _azureToken = await res.text();
+  _azureTokenExpiry = now + 9 * 60 * 1000;
+  return _azureToken;
+}
+
+function _speakPlayUI() {
+  document.getElementById('btnPlay').classList.add('playing');
+  document.getElementById('btnPlay').textContent = '🔉';
+  document.getElementById('playLabel').textContent = '播放中…';
+}
+
+function _speakEndUI() {
+  document.getElementById('btnPlay').classList.remove('playing');
+  document.getElementById('btnPlay').textContent = '🔊';
+  document.getElementById('playLabel').textContent = '點擊朗讀';
+}
+
+async function speak(text, onEnd) {
+  const key = localStorage.getItem('azureKey') || '';
+  const region = localStorage.getItem('azureRegion') || 'japaneast';
+  const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
+
+  if (!key) {
+    showToast('請先在「設定」填入 Azure Key');
+    return;
+  }
+
+  _speakPlayUI();
+  try {
+    const token = await _getAzureToken(key, region);
+    const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(text)}</prosody></voice></speak>`;
+    const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/ssml+xml',
+        'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3'
+      },
+      body: ssml
+    });
+    if (!res.ok) throw new Error('TTS 請求失敗 ' + res.status);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.onended = () => { _speakEndUI(); URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+    audio.onerror = () => { _speakEndUI(); URL.revokeObjectURL(url); showToast('音訊播放失敗'); };
+    audio.play();
+  } catch (e) {
+    _speakEndUI();
+    _azureToken = null; // reset token on error
+    showToast('語音失敗：' + e.message);
     if (onEnd) onEnd();
-  };
-  speechSynthesis.speak(utter);
+  }
 }
 
 function getCurrentItem() {
@@ -2511,10 +2576,42 @@ function scanAllCards() {
 
 // ===== SETTINGS =====
 function saveSettings() {
+  const key = document.getElementById('azureKeyInput').value.trim();
+  const region = document.getElementById('azureRegionInput').value.trim() || 'japaneast';
+  const voice = document.getElementById('azureVoiceSelect').value;
+  localStorage.setItem('azureKey', key);
+  localStorage.setItem('azureRegion', region);
+  localStorage.setItem('azureVoice', voice);
+  _azureToken = null; // reset token on key change
+  updateStatusDots();
+  showToast('設定已儲存');
+}
+
+function saveClaude() {
   state.settings.claudeKey = document.getElementById('claudeKey').value.trim();
   localStorage.setItem('jptutor_settings', JSON.stringify(state.settings));
   updateStatusDots();
-  showToast('設定已儲存');
+  showToast('Claude Key 已儲存');
+}
+
+async function testAzure() {
+  const status = document.getElementById('ttsStatus');
+  status.textContent = '測試中…';
+  status.style.color = 'var(--muted)';
+  saveSettings();
+  const key = localStorage.getItem('azureKey') || '';
+  const region = localStorage.getItem('azureRegion') || 'japaneast';
+  if (!key) { status.textContent = '— 請先填入 Azure Key'; return; }
+  try {
+    _azureToken = null;
+    await _getAzureToken(key, region);
+    status.textContent = '✓ 連線成功';
+    status.style.color = 'var(--good)';
+    speak('テスト');
+  } catch (e) {
+    status.textContent = '✗ 失敗：' + e.message;
+    status.style.color = 'var(--bad)';
+  }
 }
 
 async function testClaude() {
@@ -2532,6 +2629,8 @@ async function testClaude() {
 }
 
 function updateStatusDots() {
+  const dA = document.getElementById('dotAzure');
+  if (dA) dA.className = 'status-dot ' + (localStorage.getItem('azureKey') ? 'ok' : '');
   const dC = document.getElementById('dotClaude');
   if (dC) dC.className = 'status-dot ' + (state.settings.claudeKey ? 'ok' : '');
 }
@@ -2559,7 +2658,6 @@ function showToast(msg) {
 // ===== INIT =====
 function init() {
   initData();
-  initTTS();
   loadCurrentCard();
   updateHUD();
   renderLibrary();
