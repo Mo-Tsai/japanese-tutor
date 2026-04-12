@@ -2160,17 +2160,21 @@ async function speak(text, onEnd, verSnap) {
     const audio = new Audio(url);
     _currentAudio = audio;
 
-    // Once-guard so onended / onerror / play().catch never double-fire onEnd
+    // Once-guard so onended / onerror / play().catch / safety timer never double-fire onEnd
     let _ended = false;
+    // Safety timeout: if audio.onended never fires (iOS background / lock screen bug),
+    // force-continue after 12s so the loop never gets stuck
+    const _safetyTimer = setTimeout(() => _done(), 12000);
     const _done = (err) => {
       if (_ended) return; _ended = true;
+      clearTimeout(_safetyTimer);
       _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url);
       if (err) showToast(err);
       if (onEnd) onEnd();
     };
 
-    audio.onended = () => _done();
-    audio.onerror = () => _done('音訊播放失敗');
+    audio.addEventListener('ended', () => _done());
+    audio.addEventListener('error', () => _done('音訊播放失敗'));
 
     // Catch play() rejection (iOS autoplay policy)
     const p = audio.play();
@@ -2328,8 +2332,8 @@ async function speakChinese(text, onEnd) {
   } catch(e) { if (onEnd) onEnd(); }
 }
 
-// Jisho.org — fetch English meaning for cards that don't have it
-// v2: purges v1 cache which incorrectly stored network-timeout failures as ''
+// MyMemory translation API — CORS-friendly, free, no key needed
+// v2 cache key (v1 had Jisho CORS failures stored as '' which blocked retries)
 const _enCache = (() => { try { return JSON.parse(localStorage.getItem('jptutor_en_v2') || '{}'); } catch(e) { return {}; } })();
 
 async function fetchEnglish(item) {
@@ -2337,18 +2341,19 @@ async function fetchEnglish(item) {
   if (_enCache[item.jp] !== undefined) { if (_enCache[item.jp]) item.meaningEn = _enCache[item.jp]; return; }
   try {
     const ctrl = new AbortController();
-    const tid = setTimeout(() => ctrl.abort(), 5000); // 5s timeout
-    const res = await fetch(`https://jisho.org/api/v1/search/words?keyword=${encodeURIComponent(item.jp)}`, { signal: ctrl.signal });
+    const tid = setTimeout(() => ctrl.abort(), 8000);
+    const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(item.jp)}&langpair=ja|en`, { signal: ctrl.signal });
     clearTimeout(tid);
     const data = await res.json();
-    const defs = data?.data?.[0]?.senses?.[0]?.english_definitions;
-    const en = defs?.length ? defs.slice(0, 2).join('; ') : '';
+    const raw = data?.responseData?.translatedText || '';
+    // MyMemory sometimes echoes back the original Japanese when it has no result
+    const isValid = raw && raw !== item.jp && data?.responseStatus === 200;
+    const en = isValid ? raw : '';
     _enCache[item.jp] = en;
     localStorage.setItem('jptutor_en_v2', JSON.stringify(_enCache));
     if (en) item.meaningEn = en;
   } catch(e) {
-    // Only cache genuine "no data" (HTTP success but empty result).
-    // AbortError = timeout, TypeError = network failure → DON'T cache, allow retry.
+    // AbortError = timeout, TypeError = network failure → don't cache, allow retry
     if (e.name !== 'AbortError' && !(e instanceof TypeError)) {
       _enCache[item.jp] = '';
       localStorage.setItem('jptutor_en_v2', JSON.stringify(_enCache));
