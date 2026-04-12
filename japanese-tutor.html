@@ -1737,6 +1737,32 @@ function intervalLabel(days) {
 // ===== HELPERS =====
 const $id = id => document.getElementById(id);
 
+// ===== iOS AUDIO UNLOCK =====
+// iOS Safari blocks audio.play() in setTimeout/async callbacks unless AudioContext
+// has been resumed during a user gesture. We resume it on first tap/click.
+let _audioCtx = null;
+function _ensureAudioCtx() {
+  if (_audioCtx) return;
+  try {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Play a silent buffer to fully unlock
+    const buf = _audioCtx.createBuffer(1, 1, 22050);
+    const src = _audioCtx.createBufferSource();
+    src.buffer = buf;
+    src.connect(_audioCtx.destination);
+    src.start(0);
+  } catch(e) {}
+}
+// Resume on every user gesture (iOS suspends ctx between interactions)
+document.addEventListener('touchstart', () => {
+  _ensureAudioCtx();
+  if (_audioCtx?.state === 'suspended') _audioCtx.resume();
+}, { passive: true });
+document.addEventListener('click', () => {
+  _ensureAudioCtx();
+  if (_audioCtx?.state === 'suspended') _audioCtx.resume();
+}, { passive: true });
+
 // Loop debug logger — writes to console AND on-screen panel (visible on mobile)
 let _loopLogLines = [];
 function _dbg(msg) {
@@ -2210,7 +2236,8 @@ async function speak(text, onEnd, verSnap) {
     audio.addEventListener('ended', () => { _dbg(`audio ended ver=${verSnap}`); _done(); });
     audio.addEventListener('error', (e) => { _dbg(`audio ERROR ver=${verSnap} ${e?.message||''}`); _done('音訊播放失敗'); });
 
-    // Catch play() rejection (iOS autoplay policy)
+    // Resume AudioContext before play() to handle iOS autoplay restrictions
+    if (_audioCtx?.state === 'suspended') await _audioCtx.resume();
     const p = audio.play();
     if (p) p.catch(e => {
       if (e.name !== 'AbortError') _done('播放失敗：需先點擊畫面解鎖音訊');
