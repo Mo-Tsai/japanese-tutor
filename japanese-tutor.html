@@ -620,7 +620,7 @@
     </div>
     <div class="nav-row-bar">
       <button class="btn-nav-bar" onclick="prevCard()">◀</button>
-      <button class="btn-word-bar" id="btnPlay" onclick="speakCurrent()">▶ 單字</button>
+      <button class="btn-word-bar" id="btnPlay" onclick="toggleSpeak()">▶ 單字</button>
       <button class="btn-sent-bar" id="btnSpeakEx" onclick="showAndSpeakExample()" style="display:none;">▶ 例句</button>
       <button class="btn-nav-bar" onclick="nextCard()">▶</button>
     </div>
@@ -2107,7 +2107,17 @@ function _speakEndUI() {
   if (btn) { btn.classList.remove('playing'); btn.textContent = state.x3Mode ? '▶ 單字 ×3' : '▶ 單字'; }
 }
 
-async function speak(text, onEnd) {
+// FIX Bug 3: toggle — stop if playing, start if idle
+function toggleSpeak() {
+  if ($id('btnPlay')?.classList.contains('playing')) {
+    _stopAudio();
+  } else {
+    speakCurrent();
+  }
+}
+
+async function speak(text, onEnd, verSnap) {
+  // verSnap: snapshot of _speakVersion at call time; abort if stale before playing
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
@@ -2121,9 +2131,12 @@ async function speak(text, onEnd) {
   // Stop any currently playing audio
   if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
 
-  _speakPlayUI();
   try {
     const token = await _getAzureToken(key, region);
+
+    // FIX Bug 2: check version after async fetch — abort if we're stale
+    if (verSnap !== undefined && _speakVersion !== verSnap) { if (onEnd) onEnd(); return; }
+
     const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(text)}</prosody></voice></speak>`;
     const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
       method: 'POST',
@@ -2136,17 +2149,34 @@ async function speak(text, onEnd) {
     });
     if (!res.ok) throw new Error('TTS 請求失敗 ' + res.status);
     const blob = await res.blob();
+
+    // FIX Bug 2: check version again after second async
+    if (verSnap !== undefined && _speakVersion !== verSnap) { if (onEnd) onEnd(); return; }
+
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     _currentAudio = audio;
-    audio.onended = () => { _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url); if (onEnd) onEnd(); };
-    audio.onerror = () => { _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url); showToast('音訊播放失敗'); if (onEnd) onEnd(); };
-    // Catch play() Promise rejection (autoplay policy on mobile)
+
+    // FIX Bug 1: once-guard so onEnded / onerror / play().catch never double-fire onEnd
+    let _ended = false;
+    const _done = (err) => {
+      if (_ended) return; _ended = true;
+      _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url);
+      if (err) showToast(err);
+      if (onEnd) onEnd();
+    };
+
+    audio.onended = () => _done();
+    audio.onerror = () => _done('音訊播放失敗');
+
+    // FIX Bug 6: show play UI only right before actual play
+    _speakPlayUI();
+
+    // FIX Bug 4: catch play() rejection (iOS autoplay policy)
     const p = audio.play();
     if (p) p.catch(e => {
-      _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url);
-      if (e.name !== 'AbortError') showToast('播放失敗：' + e.message);
-      if (onEnd) onEnd();
+      if (e.name !== 'AbortError') _done('播放失敗：需先點擊畫面解鎖音訊');
+      else _done();
     });
   } catch (e) {
     _currentAudio = null;
@@ -2198,7 +2228,7 @@ function speakCurrent() {
     if (_speakVersion !== myVer) return;
     if (item.sentence) {
       const clean = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
-      setTimeout(() => speak(clean, afterAll), 500);
+      setTimeout(() => speak(clean, afterAll, myVer), 500);
     } else {
       afterAll();
     }
@@ -2216,13 +2246,14 @@ function speakCurrent() {
       } else {
         afterAll();
       }
-    });
+    }, myVer);
   }
   round();
 }
 
 // Loop-only advance: audio already ended naturally, skip _stopAudio so version stays clean
 function _loopNextCard() {
+  if (state.mode === 'srs') return; // FIX Bug 5: SRS has its own queue, don't touch currentIndex
   _resetExampleMode();
   const items = practiceItems();
   if (state.mode === 'random') {
@@ -2288,8 +2319,12 @@ async function speakChinese(text, onEnd) {
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
-    audio.onended = () => { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
-    audio.play();
+    let _done = false;
+    const _end = () => { if (_done) return; _done = true; URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+    audio.onended = _end;
+    audio.onerror = _end;
+    const p = audio.play();
+    if (p) p.catch(_end);
   } catch(e) { if (onEnd) onEnd(); }
 }
 
@@ -2327,7 +2362,7 @@ function speakExample() {
       if (_speakVersion !== myVer) return;
       rep++;
       if (rep < reps) setTimeout(round, 500); else _afterSpeak(myVer);
-    });
+    }, myVer);
   }
   round();
 }
