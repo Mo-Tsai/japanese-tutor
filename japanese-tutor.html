@@ -637,6 +637,11 @@
           <div class="tog-track"></div>
           中日
         </label>
+        <label class="tog-switch">
+          <input type="checkbox" id="x3Toggle" onchange="toggleX3Mode()">
+          <div class="tog-track"></div>
+          ×3+例
+        </label>
       </div>
       <div class="speed-group">
         <button class="speed-btn" onclick="setSpeed(0.6)" id="spd06">慢</button>
@@ -646,7 +651,7 @@
     </div>
     <div class="nav-row-bar">
       <button class="btn-nav-bar" onclick="prevCard()">◀</button>
-      <button class="btn-word-bar" id="btnPlay" onclick="speakCurrent()">▶ 單字 ×3</button>
+      <button class="btn-word-bar" id="btnPlay" onclick="speakCurrent()">▶ 單字</button>
       <button class="btn-sent-bar" id="btnSpeakEx" onclick="showAndSpeakExample()" style="display:none;">▶ 例句</button>
       <button class="btn-nav-bar" onclick="nextCard()">▶</button>
     </div>
@@ -1765,6 +1770,7 @@ let state = {
   showExample: false,
   isLooping: false,
   cnMode: false,
+  x3Mode: false,
   settings: { claudeKey: '' },
   generatedItems: [],
   practiceQueue: [],  // for srs mode
@@ -1907,7 +1913,12 @@ function loadCurrentCard() {
     document.getElementById('enWordRow').style.display = en ? 'flex' : 'none';
   };
   _setEnWord();
-  if (!item.meaningEn) fetchEnglish(item).then(_setEnWord);
+  if (!item.meaningEn) {
+    // Show loading placeholder while Jisho fetches
+    document.getElementById('wordMeaningEn').textContent = '…';
+    document.getElementById('enWordRow').style.display = 'flex';
+    fetchEnglish(item).then(_setEnWord);
+  }
   document.getElementById('sentenceBadge').textContent = item.jlpt || '—';
   document.getElementById('sentenceType').textContent = item.type || '';
 
@@ -1960,7 +1971,7 @@ function loadCurrentCard() {
 
   // Reset play btn
   const btnPlay = document.getElementById('btnPlay');
-  if (btnPlay) { btnPlay.classList.remove('playing'); btnPlay.textContent = '▶ 單字 ×3'; }
+  if (btnPlay) { btnPlay.classList.remove('playing'); btnPlay.textContent = state.x3Mode ? '▶ 單字 ×3+例' : '▶ 單字'; }
 
   // Update flag button
   updateFlagBtn(item.id);
@@ -1974,8 +1985,15 @@ function _resetExampleMode() {
   _setExampleMode(false);
 }
 
+function _stopAudio() {
+  _speakVersion++; // abort any in-flight speak loop
+  if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
+  _speakEndUI();
+}
+
 function prevCard() {
   if (state.mode === 'srs') return;
+  _stopAudio();
   _resetExampleMode();
   const items = practiceItems();
   state.currentIndex = (state.currentIndex - 1 + items.length) % items.length;
@@ -1984,6 +2002,7 @@ function prevCard() {
 
 function nextCard() {
   if (state.mode === 'srs') return;
+  _stopAudio();
   _resetExampleMode();
   const items = practiceItems();
   if (state.mode === 'random') {
@@ -2058,12 +2077,14 @@ function _setExampleMode(on) {
 function showAndSpeakExample() {
   if (!state.showExample) {
     // Show example + switch button states
+    _stopAudio();
     state.showExample = true;
     loadCurrentCard();
     _setExampleMode(true);
     setTimeout(speakExample, 200);
   } else {
     // Press again → hide example, revert buttons
+    _stopAudio();
     state.showExample = false;
     _setExampleMode(false);
     loadCurrentCard();
@@ -2128,8 +2149,10 @@ function _speakPlayUI() {
 
 function _speakEndUI() {
   const btn = document.getElementById('btnPlay');
-  if (btn) { btn.classList.remove('playing'); btn.textContent = '▶ 單字 ×3'; }
+  if (btn) { btn.classList.remove('playing'); btn.textContent = state.x3Mode ? '▶ 單字 ×3+例' : '▶ 單字'; }
 }
+
+let _currentAudio = null;
 
 async function speak(text, onEnd) {
   const key = localStorage.getItem('azureKey') || '';
@@ -2138,8 +2161,12 @@ async function speak(text, onEnd) {
 
   if (!key) {
     showToast('請先在「設定」填入 Azure Key');
+    if (onEnd) onEnd();
     return;
   }
+
+  // Stop any currently playing audio
+  if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
 
   _speakPlayUI();
   try {
@@ -2158,10 +2185,12 @@ async function speak(text, onEnd) {
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
-    audio.onended = () => { _speakEndUI(); URL.revokeObjectURL(url); if (onEnd) onEnd(); };
-    audio.onerror = () => { _speakEndUI(); URL.revokeObjectURL(url); showToast('音訊播放失敗'); };
+    _currentAudio = audio;
+    audio.onended = () => { _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+    audio.onerror = () => { _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url); showToast('音訊播放失敗'); if (onEnd) onEnd(); };
     audio.play();
   } catch (e) {
+    _currentAudio = null;
     _speakEndUI();
     _azureToken = null; // reset token on error
     showToast('語音失敗：' + e.message);
@@ -2177,7 +2206,13 @@ function getCurrentItem() {
   return items[state.currentIndex];
 }
 
+let _speakVersion = 0;
+
 function speakCurrent() {
+  // Bump version — any in-flight callbacks from a previous call will abort
+  _speakVersion++;
+  const myVer = _speakVersion;
+
   // Reset to word mode if example was showing
   if (state.showExample) {
     state.showExample = false;
@@ -2186,25 +2221,57 @@ function speakCurrent() {
   }
   const item = getCurrentItem();
   if (!item) return;
+
+  const reps = state.x3Mode ? 3 : 1;
   let rep = 0;
+
+  function afterAll() {
+    if (_speakVersion !== myVer) return;
+    if (state.cnMode && item.meaning) {
+      setTimeout(() => speakChinese(item.meaning, () => {
+        if (_speakVersion !== myVer) return;
+        _afterSpeak(myVer);
+      }), 400);
+    } else {
+      _afterSpeak(myVer);
+    }
+  }
+
+  function speakExample() {
+    if (_speakVersion !== myVer) return;
+    if (item.sentence) {
+      const clean = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
+      setTimeout(() => speak(clean, afterAll), 500);
+    } else {
+      afterAll();
+    }
+  }
+
   function round() {
+    if (_speakVersion !== myVer) return;
     speak(item.jp, () => {
+      if (_speakVersion !== myVer) return;
       rep++;
-      if (rep < 3) {
+      if (rep < reps) {
         setTimeout(round, 500);
-      } else if (state.cnMode && item.meaning) {
-        setTimeout(() => speakChinese(item.meaning, _afterSpeak), 400);
+      } else if (state.x3Mode) {
+        speakExample();
       } else {
-        _afterSpeak();
+        afterAll();
       }
     });
   }
   round();
 }
 
-function _afterSpeak() {
+function _afterSpeak(ver) {
+  if (ver !== undefined && _speakVersion !== ver) return;
   if (state.isLooping) {
-    setTimeout(() => { nextCard(); setTimeout(speakCurrent, 400); }, 800);
+    setTimeout(() => {
+      if (ver !== undefined && _speakVersion !== ver) return;
+      nextCard();
+      setTimeout(speakCurrent, 400);
+    }, 800);
   }
 }
 
@@ -2214,6 +2281,11 @@ function toggleLoop() {
 
 function toggleCnMode() {
   state.cnMode = document.getElementById('cnToggle').checked;
+}
+
+function toggleX3Mode() {
+  state.x3Mode = document.getElementById('x3Toggle').checked;
+  _speakEndUI(); // update button text immediately
 }
 
 // English TTS — Web Speech API, no key needed
