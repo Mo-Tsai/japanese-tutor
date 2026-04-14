@@ -92,13 +92,13 @@
 
   .sentence-jp {
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 2rem;
+    font-size: 2.4rem;
     letter-spacing: 0.12em;
     line-height: 1.8;
   }
   .sentence-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; vertical-align: bottom; }
   .sentence-jp ruby rt { font-size: 0.36em; letter-spacing: 0.04em; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; line-height: 1; margin-bottom: 2px; }
-  .sentence-meaning { font-size: 0.86rem; color: var(--muted); }
+  .sentence-meaning { font-size: 1.03rem; color: var(--muted); }
   .sentence-type { font-family: 'Courier New', monospace; font-size: 0.58rem; color: var(--border); letter-spacing: 0.06em; }
 
   /* Example sentence block */
@@ -111,16 +111,16 @@
   }
   .example-jp {
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 0.95rem;
+    font-size: 1.14rem;
     letter-spacing: 0.08em;
     line-height: 2.4;
     color: var(--ink);
   }
   .example-jp ruby { margin: 0 1px; }
   .example-jp ruby rt { font-size: 0.5em; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; text-align: center; }
-  .example-meaning { font-size: 0.76rem; color: var(--muted); margin-top: 2px; }
-  .example-meaning-en { font-size: 0.7rem; color: var(--muted); font-style: italic; }
-  .word-meaning-en { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+  .example-meaning { font-size: 0.91rem; color: var(--muted); margin-top: 2px; }
+  .example-meaning-en { font-size: 0.84rem; color: var(--muted); font-style: italic; }
+  .word-meaning-en { font-size: 0.94rem; color: var(--muted); font-style: italic; }
   .en-speak-row { display: flex; align-items: center; gap: 4px; justify-content: center; }
   .btn-speak-en { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 0 2px; opacity: 0.45; line-height: 1; transition: opacity 0.15s; }
   .btn-speak-en:hover { opacity: 1; }
@@ -167,8 +167,6 @@
   .btn.green:hover { background: var(--good); color: #fff; }
 
   /* MODE TOGGLE */
-  .mode-row { display: flex; gap: 6px; align-items: center; margin-left: auto; }
-  .mode-label { font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.06em; }
   .toggle-wrap { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .toggle-btn { font-family: 'Courier New', monospace; font-size: 0.6rem; padding: 4px 10px; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
   .toggle-btn:last-child { border-right: none; }
@@ -303,7 +301,7 @@
 
   /* MOBILE */
   @media (max-width: 600px) {
-    .sentence-jp { font-size: 1.5rem; }
+    .sentence-jp { font-size: 1.8rem; }
     .srs-btn { padding: 10px 8px; font-size: 0.62rem; }
     .add-form { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -336,14 +334,6 @@
           <button class="filter-btn" onclick="setLevelFilter('N4')">N4</button>
         </div>
 
-        <div class="mode-row">
-          <span class="mode-label">模式</span>
-          <div class="toggle-wrap">
-            <button class="toggle-btn active" onclick="setMode('normal')" id="modeNormal">順序</button>
-            <button class="toggle-btn" onclick="setMode('srs')" id="modeSRS">SRS</button>
-            <button class="toggle-btn" onclick="setMode('random')" id="modeRandom">隨機</button>
-          </div>
-        </div>
       </div>
 
       <div class="flashcard-wrap" id="flashcardWrap">
@@ -1746,11 +1736,9 @@ function _clearPrefetch() {
   _pf = { url: null, jp: null, ver: null };
 }
 async function _prefetchNext(ver) {
-  if (!state.isLooping || state.mode === 'srs') return;
+  if (!state.isLooping || state.x3Mode) return;
   const items = practiceItems();
-  const nextIdx = state.mode === 'random'
-    ? Math.floor(Math.random() * items.length)
-    : (state.currentIndex + 1) % items.length;
+  const nextIdx = (state.currentIndex + 1) % items.length;
   const nextItem = items[nextIdx];
   if (!nextItem || _pf.jp === nextItem.jp) return;
   const key = localStorage.getItem('azureKey') || '';
@@ -1800,7 +1788,6 @@ let state = {
   flaggedCards: new Set(), // flagged card ids
   currentIndex: 0,
   levelFilter: 'all', // 'all'|'N5'|'N4'
-  mode: 'normal',     // 'normal'|'srs'|'random'
   currentCategory: 'all',
   speed: 0.85,
   showExample: false,
@@ -1809,7 +1796,6 @@ let state = {
   x3Mode: false,
   settings: { claudeKey: '' },
   generatedItems: [],
-  practiceQueue: [],  // for srs mode
 };
 
 // ===== INIT DATA =====
@@ -1887,21 +1873,6 @@ function practiceItems() {
   return items;
 }
 
-// ===== SRS QUEUE =====
-function buildSRSQueue() {
-  const items = practiceItems();
-  const due = items.filter(i => isDue(state.srsData[i.id] ? { nextReview: state.srsData[i.id].nextReview } : {}));
-  // Sort: overdue first, then new
-  due.sort((a, b) => {
-    const aS = state.srsData[a.id];
-    const bS = state.srsData[b.id];
-    const aDate = aS?.nextReview ? new Date(aS.nextReview) : new Date(0);
-    const bDate = bS?.nextReview ? new Date(bS.nextReview) : new Date(0);
-    return aDate - bDate;
-  });
-  state.practiceQueue = due.map(i => i.id);
-  state.currentIndex = 0;
-}
 
 // ===== LOAD CARD =====
 function loadCurrentCard() {
@@ -1916,25 +1887,9 @@ function loadCurrentCard() {
     return;
   }
 
-  let item;
-  if (state.mode === 'srs') {
-    if (!state.practiceQueue.length) {
-      $id('sentenceJp').innerHTML = '✓ 今日完成';
-      $id('sentenceMeaning').textContent = '所有到期單字已複習完畢';
-      $id('sentenceCounter').textContent = '—';
-      $id('srsIndicator').textContent = '';
-      $id('srsRating').style.display = 'none';
-      $id('exampleBlock').style.display = 'none';
-      return;
-    }
-    item = items.find(i => i.id === state.practiceQueue[0]);
-    if (!item) { state.practiceQueue.shift(); loadCurrentCard(); return; }
-    $id('sentenceCounter').textContent = `待複習 ${state.practiceQueue.length}`;
-  } else {
-    if (state.currentIndex >= items.length) state.currentIndex = 0;
-    item = items[state.currentIndex];
-    $id('sentenceCounter').textContent = `${state.currentIndex + 1} / ${items.length}`;
-  }
+  if (state.currentIndex >= items.length) state.currentIndex = 0;
+  const item = items[state.currentIndex];
+  $id('sentenceCounter').textContent = `${state.currentIndex + 1} / ${items.length}`;
 
   // Render main word
   $id('sentenceJp').innerHTML = renderRuby(item.ruby, item.jp);
@@ -1994,17 +1949,13 @@ function loadCurrentCard() {
     $id('exampleBlock').style.display = 'none';
   }
 
-  // SRS rating buttons
-  if (state.mode === 'srs') {
-    $id('srsRating').style.display = 'flex';
-    const curr = state.srsData[item.id] || { ef: 2.5, interval: 1, reps: 0 };
-    $id('intAgain').textContent = '明天';
-    $id('intHard').textContent = intervalLabel(srsNextInterval(curr, 1).interval);
-    $id('intGood').textContent = intervalLabel(srsNextInterval(curr, 2).interval);
-    $id('intEasy').textContent = intervalLabel(srsNextInterval(curr, 3).interval);
-  } else {
-    $id('srsRating').style.display = 'none';
-  }
+  // SRS rating buttons — always visible (Anki-style)
+  $id('srsRating').style.display = 'flex';
+  const curr = state.srsData[item.id] || { ef: 2.5, interval: 1, reps: 0 };
+  $id('intAgain').textContent = '明天';
+  $id('intHard').textContent = intervalLabel(srsNextInterval(curr, 1).interval);
+  $id('intGood').textContent = intervalLabel(srsNextInterval(curr, 2).interval);
+  $id('intEasy').textContent = intervalLabel(srsNextInterval(curr, 3).interval);
 
   const _exBtn = $id('btnSpeakEx');
   _exBtn.style.display = item.sentence ? '' : 'none';
@@ -2032,7 +1983,6 @@ function _stopAudio() {
 }
 
 function prevCard() {
-  if (state.mode === 'srs') return;
   _stopAudio();
   _resetExampleMode();
   const items = practiceItems();
@@ -2041,22 +1991,16 @@ function prevCard() {
 }
 
 function nextCard() {
-  if (state.mode === 'srs') return;
   _stopAudio();
   _resetExampleMode();
   const items = practiceItems();
-  if (state.mode === 'random') {
-    state.currentIndex = Math.floor(Math.random() * items.length);
-  } else {
-    state.currentIndex = (state.currentIndex + 1) % items.length;
-  }
+  state.currentIndex = (state.currentIndex + 1) % items.length;
   loadCurrentCard();
 }
 
 // ===== SRS RATING =====
 function rateSRS(rating) {
-  const item = EMBEDDED_WORDS.concat(state.customItems)
-    .find(i => i.id === state.practiceQueue[0]);
+  const item = getCurrentItem();
   if (!item) return;
 
   const curr = state.srsData[item.id] || { ef: 2.5, interval: 1, reps: 0, masteredCount: 0 };
@@ -2073,23 +2017,13 @@ function rateSRS(rating) {
   };
   saveSRS();
 
-  state.practiceQueue.shift();
+  const items = practiceItems();
+  state.currentIndex = (state.currentIndex + 1) % items.length;
   loadCurrentCard();
   updateHUD();
 }
 
-// ===== MODE & FILTER =====
-function setMode(mode) {
-  state.mode = mode;
-  ['normal','srs','random'].forEach(m => {
-    const btn = document.getElementById('mode' + m.charAt(0).toUpperCase() + m.slice(1));
-    if (btn) btn.classList.toggle('active', m === mode);
-  });
-
-  if (mode === 'srs') buildSRSQueue();
-  loadCurrentCard();
-}
-
+// ===== FILTER =====
 function setLevelFilter(level) {
   state.levelFilter = level;
   document.querySelectorAll('.filter-btn').forEach(b => {
@@ -2097,7 +2031,6 @@ function setLevelFilter(level) {
     b.classList.toggle('active', bl === level);
   });
   state.currentIndex = 0;
-  if (state.mode === 'srs') buildSRSQueue();
   loadCurrentCard();
 }
 
@@ -2288,11 +2221,7 @@ async function speak(text, onEnd, verSnap) {
 }
 
 function getCurrentItem() {
-  const items = practiceItems();
-  if (state.mode === 'srs') {
-    return items.find(i => i.id === state.practiceQueue[0]);
-  }
-  return items[state.currentIndex];
+  return practiceItems()[state.currentIndex];
 }
 
 function speakCurrent() {
@@ -2354,14 +2283,9 @@ function speakCurrent() {
 
 // Loop-only advance: audio already ended naturally, skip _stopAudio so version stays clean
 function _loopNextCard() {
-  if (state.mode === 'srs') return; // FIX Bug 5: SRS has its own queue, don't touch currentIndex
   _resetExampleMode();
   const items = practiceItems();
-  if (state.mode === 'random') {
-    state.currentIndex = Math.floor(Math.random() * items.length);
-  } else {
-    state.currentIndex = (state.currentIndex + 1) % items.length;
-  }
+  state.currentIndex = (state.currentIndex + 1) % items.length;
   loadCurrentCard();
 }
 
@@ -2381,8 +2305,8 @@ function _afterSpeak(ver, wasExample) {
           _setExampleMode(true);
           setTimeout(speakExample, 200);
         }, 400);
-      } else if (_pf.url && _pf.ver === ver) {
-        // Pre-fetch ready: play immediately — no async gap, iOS allows this as media continuation
+      } else if (_pf.url && _pf.ver === ver && !state.x3Mode) {
+        // Pre-fetch ready (and not x3 mode): play immediately — no async gap, iOS allows this as media continuation
         _dbg(`pf▶ ${_pf.jp}`);
         const pfUrl = _pf.url;
         // Don't revoke URL here — we still need it. Just reset state.
@@ -2416,8 +2340,9 @@ function _afterSpeak(ver, wasExample) {
           } else _pfDone();
         });
       } else {
-        // Pre-fetch not ready: fall back to normal async speak
-        _dbg(`pf not ready, falling back`);
+        // Pre-fetch not ready or x3 mode: fall back to normal async speak
+        _dbg(`pf not ready or x3, falling back`);
+        _clearPrefetch();
         setTimeout(speakCurrent, 400);
       }
     }, 800);
@@ -2559,7 +2484,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
-      if (state.mode === 'srs') return;
       if (dx < 0) nextCard(); else prevCard();
     }
   }, { passive: true });
@@ -2643,9 +2567,6 @@ function renderLibrary() {
 function practiceItem(id) {
   const idx = practiceItems().findIndex(i => i.id === id);
   if (idx !== -1) state.currentIndex = idx;
-  state.mode = 'normal';
-  document.querySelectorAll('[id^="mode"]').forEach(b => b.classList.remove('active'));
-  $id('modeNormal').classList.add('active');
   switchSection('practice');
   loadCurrentCard();
 }
