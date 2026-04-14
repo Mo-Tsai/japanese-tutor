@@ -1679,36 +1679,71 @@ const EMBEDDED_WORDS = [
 ];
 </script>
 <script>
-// ===== SRS ENGINE (SM-2 simplified) =====
+// ===== SRS ENGINE — Anki SM-2 =====
+// Matches Anki's production algorithm exactly.
+// Ratings: 0=Again, 1=Hard, 2=Good, 3=Easy
+// Hard × 1.2, Good × EF, Easy × EF × 1.3 (Anki defaults)
+// EF changes: Again −0.20, Hard −0.15, Good ±0, Easy +0.15, min 1.30
 function srsNextInterval(card, rating) {
-  // rating: 0=again, 1=hard, 2=good, 3=easy
   const ef = card.ef || 2.5;
   const interval = card.interval || 1;
   const reps = card.reps || 0;
 
+  // Days overdue (rewards reviewing late cards with a longer next interval)
+  const daysOverdue = card.nextReview
+    ? Math.max(0, Math.floor((Date.now() - new Date(card.nextReview).getTime()) / 86400000))
+    : 0;
+
   let newEf = ef;
   let newInterval;
-  let newReps = reps + 1;
+  let newReps;
 
-  if (rating === 0) {
+  if (rating === 0) {                        // Again — reset
+    newEf = Math.max(1.3, ef - 0.20);
     newInterval = 1;
     newReps = 0;
-    newEf = Math.max(1.3, ef - 0.2);
-  } else if (rating === 1) {
-    newInterval = Math.max(1, Math.round(interval * 1.2));
+
+  } else if (rating === 1) {                 // Hard — slow down
     newEf = Math.max(1.3, ef - 0.15);
-  } else if (rating === 2) {
-    if (reps === 0) newInterval = 1;
-    else if (reps === 1) newInterval = 3;
-    else newInterval = Math.round(interval * ef);
-    newEf = ef + 0.1;
-  } else { // easy
-    if (reps === 0) newInterval = 4;
-    else newInterval = Math.round(interval * ef * 1.3);
-    newEf = ef + 0.15;
+    if (reps < 2) {
+      newInterval = 1;                       // still in early learning
+    } else {
+      newInterval = Math.max(interval + 1,
+        Math.round((interval + daysOverdue / 4) * 1.2));
+    }
+    newReps = reps + 1;
+
+  } else if (rating === 2) {                 // Good — normal pace
+    // EF unchanged
+    if (reps === 0) {
+      newInterval = 1;                       // graduating interval
+    } else if (reps === 1) {
+      newInterval = 6;                       // second review
+    } else {
+      newInterval = Math.max(interval + 1,
+        Math.round((interval + daysOverdue / 2) * ef));
+    }
+    newReps = reps + 1;
+
+  } else {                                   // Easy — fast track
+    newEf = Math.min(3.0, ef + 0.15);
+    if (reps === 0) {
+      newInterval = 4;                       // easy interval for new card
+    } else if (reps === 1) {
+      newInterval = Math.max(6,
+        Math.round((interval + daysOverdue / 2) * ef * 1.3));
+    } else {
+      newInterval = Math.max(interval + 1,
+        Math.round((interval + daysOverdue) * ef * 1.3));
+    }
+    newReps = reps + 1;
   }
 
-  return { ef: Math.min(3.0, newEf), interval: newInterval, reps: newReps };
+  return {
+    ef: Math.max(1.3, Math.min(3.0, newEf)),
+    interval: Math.max(1, newInterval),
+    reps: newReps
+  };
 }
 
 function isDue(card) {
@@ -1927,8 +1962,8 @@ function loadCurrentCard() {
   if (srsD?.nextReview && new Date(srsD.nextReview) < new Date()) disp.classList.add('srs-due');
   else if (!srsD) disp.classList.add('srs-new');
 
-  // Example sentence
-  if (item.sentence && state.showExample) {
+  // Example sentence — always visible when card has one
+  if (item.sentence) {
     $id('exampleBlock').style.display = 'block';
     $id('exampleJp').innerHTML = renderRuby(item.sentence, item.sentence.replace(/\|[^ ]*/g, '').replace(/[^ ]*\|/g, ''));
     $id('exampleMeaning').textContent = item.sentenceMeaning || '';
@@ -2034,11 +2069,6 @@ function setLevelFilter(level) {
   loadCurrentCard();
 }
 
-// ===== EXAMPLE TOGGLE =====
-function toggleExample() {
-  state.showExample = !state.showExample;
-  loadCurrentCard();
-}
 
 function _setExampleMode(on) {
   const wordBtn = $id('btnPlay');
@@ -2048,20 +2078,9 @@ function _setExampleMode(on) {
 }
 
 function showAndSpeakExample() {
-  if (!state.showExample) {
-    // Show example + switch button states
-    _stopAudio();
-    state.showExample = true;
-    loadCurrentCard();
-    _setExampleMode(true);
-    setTimeout(speakExample, 200);
-  } else {
-    // Press again → hide example, revert buttons
-    _stopAudio();
-    state.showExample = false;
-    _setExampleMode(false);
-    loadCurrentCard();
-  }
+  _stopAudio();
+  _setExampleMode(true);
+  setTimeout(speakExample, 200);
 }
 
 // ===== RUBY RENDERER =====
@@ -2224,23 +2243,125 @@ function getCurrentItem() {
   return practiceItems()[state.currentIndex];
 }
 
+// ×3 mode: fetch word TTS once, play 3 times via onended chain (no async gap → iOS safe),
+// then play pre-fetched example in the same onended chain.
+async function _speakWord3Reps(item, myVer, onDone) {
+  const key = localStorage.getItem('azureKey') || '';
+  const region = localStorage.getItem('azureRegion') || 'japaneast';
+  const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
+  if (!key) { showToast('請先在「設定」填入 Azure Key'); onDone(); return; }
+
+  try {
+    const token = await _getAzureToken(key, region);
+    if (_speakVersion !== myVer) { onDone(); return; }
+
+    // Fetch word TTS
+    const wordSsml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(item.jp)}</prosody></voice></speak>`;
+    const wordRes = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' },
+      body: wordSsml
+    });
+    if (!wordRes.ok || _speakVersion !== myVer) { onDone(); return; }
+    const wordBlob = await wordRes.blob();
+    if (_speakVersion !== myVer) { onDone(); return; }
+
+    const wordUrl = URL.createObjectURL(wordBlob);
+
+    // Pre-fetch example TTS in parallel (while word plays)
+    let exUrl = null;
+    if (item.sentence) {
+      const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
+      _getAzureToken(key, region).then(tok => {
+        if (_speakVersion !== myVer) return null;
+        const exSsml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(exText)}</prosody></voice></speak>`;
+        return fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer '+tok, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' },
+          body: exSsml
+        });
+      }).then(r => r && _speakVersion === myVer ? r.blob() : null)
+        .then(b => { if (b && _speakVersion === myVer) exUrl = URL.createObjectURL(b); })
+        .catch(() => {});
+    }
+
+    let ended = false;
+    const safeSt = setTimeout(() => { if (!ended) doCleanup(); }, 22000);
+
+    function doCleanup() {
+      if (ended) return; ended = true;
+      clearTimeout(safeSt);
+      try { URL.revokeObjectURL(wordUrl); } catch(e){}
+      if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
+      _currentAudio = null;
+      _speakEndUI();
+      onDone();
+    }
+
+    let rep = 0;
+
+    function playRep() {
+      if (ended || _speakVersion !== myVer) { doCleanup(); return; }
+      rep++;
+      const audio = new Audio(wordUrl); // new Audio from same URL each rep
+      _currentAudio = audio;
+      audio.onerror = () => { clearTimeout(safeSt); doCleanup(); };
+      audio.onended = () => {
+        if (rep < 3) {
+          playRep(); // immediate in onended → iOS media continuation
+        } else {
+          // All 3 word reps done → play example if pre-fetched
+          try { URL.revokeObjectURL(wordUrl); } catch(e){}
+          _currentAudio = null;
+          if (exUrl && _speakVersion === myVer) {
+            const exAudio = new Audio(exUrl);
+            _currentAudio = exAudio;
+            const exSt = setTimeout(() => doCleanup(), 12000);
+            exAudio.onended = () => { clearTimeout(exSt); doCleanup(); };
+            exAudio.onerror = () => { clearTimeout(exSt); doCleanup(); };
+            const pp = exAudio.play();
+            if (pp) pp.catch(() => { clearTimeout(exSt); doCleanup(); });
+          } else {
+            if (ended) return; ended = true;
+            clearTimeout(safeSt);
+            if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
+            _currentAudio = null;
+            _speakEndUI();
+            onDone();
+          }
+        }
+      };
+      const p = audio.play();
+      if (p) p.catch(e => {
+        _dbg(`x3 play rejected: ${e.name}`);
+        if (e.name === 'AbortError') { clearTimeout(safeSt); doCleanup(); }
+        else if (e.name === 'NotAllowedError') {
+          const retry = () => {
+            document.removeEventListener('touchstart', retry);
+            audio.play().catch(() => { clearTimeout(safeSt); doCleanup(); });
+          };
+          document.addEventListener('touchstart', retry, { once: true, passive: true });
+        } else { clearTimeout(safeSt); doCleanup(); }
+      });
+    }
+
+    _speakPlayUI();
+    playRep(); // start rep 1
+  } catch(e) {
+    _currentAudio = null; _azureToken = null;
+    showToast('語音失敗：' + e.message);
+    onDone();
+  }
+}
+
 function speakCurrent() {
-  // Bump version — any in-flight callbacks from a previous call will abort
   _speakVersion++;
   const myVer = _speakVersion;
   _dbg(`speakCurrent ver=${myVer} card=${state.currentIndex} jp=${getCurrentItem()?.jp}`);
 
-  // Reset to word mode if example was showing
-  if (state.showExample) {
-    state.showExample = false;
-    _setExampleMode(false);
-    loadCurrentCard();
-  }
+  _setExampleMode(false);
   const item = getCurrentItem();
   if (!item) return;
-
-  const reps = state.x3Mode ? 3 : 1;
-  let rep = 0;
 
   function afterAll() {
     if (_speakVersion !== myVer) return;
@@ -2254,31 +2375,13 @@ function speakCurrent() {
     }
   }
 
-  function _speakExampleInRound() {
-    if (_speakVersion !== myVer) return;
-    if (item.sentence) {
-      const clean = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
-      setTimeout(() => speak(clean, afterAll, myVer), 500);
-    } else {
-      afterAll();
-    }
+  if (state.x3Mode) {
+    // ×3: play word × 3 + example via onended chain (no async gap → iOS background safe)
+    _speakWord3Reps(item, myVer, afterAll);
+  } else {
+    // ×1: use speak() with pre-fetch chain
+    speak(item.jp, afterAll, myVer);
   }
-
-  function round() {
-    if (_speakVersion !== myVer) return;
-    speak(item.jp, () => {
-      if (_speakVersion !== myVer) return;
-      rep++;
-      if (rep < reps) {
-        setTimeout(round, 500);
-      } else if (state.x3Mode) {
-        _speakExampleInRound();
-      } else {
-        afterAll();
-      }
-    }, myVer);
-  }
-  round();
 }
 
 // Loop-only advance: audio already ended naturally, skip _stopAudio so version stays clean
@@ -2293,15 +2396,13 @@ function _afterSpeak(ver, wasExample) {
   _dbg(`_afterSpeak ver=${ver} cur=${_speakVersion} ex=${wasExample} looping=${state.isLooping}`);
   if (ver !== undefined && _speakVersion !== ver) { _dbg(`ABORT stale ver=${ver} cur=${_speakVersion}`); return; }
   if (state.isLooping) {
-    const playExample = wasExample || state.showExample;
+    const playExample = !!wasExample;
     setTimeout(() => {
       if (ver !== undefined && _speakVersion !== ver) return;
       _loopNextCard();
       if (playExample) {
         setTimeout(() => {
           if (ver !== undefined && _speakVersion !== ver) return;
-          state.showExample = true;
-          loadCurrentCard();
           _setExampleMode(true);
           setTimeout(speakExample, 200);
         }, 400);
@@ -2495,7 +2596,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === 'l') nextCard();
   else if (e.key === 'ArrowLeft' || e.key === 'h') prevCard();
   else if (e.key === ' ') { e.preventDefault(); speakCurrent(); }
-  else if (e.key === 'e') toggleExample();
+  else if (e.key === 'e') showAndSpeakExample();
   else if (e.key === '1') rateSRS(0);
   else if (e.key === '2') rateSRS(1);
   else if (e.key === '3') rateSRS(2);
