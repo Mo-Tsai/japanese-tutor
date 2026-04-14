@@ -1771,7 +1771,7 @@ function _clearPrefetch() {
   _pf = { url: null, jp: null, ver: null };
 }
 async function _prefetchNext(ver) {
-  if (!state.isLooping || state.x3Mode) return;
+  if (!state.isLooping) return;
   const items = practiceItems();
   const nextIdx = (state.currentIndex + 1) % items.length;
   const nextItem = items[nextIdx];
@@ -2243,6 +2243,93 @@ function getCurrentItem() {
   return practiceItems()[state.currentIndex];
 }
 
+// ×3 mode with pre-fetched word URL — skips fetch, plays immediately in onended (iOS background safe).
+function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
+  const key = localStorage.getItem('azureKey') || '';
+  const region = localStorage.getItem('azureRegion') || 'japaneast';
+  const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
+
+  // Pre-fetch example TTS in parallel while word reps play
+  let exUrl = null;
+  if (item.sentence && key) {
+    const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
+    _getAzureToken(key, region).then(tok => {
+      if (_speakVersion !== myVer) return null;
+      const exSsml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(exText)}</prosody></voice></speak>`;
+      return fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer '+tok, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' },
+        body: exSsml
+      });
+    }).then(r => r && _speakVersion === myVer ? r.blob() : null)
+      .then(b => { if (b && _speakVersion === myVer) exUrl = URL.createObjectURL(b); })
+      .catch(() => {});
+  }
+
+  let ended = false;
+  const safeSt = setTimeout(() => { if (!ended) doCleanup(); }, 22000);
+
+  function doCleanup() {
+    if (ended) return; ended = true;
+    clearTimeout(safeSt);
+    try { URL.revokeObjectURL(wordUrl); } catch(e){}
+    if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
+    _currentAudio = null;
+    _speakEndUI();
+    onDone();
+  }
+
+  let rep = 0;
+
+  function playRep() {
+    if (ended || _speakVersion !== myVer) { doCleanup(); return; }
+    rep++;
+    const audio = new Audio(wordUrl);
+    _currentAudio = audio;
+    audio.onerror = () => { clearTimeout(safeSt); doCleanup(); };
+    audio.onended = () => {
+      if (rep < 3) {
+        playRep(); // immediate in onended → iOS media continuation
+      } else {
+        try { URL.revokeObjectURL(wordUrl); } catch(e){}
+        _currentAudio = null;
+        if (exUrl && _speakVersion === myVer) {
+          const exAudio = new Audio(exUrl);
+          _currentAudio = exAudio;
+          const exSt = setTimeout(() => doCleanup(), 12000);
+          exAudio.onended = () => { clearTimeout(exSt); doCleanup(); };
+          exAudio.onerror = () => { clearTimeout(exSt); doCleanup(); };
+          const pp = exAudio.play();
+          if (pp) pp.catch(() => { clearTimeout(exSt); doCleanup(); });
+        } else {
+          if (ended) return; ended = true;
+          clearTimeout(safeSt);
+          if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
+          _currentAudio = null;
+          _speakEndUI();
+          onDone();
+        }
+      }
+    };
+    const p = audio.play();
+    if (p) p.catch(e => {
+      _dbg(`x3pf play rejected: ${e.name}`);
+      if (e.name === 'AbortError') { clearTimeout(safeSt); doCleanup(); }
+      else if (e.name === 'NotAllowedError') {
+        const retry = () => {
+          document.removeEventListener('touchstart', retry);
+          audio.play().catch(() => { clearTimeout(safeSt); doCleanup(); });
+        };
+        document.addEventListener('touchstart', retry, { once: true, passive: true });
+      } else { clearTimeout(safeSt); doCleanup(); }
+    });
+  }
+
+  _speakPlayUI();
+  _prefetchNext(myVer); // pre-fetch the card after next while this plays
+  playRep();
+}
+
 // ×3 mode: fetch word TTS once, play 3 times via onended chain (no async gap → iOS safe),
 // then play pre-fetched example in the same onended chain.
 async function _speakWord3Reps(item, myVer, onDone) {
@@ -2346,6 +2433,7 @@ async function _speakWord3Reps(item, myVer, onDone) {
     }
 
     _speakPlayUI();
+    _prefetchNext(myVer); // pre-fetch next card's word while this plays
     playRep(); // start rep 1
   } catch(e) {
     _currentAudio = null; _azureToken = null;
@@ -2406,11 +2494,30 @@ function _afterSpeak(ver, wasExample) {
           _setExampleMode(true);
           setTimeout(speakExample, 200);
         }, 400);
+      } else if (_pf.url && _pf.ver === ver && state.x3Mode) {
+        // Pre-fetch ready + ×3 mode: call _speakWord3RepsFromUrl immediately (no async gap → iOS safe)
+        _dbg(`pf×3▶ ${_pf.jp}`);
+        const pfUrl = _pf.url;
+        _pf = { url: null, jp: null, ver: null };
+        _speakVersion++;
+        const myVer = _speakVersion;
+        const nextItem = getCurrentItem();
+        function afterAll3() {
+          if (_speakVersion !== myVer) return;
+          if (state.cnMode && nextItem.meaning) {
+            setTimeout(() => speakChinese(nextItem.meaning, () => {
+              if (_speakVersion !== myVer) return;
+              _afterSpeak(myVer);
+            }), 400);
+          } else {
+            _afterSpeak(myVer);
+          }
+        }
+        _speakWord3RepsFromUrl(pfUrl, nextItem, myVer, afterAll3);
       } else if (_pf.url && _pf.ver === ver && !state.x3Mode) {
-        // Pre-fetch ready (and not x3 mode): play immediately — no async gap, iOS allows this as media continuation
+        // Pre-fetch ready + ×1 mode: play immediately — no async gap, iOS allows this as media continuation
         _dbg(`pf▶ ${_pf.jp}`);
         const pfUrl = _pf.url;
-        // Don't revoke URL here — we still need it. Just reset state.
         _pf = { url: null, jp: null, ver: null };
         _speakVersion++;
         const myVer = _speakVersion;
@@ -2441,8 +2548,8 @@ function _afterSpeak(ver, wasExample) {
           } else _pfDone();
         });
       } else {
-        // Pre-fetch not ready or x3 mode: fall back to normal async speak
-        _dbg(`pf not ready or x3, falling back`);
+        // Pre-fetch not ready: fall back to normal async speak
+        _dbg(`pf not ready, falling back`);
         _clearPrefetch();
         setTimeout(speakCurrent, 400);
       }
