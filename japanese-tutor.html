@@ -30,6 +30,7 @@
 
   body {
     font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    font-size: 120%;
     background: var(--paper);
     color: var(--ink);
     min-height: 100vh;
@@ -92,12 +93,12 @@
 
   .sentence-jp {
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 2.4rem;
+    font-size: 3.36rem;
     letter-spacing: 0.12em;
     line-height: 1.8;
   }
   .sentence-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; vertical-align: bottom; }
-  .sentence-jp ruby rt { font-size: 0.36em; letter-spacing: 0.04em; color: var(--muted); font-family: 'Noto Sans JP', sans-serif; font-weight: 300; line-height: 1; margin-bottom: 2px; }
+  .sentence-jp ruby rt { font-size: 0.36em; letter-spacing: 0.04em; color: #6b5e56; font-family: 'Noto Sans JP', sans-serif; font-weight: 400; line-height: 1; margin-bottom: 2px; }
   .sentence-meaning { font-size: 1.03rem; color: var(--muted); }
   .sentence-type { font-family: 'Courier New', monospace; font-size: 0.58rem; color: var(--border); letter-spacing: 0.06em; }
 
@@ -303,7 +304,7 @@
 
   /* MOBILE */
   @media (max-width: 600px) {
-    .sentence-jp { font-size: 1.8rem; }
+    .sentence-jp { font-size: 2.52rem; }
     .srs-btn { padding: 10px 8px; font-size: 0.62rem; }
     .add-form { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -316,7 +317,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v3.0</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v3.1</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
