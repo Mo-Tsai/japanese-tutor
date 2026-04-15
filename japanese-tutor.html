@@ -316,7 +316,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.8</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.9</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -576,15 +576,26 @@
     </div>
 
     <div class="card" style="margin-top:8px;">
-      <div class="card-label">SRS 說明</div>
+      <div class="card-label">SRS 閃卡設定</div>
+      <div style="margin-bottom:12px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; cursor:pointer;">
+          <input type="checkbox" id="srsSortToggle" onchange="toggleSrsSort()">
+          <span>智慧排序（到期卡優先，新卡次之，未到期最後）</span>
+        </label>
+        <div class="setting-hint">開啟後卡片順序依 SRS 排程，關閉則依教科書順序</div>
+      </div>
       <div style="font-size:0.8rem; color:var(--muted); line-height:2;">
-        切換到「SRS 模式」後，每張卡可評分：<br>
+        每張卡可評分：<br>
         <strong>又忘了</strong> → 重置，明天再練<br>
         <strong>困難</strong> → 間隔 × 1.2<br>
         <strong>記得</strong> → 間隔 × 2.5（預設）<br>
         <strong>很簡單</strong> → 間隔 × 3.5<br><br>
         初始間隔：1 天。掌握門檻：連續記得 5 次。<br>
-        評分記錄存在瀏覽器 localStorage。
+        評分記錄存在瀏覽器 localStorage，更新版本不會遺失。
+      </div>
+      <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+        <button class="btn" style="font-size:0.7rem; color:var(--bad); border-color:var(--bad);" onclick="resetSRS()">重置 SRS 紀錄</button>
+        <span style="font-size:0.65rem; color:var(--muted); margin-left:8px;">清除所有學習進度，重新開始</span>
       </div>
     </div>
   </div>
@@ -1888,6 +1899,7 @@ let state = {
   x3Mode: false,
   settings: { claudeKey: '' },
   generatedItems: [],
+  srsSortEnabled: false,
 };
 
 // ===== INIT DATA =====
@@ -1902,6 +1914,11 @@ function initData() {
   // Load SRS data
   const srs = localStorage.getItem('jptutor_srs_v1');
   state.srsData = srs ? JSON.parse(srs) : {};
+
+  // Load SRS sort preference
+  state.srsSortEnabled = localStorage.getItem('jptutor_srs_sort') === '1';
+  const srsToggle = $id('srsSortToggle');
+  if (srsToggle) srsToggle.checked = state.srsSortEnabled;
 
   // Load flagged
   loadFlagged();
@@ -1962,6 +1979,7 @@ function practiceItems() {
   if (state.levelFilter !== 'all') {
     items = items.filter(i => i.jlpt === state.levelFilter);
   }
+  if (!state.srsSortEnabled) return items;
   // SRS scheduling: due cards first, then new cards, then future cards
   const now = Date.now();
   items = items.slice().sort((a, b) => {
@@ -1969,10 +1987,7 @@ function practiceItems() {
     const catA = !sa ? 1 : (new Date(sa.nextReview).getTime() <= now ? 0 : 2);
     const catB = !sb ? 1 : (new Date(sb.nextReview).getTime() <= now ? 0 : 2);
     if (catA !== catB) return catA - catB; // due(0) < new(1) < future(2)
-    // Within due: most overdue first
-    if (catA === 0) return new Date(sa.nextReview).getTime() - new Date(sb.nextReview).getTime();
-    // Within future: soonest due first
-    if (catA === 2) return new Date(sa.nextReview).getTime() - new Date(sb.nextReview).getTime();
+    if (catA === 0 || catA === 2) return new Date(sa.nextReview).getTime() - new Date(sb.nextReview).getTime();
     return 0; // new cards: keep original order
   });
   return items;
@@ -2147,6 +2162,24 @@ function rateSRS(rating) {
 }
 
 // ===== FILTER =====
+function resetSRS() {
+  if (!confirm('確定要清除所有 SRS 學習紀錄嗎？此操作無法復原。')) return;
+  state.srsData = {};
+  localStorage.removeItem('jptutor_srs_v1');
+  state.currentIndex = 0;
+  loadCurrentCard();
+  updateHUD();
+  showToast('SRS 紀錄已重置');
+}
+
+function toggleSrsSort() {
+  state.srsSortEnabled = $id('srsSortToggle').checked;
+  localStorage.setItem('jptutor_srs_sort', state.srsSortEnabled ? '1' : '0');
+  state.currentIndex = 0;
+  loadCurrentCard();
+  updateHUD();
+}
+
 function setLevelFilter(level) {
   state.levelFilter = level;
   document.querySelectorAll('.filter-btn').forEach(b => {
