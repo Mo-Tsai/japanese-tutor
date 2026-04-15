@@ -147,13 +147,13 @@
   }
   .srs-btn .srs-interval { font-size: 0.55rem; opacity: 0.7; }
   .srs-btn.again { border-color: var(--bad); color: var(--bad); }
-  .srs-btn.again:hover { background: var(--bad); color: #fff; }
+  .srs-btn.again:hover, .srs-btn.again.tapped { background: var(--bad); color: #fff; }
   .srs-btn.hard { border-color: var(--warn); color: var(--warn); }
-  .srs-btn.hard:hover { background: var(--warn); color: #fff; }
+  .srs-btn.hard:hover, .srs-btn.hard.tapped { background: var(--warn); color: #fff; }
   .srs-btn.good { border-color: var(--good); color: var(--good); }
-  .srs-btn.good:hover { background: var(--good); color: #fff; }
+  .srs-btn.good:hover, .srs-btn.good.tapped { background: var(--good); color: #fff; }
   .srs-btn.easy { border-color: var(--gold); color: var(--gold); }
-  .srs-btn.easy:hover { background: var(--gold); color: #fff; }
+  .srs-btn.easy:hover, .srs-btn.easy.tapped { background: var(--gold); color: #fff; }
 
   /* NAV */
   .btn { font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.06em; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; transition: all 0.15s; color: var(--ink); }
@@ -1816,6 +1816,58 @@ let _azureToken = null, _azureTokenExpiry = 0;
 let _currentAudio = null;
 let _speakVersion = 0;
 
+// ===== iOS AUDIO FIX =====
+// iOS requires audio.play() from a user gesture. Once an Audio element is "unlocked"
+// by a user tap, the SAME element can play() again without a gesture.
+// We reuse a single element for all loop playback to avoid iOS blocking.
+let _loopEl = null;
+let _loopUnlocked = false;
+
+// Tiny silent MP3 (1 frame) — used to "unlock" the Audio element on iOS within user gesture
+const _silentMp3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAABhilEzTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAABhilEzTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
+
+// Call this SYNCHRONOUSLY inside a user tap/click handler to unlock the audio element
+function _unlockLoopEl() {
+  if (_loopUnlocked && _loopEl) return;
+  _loopEl = new Audio();
+  _loopEl.src = _silentMp3;
+  _loopEl.volume = 0;
+  const p = _loopEl.play();
+  if (p) p.then(() => {
+    _loopEl.pause();
+    _loopEl.volume = 1;
+    _loopUnlocked = true;
+    _dbg('_loopEl unlocked');
+  }).catch(e => { _dbg(`_loopEl unlock failed: ${e.name}`); });
+}
+
+function _loopPlay(url, onended, onerror) {
+  if (!_loopEl) _loopEl = new Audio();
+  const sameUrl = (_loopEl.src === url);
+  _dbg(`_loopPlay same=${sameUrl} p=${_loopEl.paused} e=${_loopEl.ended} rs=${_loopEl.readyState}`);
+  _loopEl.onended = null;
+  _loopEl.onerror = null;
+  if (sameUrl) {
+    // Same URL (x3 reps): rewind instead of re-setting src
+    _loopEl.currentTime = 0;
+  } else {
+    // Different URL: set new src (NO pause/load — keeps iOS unlock alive)
+    _loopEl.src = url;
+  }
+  _loopEl.onended = onended;
+  _loopEl.onerror = onerror;
+  _currentAudio = _loopEl;
+  return _loopEl.play();
+}
+
+function _stopLoopEl() {
+  if (_loopEl) {
+    try { _loopEl.pause(); } catch(e) {}
+    _loopEl.onended = null;
+    _loopEl.onerror = null;
+  }
+}
+
 let state = {
   allItems: [],       // embedded + custom
   customItems: [],    // user-added only
@@ -2014,6 +2066,7 @@ function _stopAudio() {
   _speakVersion++; // abort any in-flight speak loop
   _dbg(`_stopAudio → ver bumped to ${_speakVersion}`);
   if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
+  _stopLoopEl();
   _speakEndUI();
 }
 
@@ -2038,6 +2091,11 @@ function rateSRS(rating) {
   const item = getCurrentItem();
   if (!item) return;
 
+  // Visual feedback: flash tapped button, then reset all
+  const btnMap = ['.srs-btn.again', '.srs-btn.hard', '.srs-btn.good', '.srs-btn.easy'];
+  const tappedBtn = document.querySelector(btnMap[rating]);
+  if (tappedBtn) tappedBtn.classList.add('tapped');
+
   const curr = state.srsData[item.id] || { ef: 2.5, interval: 1, reps: 0, masteredCount: 0 };
   const next = srsNextInterval(curr, rating);
   const nextDate = new Date();
@@ -2052,10 +2110,16 @@ function rateSRS(rating) {
   };
   saveSRS();
 
-  const items = practiceItems();
-  state.currentIndex = (state.currentIndex + 1) % items.length;
-  loadCurrentCard();
-  updateHUD();
+  // Advance card after brief visual feedback
+  setTimeout(() => {
+    // Reset all SRS button states (remove tapped + blur for iOS hover)
+    document.querySelectorAll('.srs-btn').forEach(b => { b.classList.remove('tapped'); b.blur(); });
+
+    const items = practiceItems();
+    state.currentIndex = (state.currentIndex + 1) % items.length;
+    loadCurrentCard();
+    updateHUD();
+  }, 180);
 }
 
 // ===== FILTER =====
@@ -2079,6 +2143,12 @@ function _setExampleMode(on) {
 
 function showAndSpeakExample() {
   _stopAudio();
+  // 例句模式不支援連播 — 自動關閉
+  if (state.isLooping) {
+    state.isLooping = false;
+    const toggle = $id('loopToggle');
+    if (toggle) toggle.checked = false;
+  }
   _setExampleMode(true);
   setTimeout(speakExample, 200);
 }
@@ -2135,6 +2205,8 @@ function toggleSpeak() {
   if ($id('btnPlay')?.classList.contains('playing')) {
     _stopAudio();
   } else {
+    // Unlock audio element on iOS within user gesture context (synchronous)
+    if (state.isLooping) _unlockLoopEl();
     speakCurrent();
   }
 }
@@ -2177,7 +2249,10 @@ async function speak(text, onEnd, verSnap) {
     if (verSnap !== undefined && _speakVersion !== verSnap) { if (onEnd) onEnd(); return; }
 
     const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
+    // In loop mode, reuse single Audio element to keep iOS unlock chain alive
+    const useLoop = state.isLooping;
+    const audio = useLoop ? (_loopEl || (_loopEl = new Audio())) : new Audio(url);
+    if (useLoop) audio.src = url;
     _currentAudio = audio;
 
     // Once-guard so onended / onerror / play().catch / safety timer never double-fire onEnd
@@ -2185,12 +2260,13 @@ async function speak(text, onEnd, verSnap) {
     const _done = (err) => {
       if (_ended) return; _ended = true;
       clearTimeout(_safetyTimer);
+      try { audio.pause(); } catch(e){}
       _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(url);
       if (err) showToast(err);
       if (onEnd) onEnd();
     };
-    // Safety timeout: if audio.onended never fires, force-continue after 5s
-    const _safetyTimer = setTimeout(() => { _dbg(`safetyTimer fired ver=${verSnap}`); _done(); }, 5000);
+    // Safety timeout: if audio.onended never fires, force-continue after 12s
+    const _safetyTimer = setTimeout(() => { _dbg(`safetyTimer fired ver=${verSnap}`); _done(); }, 12000);
 
     audio.onended = () => { _dbg(`ended ver=${verSnap}`); _done(); };
     audio.onerror = () => { _dbg(`error ver=${verSnap}`); _done('音訊播放失敗'); };
@@ -2244,14 +2320,18 @@ function getCurrentItem() {
 }
 
 // ×3 mode with pre-fetched word URL — skips fetch, plays immediately in onended (iOS background safe).
+// When looping: word ×3 only (skip example to keep iOS audio chain alive).
+// When not looping: word ×3 + example.
 function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
+  const skipExample = state.isLooping; // looping → word only, faster cycle
+
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
 
-  // Pre-fetch example TTS in parallel while word reps play
+  // Pre-fetch example TTS only when NOT looping
   let exUrl = null;
-  if (item.sentence && key) {
+  if (!skipExample && item.sentence && key) {
     const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
     _getAzureToken(key, region).then(tok => {
       if (_speakVersion !== myVer) return null;
@@ -2267,72 +2347,68 @@ function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
   }
 
   let ended = false;
-  const safeSt = setTimeout(() => { if (!ended) doCleanup(); }, 22000);
+  const safeSt = setTimeout(() => { _dbg(`pf3 safetyTimer`); if (!ended) doCleanup(); }, 22000);
 
   function doCleanup() {
     if (ended) return; ended = true;
+    _dbg(`pf3 cleanup rep=${rep}`);
     clearTimeout(safeSt);
     try { URL.revokeObjectURL(wordUrl); } catch(e){}
     if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
     _currentAudio = null;
     _speakEndUI();
-    onDone();
+    try { onDone(); } catch(e) { _dbg(`pf3 onDone ERROR: ${e.message}`); showToast('Loop error: ' + e.message); }
   }
 
   let rep = 0;
 
   function playRep() {
-    if (ended || _speakVersion !== myVer) { doCleanup(); return; }
+    if (ended || _speakVersion !== myVer) { _dbg(`pf3 playRep abort`); doCleanup(); return; }
     rep++;
-    const audio = new Audio(wordUrl);
-    _currentAudio = audio;
-    audio.onerror = () => { clearTimeout(safeSt); doCleanup(); };
-    audio.onended = () => {
+    _dbg(`pf3 rep ${rep}/3`);
+    const onended = () => {
+      _dbg(`pf3 rep${rep} ended`);
       if (rep < 3) {
-        playRep(); // immediate in onended → iOS media continuation
+        playRep();
       } else {
         try { URL.revokeObjectURL(wordUrl); } catch(e){}
         _currentAudio = null;
-        if (exUrl && _speakVersion === myVer) {
-          const exAudio = new Audio(exUrl);
-          _currentAudio = exAudio;
-          const exSt = setTimeout(() => doCleanup(), 12000);
-          exAudio.onended = () => { clearTimeout(exSt); doCleanup(); };
-          exAudio.onerror = () => { clearTimeout(exSt); doCleanup(); };
-          const pp = exAudio.play();
-          if (pp) pp.catch(() => { clearTimeout(exSt); doCleanup(); });
+        if (!skipExample && exUrl && _speakVersion === myVer) {
+          _dbg(`pf3 ex▶`);
+          const exSt = setTimeout(() => { _dbg(`pf3 ex safetyTimer`); doCleanup(); }, 12000);
+          const p = _loopPlay(exUrl,
+            () => { _dbg(`pf3 ex ended`); clearTimeout(exSt); doCleanup(); },
+            () => { _dbg(`pf3 ex error`); clearTimeout(exSt); doCleanup(); }
+          );
+          if (p) p.catch((e) => { _dbg(`pf3 ex play rejected: ${e.name}`); clearTimeout(exSt); doCleanup(); });
         } else {
-          if (ended) return; ended = true;
-          clearTimeout(safeSt);
-          if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
-          _currentAudio = null;
-          _speakEndUI();
-          onDone();
+          _dbg(`pf3 skip ex (loop=${skipExample} exUrl=${!!exUrl})`);
+          doCleanup();
         }
       }
     };
-    const p = audio.play();
+    const onerror = () => { _dbg(`pf3 rep${rep} onerror`); clearTimeout(safeSt); doCleanup(); };
+    const p = _loopPlay(wordUrl, onended, onerror);
     if (p) p.catch(e => {
-      _dbg(`x3pf play rejected: ${e.name}`);
+      _dbg(`pf3 rep${rep} play rejected: ${e.name}`);
       if (e.name === 'AbortError') { clearTimeout(safeSt); doCleanup(); }
       else if (e.name === 'NotAllowedError') {
-        const retry = () => {
-          document.removeEventListener('touchstart', retry);
-          audio.play().catch(() => { clearTimeout(safeSt); doCleanup(); });
-        };
+        const retry = () => { document.removeEventListener('touchstart', retry); _loopEl.play().catch(() => { clearTimeout(safeSt); doCleanup(); }); };
         document.addEventListener('touchstart', retry, { once: true, passive: true });
       } else { clearTimeout(safeSt); doCleanup(); }
     });
   }
 
   _speakPlayUI();
-  _prefetchNext(myVer); // pre-fetch the card after next while this plays
+  _prefetchNext(myVer);
   playRep();
 }
 
 // ×3 mode: fetch word TTS once, play 3 times via onended chain (no async gap → iOS safe),
 // then play pre-fetched example in the same onended chain.
+// When looping: word ×3 only (skip example to keep iOS audio chain alive).
 async function _speakWord3Reps(item, myVer, onDone) {
+  const skipExample = state.isLooping; // looping → word only
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
@@ -2355,9 +2431,9 @@ async function _speakWord3Reps(item, myVer, onDone) {
 
     const wordUrl = URL.createObjectURL(wordBlob);
 
-    // Pre-fetch example TTS in parallel (while word plays)
+    // Pre-fetch example TTS only when NOT looping
     let exUrl = null;
-    if (item.sentence) {
+    if (!skipExample && item.sentence) {
       const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
       _getAzureToken(key, region).then(tok => {
         if (_speakVersion !== myVer) return null;
@@ -2373,68 +2449,61 @@ async function _speakWord3Reps(item, myVer, onDone) {
     }
 
     let ended = false;
-    const safeSt = setTimeout(() => { if (!ended) doCleanup(); }, 22000);
+    const safeSt = setTimeout(() => { _dbg(`x3 safetyTimer`); if (!ended) doCleanup(); }, 22000);
 
     function doCleanup() {
       if (ended) return; ended = true;
+      _dbg(`x3 cleanup rep=${rep}`);
       clearTimeout(safeSt);
       try { URL.revokeObjectURL(wordUrl); } catch(e){}
       if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
       _currentAudio = null;
       _speakEndUI();
-      onDone();
+      try { onDone(); } catch(e) { _dbg(`x3 onDone ERROR: ${e.message}`); showToast('Loop error: ' + e.message); }
     }
 
     let rep = 0;
 
     function playRep() {
-      if (ended || _speakVersion !== myVer) { doCleanup(); return; }
+      if (ended || _speakVersion !== myVer) { _dbg(`x3 playRep abort ended=${ended} ver=${_speakVersion}/${myVer}`); doCleanup(); return; }
       rep++;
-      const audio = new Audio(wordUrl); // new Audio from same URL each rep
-      _currentAudio = audio;
-      audio.onerror = () => { clearTimeout(safeSt); doCleanup(); };
-      audio.onended = () => {
+      _dbg(`x3 rep ${rep}/3`);
+      const onended = () => {
+        _dbg(`x3 rep${rep} ended`);
         if (rep < 3) {
-          playRep(); // immediate in onended → iOS media continuation
+          playRep();
         } else {
-          // All 3 word reps done → play example if pre-fetched
           try { URL.revokeObjectURL(wordUrl); } catch(e){}
           _currentAudio = null;
-          if (exUrl && _speakVersion === myVer) {
-            const exAudio = new Audio(exUrl);
-            _currentAudio = exAudio;
-            const exSt = setTimeout(() => doCleanup(), 12000);
-            exAudio.onended = () => { clearTimeout(exSt); doCleanup(); };
-            exAudio.onerror = () => { clearTimeout(exSt); doCleanup(); };
-            const pp = exAudio.play();
-            if (pp) pp.catch(() => { clearTimeout(exSt); doCleanup(); });
+          if (!skipExample && exUrl && _speakVersion === myVer) {
+            _dbg(`x3 ex▶`);
+            const exSt = setTimeout(() => { _dbg(`x3 ex safetyTimer`); doCleanup(); }, 12000);
+            const p = _loopPlay(exUrl,
+              () => { _dbg(`x3 ex ended`); clearTimeout(exSt); doCleanup(); },
+              () => { _dbg(`x3 ex error`); clearTimeout(exSt); doCleanup(); }
+            );
+            if (p) p.catch((e) => { _dbg(`x3 ex play rejected: ${e.name}`); clearTimeout(exSt); doCleanup(); });
           } else {
-            if (ended) return; ended = true;
-            clearTimeout(safeSt);
-            if (exUrl) { try { URL.revokeObjectURL(exUrl); } catch(e){} }
-            _currentAudio = null;
-            _speakEndUI();
-            onDone();
+            _dbg(`x3 skip ex (loop=${skipExample} exUrl=${!!exUrl})`);
+            doCleanup();
           }
         }
       };
-      const p = audio.play();
+      const onerror = () => { _dbg(`x3 rep${rep} onerror`); clearTimeout(safeSt); doCleanup(); };
+      const p = _loopPlay(wordUrl, onended, onerror);
       if (p) p.catch(e => {
-        _dbg(`x3 play rejected: ${e.name}`);
+        _dbg(`x3 rep${rep} play rejected: ${e.name}`);
         if (e.name === 'AbortError') { clearTimeout(safeSt); doCleanup(); }
         else if (e.name === 'NotAllowedError') {
-          const retry = () => {
-            document.removeEventListener('touchstart', retry);
-            audio.play().catch(() => { clearTimeout(safeSt); doCleanup(); });
-          };
+          const retry = () => { document.removeEventListener('touchstart', retry); _loopEl.play().catch(() => { clearTimeout(safeSt); doCleanup(); }); };
           document.addEventListener('touchstart', retry, { once: true, passive: true });
         } else { clearTimeout(safeSt); doCleanup(); }
       });
     }
 
     _speakPlayUI();
-    _prefetchNext(myVer); // pre-fetch next card's word while this plays
-    playRep(); // start rep 1
+    _prefetchNext(myVer);
+    playRep();
   } catch(e) {
     _currentAudio = null; _azureToken = null;
     showToast('語音失敗：' + e.message);
@@ -2452,15 +2521,18 @@ function speakCurrent() {
   if (!item) return;
 
   function afterAll() {
+    _dbg(`afterAll ver=${myVer} cur=${_speakVersion}`);
     if (_speakVersion !== myVer) return;
-    if (state.cnMode && item.meaning) {
-      setTimeout(() => speakChinese(item.meaning, () => {
-        if (_speakVersion !== myVer) return;
+    try {
+      if (state.cnMode && item.meaning) {
+        setTimeout(() => speakChinese(item.meaning, () => {
+          if (_speakVersion !== myVer) return;
+          _afterSpeak(myVer);
+        }), 400);
+      } else {
         _afterSpeak(myVer);
-      }), 400);
-    } else {
-      _afterSpeak(myVer);
-    }
+      }
+    } catch(e) { _dbg(`afterAll ERROR: ${e.message}`); showToast('Loop error: ' + e.message); }
   }
 
   if (state.x3Mode) {
@@ -2480,81 +2552,86 @@ function _loopNextCard() {
   loadCurrentCard();
 }
 
-function _afterSpeak(ver, wasExample) {
-  _dbg(`_afterSpeak ver=${ver} cur=${_speakVersion} ex=${wasExample} looping=${state.isLooping}`);
+function _afterSpeak(ver) {
+  _dbg(`_afterSpeak ver=${ver} cur=${_speakVersion} looping=${state.isLooping} pf=${!!_pf.url} pfVer=${_pf.ver}`);
   if (ver !== undefined && _speakVersion !== ver) { _dbg(`ABORT stale ver=${ver} cur=${_speakVersion}`); return; }
-  if (state.isLooping) {
-    const playExample = !!wasExample;
-    setTimeout(() => {
-      if (ver !== undefined && _speakVersion !== ver) return;
-      _loopNextCard();
-      if (playExample) {
-        setTimeout(() => {
-          if (ver !== undefined && _speakVersion !== ver) return;
-          _setExampleMode(true);
-          setTimeout(speakExample, 200);
-        }, 400);
-      } else if (_pf.url && _pf.ver === ver && state.x3Mode) {
-        // Pre-fetch ready + ×3 mode: call _speakWord3RepsFromUrl immediately (no async gap → iOS safe)
-        _dbg(`pf×3▶ ${_pf.jp}`);
-        const pfUrl = _pf.url;
-        _pf = { url: null, jp: null, ver: null };
-        _speakVersion++;
-        const myVer = _speakVersion;
-        const nextItem = getCurrentItem();
-        function afterAll3() {
-          if (_speakVersion !== myVer) return;
-          if (state.cnMode && nextItem.meaning) {
-            setTimeout(() => speakChinese(nextItem.meaning, () => {
-              if (_speakVersion !== myVer) return;
-              _afterSpeak(myVer);
-            }), 400);
-          } else {
+  if (!state.isLooping) return;
+  try {
+
+  // ── Prefetch ready → play IMMEDIATELY (synchronous in onended chain → iOS media continuation) ──
+  if (_pf.url && _pf.ver === ver) {
+    const pfUrl = _pf.url;
+    const pfJp = _pf.jp;
+    _pf = { url: null, jp: null, ver: null };
+    _speakVersion++;
+    const myVer = _speakVersion;
+
+    // Advance card synchronously so getCurrentItem() returns the new card
+    _loopNextCard();
+    const nextItem = getCurrentItem();
+
+    if (state.x3Mode) {
+      _dbg(`pf×3▶ ${pfJp}`);
+      function afterAll3() {
+        if (_speakVersion !== myVer) return;
+        if (state.cnMode && nextItem.meaning) {
+          setTimeout(() => speakChinese(nextItem.meaning, () => {
+            if (_speakVersion !== myVer) return;
             _afterSpeak(myVer);
-          }
-        }
-        _speakWord3RepsFromUrl(pfUrl, nextItem, myVer, afterAll3);
-      } else if (_pf.url && _pf.ver === ver && !state.x3Mode) {
-        // Pre-fetch ready + ×1 mode: play immediately — no async gap, iOS allows this as media continuation
-        _dbg(`pf▶ ${_pf.jp}`);
-        const pfUrl = _pf.url;
-        _pf = { url: null, jp: null, ver: null };
-        _speakVersion++;
-        const myVer = _speakVersion;
-        const pfAudio = new Audio(pfUrl);
-        _currentAudio = pfAudio;
-        let _pfEnded = false;
-        const _pfDone = (err) => {
-          if (_pfEnded) return; _pfEnded = true;
-          clearTimeout(_pfSt);
-          _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(pfUrl);
-          if (err) showToast(err);
+          }), 400);
+        } else {
           _afterSpeak(myVer);
-        };
-        const _pfSt = setTimeout(() => { _dbg(`pf safety`); _pfDone(); }, 12000);
-        pfAudio.onended = () => { _dbg(`pf ended`); _pfDone(); };
-        pfAudio.onerror = () => _pfDone('音訊播放失敗');
-        _speakPlayUI();
-        _prefetchNext(myVer); // pre-fetch the card after next
-        const pp = pfAudio.play();
-        if (pp) pp.catch(e => {
-          _dbg(`pf play rejected: ${e.name}`);
-          if (e.name === 'AbortError') _pfDone();
-          else if (e.name === 'NotAllowedError') {
-            clearTimeout(_pfSt);
-            const _r = () => { document.removeEventListener('touchstart', _r); pfAudio.play().catch(() => _pfDone()); };
-            document.addEventListener('touchstart', _r, { once: true, passive: true });
-            setTimeout(_r, 60000);
-          } else _pfDone();
-        });
-      } else {
-        // Pre-fetch not ready: fall back to normal async speak
-        _dbg(`pf not ready, falling back`);
-        _clearPrefetch();
-        setTimeout(speakCurrent, 400);
+        }
       }
-    }, 800);
+      _speakWord3RepsFromUrl(pfUrl, nextItem, myVer, afterAll3);
+    } else {
+      _dbg(`pf▶ ${pfJp}`);
+      let _pfEnded = false;
+      const _pfDone = (err) => {
+        if (_pfEnded) return; _pfEnded = true;
+        clearTimeout(_pfSt);
+        _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(pfUrl);
+        if (err) showToast(err);
+        if (state.cnMode && nextItem.meaning) {
+          setTimeout(() => speakChinese(nextItem.meaning, () => {
+            if (_speakVersion !== myVer) return;
+            _afterSpeak(myVer);
+          }), 400);
+        } else {
+          _afterSpeak(myVer);
+        }
+      };
+      const _pfSt = setTimeout(() => { _dbg(`pf safety`); _pfDone(); }, 12000);
+      _speakPlayUI();
+      _prefetchNext(myVer);
+      const pp = _loopPlay(pfUrl,
+        () => { _dbg(`pf ended`); _pfDone(); },
+        () => _pfDone('音訊播放失敗')
+      );
+      if (pp) pp.catch(e => {
+        _dbg(`pf play rejected: ${e.name}`);
+        if (e.name === 'AbortError') _pfDone();
+        else if (e.name === 'NotAllowedError') {
+          clearTimeout(_pfSt);
+          const _r = () => { document.removeEventListener('touchstart', _r); _loopEl.play().catch(() => _pfDone()); };
+          document.addEventListener('touchstart', _r, { once: true, passive: true });
+          setTimeout(_r, 60000);
+        } else _pfDone();
+      });
+    }
+    return;
   }
+
+  // ── No prefetch → fallback with delay ──
+  _dbg(`pf not ready, falling back`);
+  _clearPrefetch();
+  setTimeout(() => {
+    if (ver !== undefined && _speakVersion !== ver) return;
+    _loopNextCard();
+    setTimeout(speakCurrent, 400);
+  }, 800);
+
+  } catch(e) { _dbg(`_afterSpeak ERROR: ${e.message}`); showToast('Loop error: ' + e.message); }
 }
 
 function toggleLoop() {
@@ -2600,11 +2677,15 @@ async function speakChinese(text, onEnd) {
     });
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
+    const useLoop = state.isLooping;
+    const audio = useLoop ? (_loopEl || (_loopEl = new Audio())) : new Audio(url);
+    if (useLoop) audio.src = url;
     let _done = false;
-    const _end = () => { if (_done) return; _done = true; URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+    const _end = () => { if (_done) return; _done = true; clearTimeout(_cnSafe); try { audio.pause(); } catch(e){} URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+    const _cnSafe = setTimeout(() => { _dbg('cn safety'); _end(); }, 10000);
     audio.onended = _end;
     audio.onerror = _end;
+    _currentAudio = audio;
     const p = audio.play();
     if (p) p.catch(_end);
   } catch(e) { if (onEnd) onEnd(); }
@@ -2666,7 +2747,7 @@ function speakExample() {
     speak(clean, () => {
       if (_speakVersion !== myVer) return;
       rep++;
-      if (rep < reps) setTimeout(round, 500); else _afterSpeak(myVer, true); // wasExample=true
+      if (rep < reps) setTimeout(round, 500); else _afterSpeak(myVer);
     }, myVer);
   }
   round();
