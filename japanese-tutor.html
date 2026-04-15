@@ -147,13 +147,15 @@
   }
   .srs-btn .srs-interval { font-size: 0.55rem; opacity: 0.7; }
   .srs-btn.again { border-color: var(--bad); color: var(--bad); }
-  .srs-btn.again:hover, .srs-btn.again.tapped { background: var(--bad); color: #fff; }
+  .srs-btn.again:hover, .srs-btn.again.tapped { background: var(--bad); color: #fff; transform: scale(0.93); }
   .srs-btn.hard { border-color: var(--warn); color: var(--warn); }
-  .srs-btn.hard:hover, .srs-btn.hard.tapped { background: var(--warn); color: #fff; }
+  .srs-btn.hard:hover, .srs-btn.hard.tapped { background: var(--warn); color: #fff; transform: scale(0.93); }
   .srs-btn.good { border-color: var(--good); color: var(--good); }
-  .srs-btn.good:hover, .srs-btn.good.tapped { background: var(--good); color: #fff; }
+  .srs-btn.good:hover, .srs-btn.good.tapped { background: var(--good); color: #fff; transform: scale(0.93); }
   .srs-btn.easy { border-color: var(--gold); color: var(--gold); }
-  .srs-btn.easy:hover, .srs-btn.easy.tapped { background: var(--gold); color: #fff; }
+  .srs-btn.easy:hover, .srs-btn.easy.tapped { background: var(--gold); color: #fff; transform: scale(0.93); }
+  .srs-btn.flash { animation: srsFlash 0.35s ease-out; }
+  @keyframes srsFlash { 0% { transform: scale(0.93); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
   /* NAV */
   .btn { font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.06em; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; transition: all 0.15s; color: var(--ink); }
@@ -314,7 +316,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.7</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.8</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -1960,6 +1962,19 @@ function practiceItems() {
   if (state.levelFilter !== 'all') {
     items = items.filter(i => i.jlpt === state.levelFilter);
   }
+  // SRS scheduling: due cards first, then new cards, then future cards
+  const now = Date.now();
+  items = items.slice().sort((a, b) => {
+    const sa = state.srsData[a.id], sb = state.srsData[b.id];
+    const catA = !sa ? 1 : (new Date(sa.nextReview).getTime() <= now ? 0 : 2);
+    const catB = !sb ? 1 : (new Date(sb.nextReview).getTime() <= now ? 0 : 2);
+    if (catA !== catB) return catA - catB; // due(0) < new(1) < future(2)
+    // Within due: most overdue first
+    if (catA === 0) return new Date(sa.nextReview).getTime() - new Date(sb.nextReview).getTime();
+    // Within future: soonest due first
+    if (catA === 2) return new Date(sa.nextReview).getTime() - new Date(sb.nextReview).getTime();
+    return 0; // new cards: keep original order
+  });
   return items;
 }
 
@@ -2113,16 +2128,22 @@ function rateSRS(rating) {
   };
   saveSRS();
 
-  // Advance card after brief visual feedback
+  // Advance card after visual feedback
   setTimeout(() => {
-    // Reset all SRS button states (remove tapped + blur for iOS hover)
-    document.querySelectorAll('.srs-btn').forEach(b => { b.classList.remove('tapped'); b.blur(); });
-
-    const items = practiceItems();
-    state.currentIndex = (state.currentIndex + 1) % items.length;
-    loadCurrentCard();
-    updateHUD();
-  }, 180);
+    // Flash animation on release, then reset
+    document.querySelectorAll('.srs-btn').forEach(b => {
+      b.classList.remove('tapped');
+      b.classList.add('flash');
+      b.blur();
+    });
+    setTimeout(() => {
+      document.querySelectorAll('.srs-btn').forEach(b => b.classList.remove('flash'));
+      const items = practiceItems();
+      state.currentIndex = (state.currentIndex + 1) % items.length;
+      loadCurrentCard();
+      updateHUD();
+    }, 350);
+  }, 300);
 }
 
 // ===== FILTER =====
@@ -2800,7 +2821,17 @@ document.addEventListener('keydown', e => {
 function updateHUD() {
   const items = practiceItems();
   const counter = $id('headerCounter');
-  if (counter) counter.textContent = `${state.currentIndex + 1} / ${items.length}`;
+  if (!counter) return;
+  // Count due / new / future
+  const now = Date.now();
+  let due = 0, fresh = 0;
+  items.forEach(i => {
+    const s = state.srsData[i.id];
+    if (!s) fresh++;
+    else if (new Date(s.nextReview).getTime() <= now) due++;
+  });
+  const reviewed = items.length - due - fresh;
+  counter.textContent = `${state.currentIndex + 1}/${items.length}　到期:${due} 新:${fresh} 已排:${reviewed}`;
 }
 
 // ===== LIBRARY =====
