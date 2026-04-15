@@ -314,7 +314,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.4</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.5</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -2144,12 +2144,7 @@ function _setExampleMode(on) {
 
 function showAndSpeakExample() {
   _stopAudio();
-  // 例句模式不支援連播 — 自動關閉
-  if (state.isLooping) {
-    state.isLooping = false;
-    const toggle = $id('loopToggle');
-    if (toggle) toggle.checked = false;
-  }
+  if (state.isLooping) _unlockLoopEl();
   _setExampleMode(true);
   setTimeout(speakExample, 200);
 }
@@ -2321,18 +2316,14 @@ function getCurrentItem() {
 }
 
 // ×3 mode with pre-fetched word URL — skips fetch, plays immediately in onended (iOS background safe).
-// When looping: word ×3 only (skip example to keep iOS audio chain alive).
-// When not looping: word ×3 + example.
 function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
-  const skipExample = state.isLooping; // looping → word only, faster cycle
-
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
 
-  // Pre-fetch example TTS only when NOT looping
+  // Pre-fetch example TTS in parallel while word reps play
   let exUrl = null;
-  if (!skipExample && item.sentence && key) {
+  if (item.sentence && key) {
     const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
     _getAzureToken(key, region).then(tok => {
       if (_speakVersion !== myVer) return null;
@@ -2374,7 +2365,7 @@ function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
       } else {
         try { URL.revokeObjectURL(wordUrl); } catch(e){}
         _currentAudio = null;
-        if (!skipExample && exUrl && _speakVersion === myVer) {
+        if (exUrl && _speakVersion === myVer) {
           _dbg(`pf3 ex▶`);
           const exSt = setTimeout(() => { _dbg(`pf3 ex safetyTimer`); doCleanup(); }, 12000);
           const p = _loopPlay(exUrl,
@@ -2383,7 +2374,7 @@ function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
           );
           if (p) p.catch((e) => { _dbg(`pf3 ex play rejected: ${e.name}`); clearTimeout(exSt); doCleanup(); });
         } else {
-          _dbg(`pf3 skip ex (loop=${skipExample} exUrl=${!!exUrl})`);
+          _dbg(`pf3 no ex, exUrl=${!!exUrl}`);
           doCleanup();
         }
       }
@@ -2407,9 +2398,7 @@ function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
 
 // ×3 mode: fetch word TTS once, play 3 times via onended chain (no async gap → iOS safe),
 // then play pre-fetched example in the same onended chain.
-// When looping: word ×3 only (skip example to keep iOS audio chain alive).
 async function _speakWord3Reps(item, myVer, onDone) {
-  const skipExample = state.isLooping; // looping → word only
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
@@ -2432,9 +2421,9 @@ async function _speakWord3Reps(item, myVer, onDone) {
 
     const wordUrl = URL.createObjectURL(wordBlob);
 
-    // Pre-fetch example TTS only when NOT looping
+    // Pre-fetch example TTS in parallel (while word plays)
     let exUrl = null;
-    if (!skipExample && item.sentence) {
+    if (item.sentence) {
       const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
       _getAzureToken(key, region).then(tok => {
         if (_speakVersion !== myVer) return null;
@@ -2476,7 +2465,7 @@ async function _speakWord3Reps(item, myVer, onDone) {
         } else {
           try { URL.revokeObjectURL(wordUrl); } catch(e){}
           _currentAudio = null;
-          if (!skipExample && exUrl && _speakVersion === myVer) {
+          if (exUrl && _speakVersion === myVer) {
             _dbg(`x3 ex▶`);
             const exSt = setTimeout(() => { _dbg(`x3 ex safetyTimer`); doCleanup(); }, 12000);
             const p = _loopPlay(exUrl,
@@ -2485,7 +2474,7 @@ async function _speakWord3Reps(item, myVer, onDone) {
             );
             if (p) p.catch((e) => { _dbg(`x3 ex play rejected: ${e.name}`); clearTimeout(exSt); doCleanup(); });
           } else {
-            _dbg(`x3 skip ex (loop=${skipExample} exUrl=${!!exUrl})`);
+            _dbg(`x3 no ex, exUrl=${!!exUrl}`);
             doCleanup();
           }
         }
