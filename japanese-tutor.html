@@ -314,7 +314,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.5</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.6</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -1706,8 +1706,10 @@ function srsNextInterval(card, rating) {
 
   } else if (rating === 1) {                 // Hard — slow down
     newEf = Math.max(1.3, ef - 0.15);
-    if (reps < 2) {
-      newInterval = 1;                       // still in early learning
+    if (reps === 0) {
+      newInterval = 1;                       // new card → tomorrow
+    } else if (reps === 1) {
+      newInterval = 3;                       // second review → 3 days
     } else {
       newInterval = Math.max(interval + 1,
         Math.round((interval + daysOverdue / 4) * 1.2));
@@ -1717,7 +1719,7 @@ function srsNextInterval(card, rating) {
   } else if (rating === 2) {                 // Good — normal pace
     // EF unchanged
     if (reps === 0) {
-      newInterval = 1;                       // graduating interval
+      newInterval = 2;                       // new card → 2 days
     } else if (reps === 1) {
       newInterval = 6;                       // second review
     } else {
@@ -2144,7 +2146,11 @@ function _setExampleMode(on) {
 
 function showAndSpeakExample() {
   _stopAudio();
-  if (state.isLooping) _unlockLoopEl();
+  // 例句不支援連播 — 自動關閉
+  if (state.isLooping) {
+    state.isLooping = false;
+    const t = $id('loopToggle'); if (t) t.checked = false;
+  }
   _setExampleMode(true);
   setTimeout(speakExample, 200);
 }
@@ -2316,14 +2322,17 @@ function getCurrentItem() {
 }
 
 // ×3 mode with pre-fetched word URL — skips fetch, plays immediately in onended (iOS background safe).
+// When looping: word ×3 only (skip example to avoid iOS audio chain break).
+// When not looping: word ×3 + example.
 function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
+  const skipEx = state.isLooping;
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
 
-  // Pre-fetch example TTS in parallel while word reps play
+  // Pre-fetch example TTS only when not looping
   let exUrl = null;
-  if (item.sentence && key) {
+  if (!skipEx && item.sentence && key) {
     const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
     _getAzureToken(key, region).then(tok => {
       if (_speakVersion !== myVer) return null;
@@ -2398,7 +2407,9 @@ function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
 
 // ×3 mode: fetch word TTS once, play 3 times via onended chain (no async gap → iOS safe),
 // then play pre-fetched example in the same onended chain.
+// When looping: word ×3 only (skip example to avoid iOS audio chain break).
 async function _speakWord3Reps(item, myVer, onDone) {
+  const skipEx = state.isLooping;
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
@@ -2421,9 +2432,9 @@ async function _speakWord3Reps(item, myVer, onDone) {
 
     const wordUrl = URL.createObjectURL(wordBlob);
 
-    // Pre-fetch example TTS in parallel (while word plays)
+    // Pre-fetch example TTS only when not looping
     let exUrl = null;
-    if (item.sentence) {
+    if (!skipEx && item.sentence) {
       const exText = item.sentence.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
       _getAzureToken(key, region).then(tok => {
         if (_speakVersion !== myVer) return null;
