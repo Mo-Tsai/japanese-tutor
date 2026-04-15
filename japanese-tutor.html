@@ -316,7 +316,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.9</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v3.0</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -577,6 +577,7 @@
 
     <div class="card" style="margin-top:8px;">
       <div class="card-label">SRS 閃卡設定</div>
+      <div id="srsStatsDisplay" style="font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--accent); margin-bottom:12px; padding:8px 10px; background:var(--paper2); border-radius:6px;"></div>
       <div style="margin-bottom:12px;">
         <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; cursor:pointer;">
           <input type="checkbox" id="srsSortToggle" onchange="toggleSrsSort()">
@@ -2864,7 +2865,12 @@ function updateHUD() {
     else if (new Date(s.nextReview).getTime() <= now) due++;
   });
   const reviewed = items.length - due - fresh;
-  counter.textContent = `${state.currentIndex + 1}/${items.length}　到期:${due} 新:${fresh} 已排:${reviewed}`;
+  counter.textContent = `${state.currentIndex + 1} / ${items.length}`;
+  // Update SRS stats in settings page
+  const srsStats = $id('srsStatsDisplay');
+  if (srsStats) {
+    srsStats.textContent = `到期：${due}　新卡：${fresh}　已排程：${reviewed}　共 ${items.length} 張`;
+  }
 }
 
 // ===== LIBRARY =====
