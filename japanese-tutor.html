@@ -314,7 +314,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.6</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v2.7</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -2048,7 +2048,7 @@ function loadCurrentCard() {
   $id('intEasy').textContent = intervalLabel(srsNextInterval(curr, 3).interval);
 
   const _exBtn = $id('btnSpeakEx');
-  _exBtn.style.display = item.sentence ? '' : 'none';
+  _exBtn.style.display = (item.sentence && !state.isLooping) ? '' : 'none';
   _exBtn.textContent = state.x3Mode ? '▶ 例句 ×3' : '▶ 例句';
 
   // Reset play btn
@@ -2637,6 +2637,10 @@ function _afterSpeak(ver) {
 
 function toggleLoop() {
   state.isLooping = $id('loopToggle').checked;
+  // 連播開啟時隱藏例句按鈕，關閉時恢復
+  const item = getCurrentItem();
+  const _exBtn = $id('btnSpeakEx');
+  if (_exBtn) _exBtn.style.display = (item?.sentence && !state.isLooping) ? '' : 'none';
 }
 
 function toggleCnMode() {
