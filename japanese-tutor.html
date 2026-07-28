@@ -87,7 +87,7 @@
   .sentence-display.srs-due { border-color: var(--warn); }
   .sentence-display.srs-new { border-color: var(--accent); }
 
-  .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'Courier New', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
+  .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'Noto Sans TC', 'Courier New', monospace; font-family: 'Courier New', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
   .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); }
   .srs-indicator { position: absolute; bottom: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.55rem; color: var(--muted); }
 
@@ -169,6 +169,18 @@
   .btn.green { border-color: var(--good); color: var(--good); }
   .btn.green:hover { background: var(--good); color: #fff; }
 
+  .group-select {
+    font-family: 'Noto Sans TC','Inter',sans-serif; font-size: 0.72rem;
+    padding: 4px 10px; border: 1px solid var(--border); border-radius: 20px;
+    background: transparent; color: var(--ink); outline: none; cursor: pointer;
+    max-width: 190px;
+  }
+  .group-select:focus { border-color: var(--accent); }
+  .card-note {
+    font-size: 0.78rem; color: var(--warn); background: rgba(224,123,57,0.08);
+    border-radius: 8px; padding: 5px 12px; margin-top: 2px; line-height: 1.5;
+  }
+
   /* MODE TOGGLE */
   .toggle-wrap { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .toggle-btn { font-family: 'Courier New', monospace; font-size: 0.6rem; padding: 4px 10px; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
@@ -232,7 +244,7 @@
 
   .level-bars { display: flex; flex-direction: column; gap: 10px; }
   .level-row { display: flex; align-items: center; gap: 10px; }
-  .level-name { font-family: 'Courier New', monospace; font-size: 0.65rem; color: var(--muted); width: 28px; }
+  .level-name { font-family: 'Noto Sans TC','Courier New', monospace; font-size: 0.65rem; color: var(--muted); width: 56px; flex-shrink: 0; }
   .level-bar-wrap { flex: 1; height: 8px; background: var(--paper2); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
   .level-bar { height: 100%; background: var(--accent); transition: width 0.4s ease; border-radius: 4px; }
   .level-count { font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); width: 60px; text-align: right; }
@@ -317,7 +329,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v3.3</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v4.0</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -332,10 +344,9 @@
 
         <!-- Filter bar -->
         <div class="filter-bar" style="margin-bottom:0;">
-          <span class="filter-label">JLPT</span>
-          <button class="filter-btn active" onclick="setLevelFilter('all')">全部</button>
-          <button class="filter-btn" onclick="setLevelFilter('N5')">N5</button>
-          <button class="filter-btn" onclick="setLevelFilter('N4')">N4</button>
+          <span class="filter-label">分類</span>
+          <select class="group-select" id="groupSelect" autocomplete="off"
+                  onchange="setLevelFilter(this.value)"></select>
         </div>
 
       </div>
@@ -349,6 +360,7 @@
 
           <div class="sentence-jp" id="sentenceJp">載入中…</div>
           <div class="sentence-meaning" id="sentenceMeaning"></div>
+          <div class="card-note" id="cardNote" style="display:none;"></div>
           <div class="en-speak-row" id="enWordRow" style="display:none;">
             <span class="word-meaning-en" id="wordMeaningEn"></span>
             <button class="btn-speak-en" onclick="speakEn('word')" title="Read in English">🔊</button>
@@ -398,10 +410,13 @@
       <button class="btn" onclick="$id('searchInput').value='';renderLibrary()">✕</button>
     </div>
 
+    <div class="filter-bar">
+      <span class="filter-label">分類</span>
+      <select class="group-select" id="libGroupSelect" autocomplete="off"
+              onchange="switchCategory(this.value)"></select>
+    </div>
     <div class="category-tabs">
       <button class="cat-tab active" onclick="switchCategory('all')">全部</button>
-      <button class="cat-tab" onclick="switchCategory('N5')">N5</button>
-      <button class="cat-tab" onclick="switchCategory('N4')">N4</button>
       <button class="cat-tab" onclick="switchCategory('custom')">自訂</button>
       <button class="cat-tab" onclick="switchCategory('mastered')">已掌握</button>
     </div>
@@ -459,7 +474,7 @@
     <div class="stats-grid" id="statsGrid"></div>
 
     <div class="card">
-      <div class="card-label">JLPT 掌握進度</div>
+      <div class="card-label">各章掌握進度</div>
       <div class="level-bars" id="levelBars"></div>
     </div>
 
@@ -525,7 +540,7 @@
     <div class="card" style="margin-top:14px;">
       <div class="card-label">自動掃描</div>
       <div style="display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;">
-        <button class="btn primary" onclick="scanAllCards()">▶ 掃描全部 1041 張</button>
+        <button class="btn primary" onclick="scanAllCards()">▶ 掃描全部卡片</button>
         <span id="scanStatus" style="font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted);"></span>
       </div>
       <div id="scanResults"></div>
@@ -581,7 +596,7 @@
       <div id="srsStatsDisplay" style="font-family:'DM Mono',monospace; font-size:0.75rem; color:var(--accent); margin-bottom:12px; padding:8px 10px; background:var(--paper2); border-radius:6px;"></div>
       <div style="margin-bottom:12px;">
         <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; cursor:pointer;">
-          <input type="checkbox" id="srsSortToggle" onchange="toggleSrsSort()">
+          <input type="checkbox" id="srsSortToggle" autocomplete="off" onchange="toggleSrsSort()">
           <span>智慧排序（到期卡優先，新卡次之，未到期最後）</span>
         </label>
         <div class="setting-hint">開啟後卡片順序依 SRS 排程，關閉則依教科書順序</div>
@@ -612,17 +627,17 @@
     <div class="ctrl-row-bar">
       <div class="tog-group">
         <label class="tog-switch">
-          <input type="checkbox" id="loopToggle" onchange="toggleLoop()">
+          <input type="checkbox" id="loopToggle" autocomplete="off" onchange="toggleLoop()">
           <div class="tog-track"></div>
           連播
         </label>
         <label class="tog-switch">
-          <input type="checkbox" id="cnToggle" onchange="toggleCnMode()">
+          <input type="checkbox" id="cnToggle" autocomplete="off" onchange="toggleCnMode()">
           <div class="tog-track"></div>
           中日
         </label>
         <label class="tog-switch">
-          <input type="checkbox" id="x3Toggle" onchange="toggleX3Mode()">
+          <input type="checkbox" id="x3Toggle" autocomplete="off" onchange="toggleX3Mode()">
           <div class="tog-track"></div>
           ×3
         </label>
@@ -1693,6 +1708,1200 @@ const EMBEDDED_WORDS = [
 {id:"v2_1039",jp:"林",ruby:"林|はやし",reading:"はやし",meaning:"樹林",type:'word',jlpt:"N4",sentence:"学校|がっこう の 近く|ちかく に 林|はやし が あります。",sentenceMeaning:"學校附近有樹林。"},
 {id:"v2_1040",jp:"恥ずかしい",ruby:"恥ずかしい|はずかしい",reading:"はずかしい",meaning:"害羞",type:'word',jlpt:"N4",sentence:"皆|みんな の 前|まえ で 間違え|まちがえ て 恥ずかしかっ|はずかしかっ た です。",sentenceMeaning:"在大家面前答錯了，很丟臉。"}
 ];
+
+// ===== 課程卡片（來自《實用日文會話課》講義，依章節分類）=====
+const COURSE_CARDS = [
+{id:"c_0000",jp:"こんにちは",ruby:"こんにちは",reading:"こんにちは",meaning:"你好",type:'word',chapter:"禮儀篇",note:"見面、活動場合、熟與不熟的人"},
+{id:"c_0001",jp:"すみません",ruby:"すみません",reading:"すみません",meaning:"不好意思",type:'word',chapter:"禮儀篇",note:"最常用、最自然"},
+{id:"c_0002",jp:"ごめん",ruby:"ごめん",reading:"ごめん",meaning:"抱歉",type:'word',chapter:"禮儀篇",note:"最輕鬆、最口語"},
+{id:"c_0003",jp:"ありがとう",ruby:"ありがとう",reading:"ありがとう",meaning:"謝謝",type:'word',chapter:"禮儀篇",note:"一般口語"},
+{id:"c_0004",jp:"かしこまりました",ruby:"かしこまりました",reading:"かしこまりました",meaning:"知道了",type:'word',chapter:"禮儀篇",note:"服務業最常用"},
+{id:"c_0005",jp:"わかりました",ruby:"わかりました",reading:"わかりました",meaning:"好、了解",type:'word',chapter:"禮儀篇"},
+{id:"c_0006",jp:"会われる",ruby:"会|あ われる",reading:"あわれる",meaning:"（見面）",type:'word',chapter:"禮儀篇"},
+{id:"c_0007",jp:"参ります",ruby:"参|まい ります",reading:"まいります",meaning:"（去／來）",type:'word',chapter:"禮儀篇"},
+{id:"c_0008",jp:"拝見する",ruby:"拝見|はいけん する",reading:"はいけんする",meaning:"見ます（看）",type:'word',chapter:"禮儀篇"},
+{id:"c_0009",jp:"もしもし、お疲れ",ruby:"もしもし、お 疲|つか れ",reading:"もしもしおつかれ",meaning:"開場",type:'word',chapter:"禮儀篇",note:"様です"},
+{id:"c_0010",jp:"もしもし、聞こえますか",ruby:"もしもし、 聞|き こえますか",reading:"もしもしきこえますか",meaning:"聽不清楚",type:'word',chapter:"禮儀篇"},
+{id:"c_0011",jp:"一分",ruby:"一分|いっぷん",reading:"いっぷん",meaning:"一分",type:'word',chapter:"餐廳篇"},
+{id:"c_0012",jp:"二分",ruby:"二分|にふん",reading:"にふん",meaning:"兩分",type:'word',chapter:"餐廳篇"},
+{id:"c_0013",jp:"三分",ruby:"三分|さんぷん",reading:"さんぷん",meaning:"三分",type:'word',chapter:"餐廳篇"},
+{id:"c_0014",jp:"四分",ruby:"四分|よんぷん",reading:"よんぷん",meaning:"四分",type:'word',chapter:"餐廳篇"},
+{id:"c_0015",jp:"五分",ruby:"五分|ごふん",reading:"ごふん",meaning:"五分",type:'word',chapter:"餐廳篇"},
+{id:"c_0016",jp:"六分",ruby:"六分|ろっぷん",reading:"ろっぷん",meaning:"六分",type:'word',chapter:"餐廳篇"},
+{id:"c_0017",jp:"七分",ruby:"七分|ななふん",reading:"ななふん",meaning:"七分",type:'word',chapter:"餐廳篇"},
+{id:"c_0018",jp:"八分",ruby:"八分|はちふん",reading:"はちふん",meaning:"八分",type:'word',chapter:"餐廳篇",note:"也可以說八分"},
+{id:"c_0019",jp:"十分",ruby:"十分|じっぷん",reading:"じっぷん",meaning:"十分",type:'word',chapter:"餐廳篇",note:"口語的說法十分"},
+{id:"c_0020",jp:"二十分",ruby:"二十分|にじっぷん",reading:"にじっぷん",meaning:"二十分",type:'word',chapter:"餐廳篇",note:"口語的說法二十分"},
+{id:"c_0021",jp:"四十分",ruby:"四十分|よんじっぷん",reading:"よんじっぷん",meaning:"四十分",type:'word',chapter:"餐廳篇",note:"口語的說法四十分"},
+{id:"c_0022",jp:"五十分",ruby:"五十分|ごじっぷん",reading:"ごじっぷん",meaning:"五十分",type:'word',chapter:"餐廳篇",note:"口語的說法五十分"},
+{id:"c_0023",jp:"六時間",ruby:"六時間|ろくじかん",reading:"ろくじかん",meaning:"六個小時",type:'word',chapter:"餐廳篇"},
+{id:"c_0024",jp:"八時間",ruby:"八時間|はちじかん",reading:"はちじかん",meaning:"八個小時",type:'word',chapter:"餐廳篇"},
+{id:"c_0025",jp:"九時間",ruby:"九時間|くじかん",reading:"くじかん",meaning:"九個小時",type:'word',chapter:"餐廳篇"},
+{id:"c_0026",jp:"十時間",ruby:"十時間|じゅうじかん",reading:"じゅうじかん",meaning:"十個小時",type:'word',chapter:"餐廳篇"},
+{id:"c_0027",jp:"十一時間",ruby:"十一時間|じゅういちじかん",reading:"じゅういちじかん",meaning:"十一個小時",type:'word',chapter:"餐廳篇"},
+{id:"c_0028",jp:"十二時間",ruby:"十二時間|じゅうにじかん",reading:"じゅうにじかん",meaning:"十二個小時",type:'word',chapter:"餐廳篇",note:"也可以說半日，意思是「半天」"},
+{id:"c_0029",jp:"一日中",ruby:"一日中|いちにちじゅう",reading:"いちにちじゅう",meaning:"一整天",type:'word',chapter:"餐廳篇"},
+{id:"c_0030",jp:"終日",ruby:"終日|しゅうじつ",reading:"しゅうじつ",meaning:"整天、全天候",type:'word',chapter:"餐廳篇"},
+{id:"c_0031",jp:"四六時中",ruby:"四六時中|しろくじちゅう",reading:"しろくじちゅう",meaning:"一天到晚",type:'word',chapter:"餐廳篇",note:"4×6=24（一天有24小時）"},
+{id:"c_0032",jp:"七名",ruby:"七名|ななめい",reading:"ななめい",meaning:"七位",type:'word',chapter:"餐廳篇",note:"另一種說法七名"},
+{id:"c_0033",jp:"三人",ruby:"三人|さんにん",reading:"さんにん",meaning:"三個人",type:'word',chapter:"餐廳篇"},
+{id:"c_0034",jp:"四人",ruby:"四人|よにん",reading:"よにん",meaning:"四個人",type:'word',chapter:"餐廳篇",note:"不能說しにん，跟「死人」相同"},
+{id:"c_0035",jp:"五人",ruby:"五人|ごにん",reading:"ごにん",meaning:"五個人",type:'word',chapter:"餐廳篇"},
+{id:"c_0036",jp:"六人",ruby:"六人|ろくにん",reading:"ろくにん",meaning:"六個人",type:'word',chapter:"餐廳篇"},
+{id:"c_0037",jp:"七人",ruby:"七人|しちにん",reading:"しちにん",meaning:"七個人",type:'word',chapter:"餐廳篇",note:"另一種說法七人"},
+{id:"c_0038",jp:"八人",ruby:"八人|はちにん",reading:"はちにん",meaning:"八個人",type:'word',chapter:"餐廳篇"},
+{id:"c_0039",jp:"九人",ruby:"九人|きゅうにん",reading:"きゅうにん",meaning:"九個人",type:'word',chapter:"餐廳篇",note:"不是くにん"},
+{id:"c_0040",jp:"十人",ruby:"十人|じゅうにん",reading:"じゅうにん",meaning:"十個人",type:'word',chapter:"餐廳篇"},
+{id:"c_0041",jp:"ベビーチェア",ruby:"ベビーチェア",reading:"ベビーチェア",meaning:"嬰兒椅",type:'word',chapter:"餐廳篇"},
+{id:"c_0042",jp:"子ども用の",ruby:"子|こ ども 用|よう の",reading:"こどもようの",meaning:"兒童椅",type:'word',chapter:"餐廳篇",note:"子ども用の椅子をお願いします"},
+{id:"c_0043",jp:"ハイチェア",ruby:"ハイチェア",reading:"ハイチェア",meaning:"高腳椅",type:'word',chapter:"餐廳篇"},
+{id:"c_0044",jp:"携帯電話の電源",ruby:"携帯電話|けいたいでんわ の 電源|でんげん",reading:"けいたいでんわのでんげん",meaning:"請關手機",type:'word',chapter:"餐廳篇",note:"をお切り"},
+{id:"c_0045",jp:"サンダルでのご",ruby:"サンダルでのご",reading:"サンダルでのご",meaning:"禁止穿拖鞋",type:'word',chapter:"餐廳篇",note:"入店は常用在高級餐廳或夜店"},
+{id:"c_0046",jp:"酔っ払いのご",ruby:"酔|よ っ 払|ぱら いのご",reading:"よっぱらいのご",meaning:"醉客禁止入內",type:'word',chapter:"餐廳篇",note:"入店は"},
+{id:"c_0047",jp:"小学生以下の",ruby:"小学生以下|しょうがくせいいか の",reading:"しょうがくせいいかの",meaning:"小學生不可入內",type:'word',chapter:"餐廳篇",note:"方のご"},
+{id:"c_0048",jp:"反社会的勢力",ruby:"反社会的勢力|はんしゃかいてきせいりょく",reading:"はんしゃかいてきせいりょく",meaning:"本店拒絕反社會",type:'word',chapter:"餐廳篇",note:"の方のご保護店家與顧客安全的"},
+{id:"c_0049",jp:"一杯",ruby:"一杯|いっぱい",reading:"いっぱい",meaning:"一杯",type:'word',chapter:"餐廳篇",note:"はい會變成ぱい"},
+{id:"c_0050",jp:"二杯",ruby:"二杯|にはい",reading:"にはい",meaning:"兩杯",type:'word',chapter:"餐廳篇"},
+{id:"c_0051",jp:"三杯",ruby:"三杯|さんばい",reading:"さんばい",meaning:"三杯",type:'word',chapter:"餐廳篇",note:"はい會變成ばい"},
+{id:"c_0052",jp:"四杯",ruby:"四杯|よんはい",reading:"よんはい",meaning:"四杯",type:'word',chapter:"餐廳篇"},
+{id:"c_0053",jp:"五杯",ruby:"五杯|ごはい",reading:"ごはい",meaning:"五杯",type:'word',chapter:"餐廳篇"},
+{id:"c_0054",jp:"六杯",ruby:"六杯|ろっぱい",reading:"ろっぱい",meaning:"六杯",type:'word',chapter:"餐廳篇",note:"也可以念 六杯"},
+{id:"c_0055",jp:"七杯",ruby:"七杯|ななはい",reading:"ななはい",meaning:"七杯",type:'word',chapter:"餐廳篇",note:"有時候也會聽到"},
+{id:"c_0056",jp:"八杯",ruby:"八杯|はっぱい",reading:"はっぱい",meaning:"八杯",type:'word',chapter:"餐廳篇",note:"也可以念"},
+{id:"c_0057",jp:"九杯",ruby:"九杯|きゅうはい",reading:"きゅうはい",meaning:"九杯",type:'word',chapter:"餐廳篇"},
+{id:"c_0058",jp:"十杯",ruby:"十杯|じっぱい",reading:"じっぱい",meaning:"十杯",type:'word',chapter:"餐廳篇",note:"口語裡常聽到"},
+{id:"c_0059",jp:"一枚",ruby:"一枚|いちまい",reading:"いちまい",meaning:"一張、一片",type:'word',chapter:"餐廳篇"},
+{id:"c_0060",jp:"二枚",ruby:"二枚|にまい",reading:"にまい",meaning:"兩張、兩片",type:'word',chapter:"餐廳篇"},
+{id:"c_0061",jp:"三枚",ruby:"三枚|さんまい",reading:"さんまい",meaning:"三張、三片",type:'word',chapter:"餐廳篇"},
+{id:"c_0062",jp:"四枚",ruby:"四枚|よんまい",reading:"よんまい",meaning:"四張、四片",type:'word',chapter:"餐廳篇"},
+{id:"c_0063",jp:"五枚",ruby:"五枚|ごまい",reading:"ごまい",meaning:"五張、五片",type:'word',chapter:"餐廳篇"},
+{id:"c_0064",jp:"六枚",ruby:"六枚|ろくまい",reading:"ろくまい",meaning:"六張、六片",type:'word',chapter:"餐廳篇"},
+{id:"c_0065",jp:"七枚",ruby:"七枚|ななまい",reading:"ななまい",meaning:"七張、七片",type:'word',chapter:"餐廳篇",note:"有時候也會說"},
+{id:"c_0066",jp:"八枚",ruby:"八枚|はちまい",reading:"はちまい",meaning:"八張、八片",type:'word',chapter:"餐廳篇"},
+{id:"c_0067",jp:"九枚",ruby:"九枚|きゅうまい",reading:"きゅうまい",meaning:"九張、九片",type:'word',chapter:"餐廳篇"},
+{id:"c_0068",jp:"十枚",ruby:"十枚|じゅうまい",reading:"じゅうまい",meaning:"十張、十片",type:'word',chapter:"餐廳篇"},
+{id:"c_0069",jp:"一本",ruby:"一本|いっぽん",reading:"いっぽん",meaning:"一根、一支",type:'word',chapter:"餐廳篇",note:"ほん會變成ぽん"},
+{id:"c_0070",jp:"二本",ruby:"二本|にほん",reading:"にほん",meaning:"兩根、兩支",type:'word',chapter:"餐廳篇"},
+{id:"c_0071",jp:"三本",ruby:"三本|さんぼん",reading:"さんぼん",meaning:"三根、三支",type:'word',chapter:"餐廳篇",note:"ほん會變成ぼん"},
+{id:"c_0072",jp:"四本",ruby:"四本|よんほん",reading:"よんほん",meaning:"四根、四支",type:'word',chapter:"餐廳篇"},
+{id:"c_0073",jp:"五本",ruby:"五本|ごほん",reading:"ごほん",meaning:"五根、五支",type:'word',chapter:"餐廳篇"},
+{id:"c_0074",jp:"六本",ruby:"六|ろっぽん 本|ろっぽん",reading:"ろっぽんろっぽん",meaning:"六根、六支",type:'word',chapter:"餐廳篇",note:"ろくほん比較少用"},
+{id:"c_0075",jp:"七本",ruby:"七本|ななほん",reading:"ななほん",meaning:"七根、七支",type:'word',chapter:"餐廳篇",note:"有時候也會聽到"},
+{id:"c_0076",jp:"八本",ruby:"八本|はちほん",reading:"はちほん",meaning:"八根、八支",type:'word',chapter:"餐廳篇"},
+{id:"c_0077",jp:"九本",ruby:"九本|きゅうほん",reading:"きゅうほん",meaning:"九根、九支",type:'word',chapter:"餐廳篇"},
+{id:"c_0078",jp:"十本",ruby:"十本|じっぽん",reading:"じっぽん",meaning:"十根、十支",type:'word',chapter:"餐廳篇",note:"另一種常用說法"},
+{id:"c_0079",jp:"メニュー",ruby:"メニュー",reading:"メニュー",meaning:"菜單",type:'word',chapter:"餐廳篇"},
+{id:"c_0080",jp:"献立表",ruby:"献立表|こんだてひょう",reading:"こんだてひょう",meaning:"菜單",type:'word',chapter:"餐廳篇",note:"比較傳統的日本料理店"},
+{id:"c_0081",jp:"お品書き",ruby:"お 品書|しなが き",reading:"おしながき",meaning:"菜單",type:'word',chapter:"餐廳篇",note:"比較傳統的日本料理店"},
+{id:"c_0082",jp:"おすすめ",ruby:"おすすめ",reading:"おすすめ",meaning:"推薦",type:'word',chapter:"餐廳篇",note:"等於招牌菜的意思"},
+{id:"c_0083",jp:"オススメ",ruby:"オススメ",reading:"オススメ",meaning:"推薦",type:'word',chapter:"餐廳篇",note:"等於招牌菜的意思"},
+{id:"c_0084",jp:"本日のおすすめ",ruby:"本日|ほんじつ のおすすめ",reading:"ほんじつのおすすめ",meaning:"今天的推薦",type:'word',chapter:"餐廳篇"},
+{id:"c_0085",jp:"旬のおすすめ",ruby:"旬|しゅん のおすすめ",reading:"しゅんのおすすめ",meaning:"當季推薦",type:'word',chapter:"餐廳篇"},
+{id:"c_0086",jp:"日替わりメニュー",ruby:"日替|ひがわ わりメニュー",reading:"ひがわわりメニュー",meaning:"單",type:'word',chapter:"餐廳篇"},
+{id:"c_0087",jp:"前菜",ruby:"前菜|ぜんさい",reading:"ぜんさい",meaning:"開胃菜",type:'word',chapter:"餐廳篇"},
+{id:"c_0088",jp:"サラダ",ruby:"サラダ",reading:"サラダ",meaning:"沙拉",type:'word',chapter:"餐廳篇"},
+{id:"c_0089",jp:"メインディッシュ",ruby:"メインディッシュ",reading:"メインディッシュ",meaning:"主菜",type:'word',chapter:"餐廳篇"},
+{id:"c_0090",jp:"一品料理",ruby:"一品料理|いっぴんりょうり",reading:"いっぴんりょうり",meaning:"單點的料理",type:'word',chapter:"餐廳篇"},
+{id:"c_0091",jp:"デザート",ruby:"デザート",reading:"デザート",meaning:"甜點",type:'word',chapter:"餐廳篇"},
+{id:"c_0092",jp:"ドリンク",ruby:"ドリンク",reading:"ドリンク",meaning:"飲料",type:'word',chapter:"餐廳篇"},
+{id:"c_0093",jp:"おつまみ",ruby:"おつまみ",reading:"おつまみ",meaning:"下酒菜",type:'word',chapter:"餐廳篇"},
+{id:"c_0094",jp:"定食",ruby:"定食|ていしょく",reading:"ていしょく",meaning:"定食",type:'word',chapter:"餐廳篇"},
+{id:"c_0095",jp:"お子様ランチ",ruby:"お 子様|こさま ランチ",reading:"おこさまランチ",meaning:"兒童餐",type:'word',chapter:"餐廳篇"},
+{id:"c_0096",jp:"セルフサービス",ruby:"セルフサービス",reading:"セルフサービス",meaning:"自助服務",type:'word',chapter:"餐廳篇"},
+{id:"c_0097",jp:"呼び鈴",ruby:"呼|よ び 鈴|りん",reading:"よびりん",meaning:"服務鈴",type:'word',chapter:"餐廳篇"},
+{id:"c_0098",jp:"券売機",ruby:"券売機|けんばいき",reading:"けんばいき",meaning:"售票機",type:'word',chapter:"餐廳篇",note:"很多拉麵店是先去機器買餐券"},
+{id:"c_0099",jp:"食券",ruby:"食券|しょっけん",reading:"しょっけん",meaning:"餐券",type:'word',chapter:"餐廳篇"},
+{id:"c_0100",jp:"替え玉",ruby:"替|か え 玉|だま",reading:"かえだま",meaning:"加麵",type:'word',chapter:"餐廳篇"},
+{id:"c_0101",jp:"屋台",ruby:"屋台|やたい",reading:"やたい",meaning:"小吃攤",type:'word',chapter:"餐廳篇"},
+{id:"c_0102",jp:"時価",ruby:"時価|じか",reading:"じか",meaning:"時價",type:'word',chapter:"餐廳篇"},
+{id:"c_0103",jp:"えび",ruby:"えび",reading:"えび",meaning:"蝦",type:'word',chapter:"餐廳篇"},
+{id:"c_0104",jp:"かに",ruby:"かに",reading:"かに",meaning:"蟹",type:'word',chapter:"餐廳篇"},
+{id:"c_0105",jp:"小麦",ruby:"小麦|こむぎ",reading:"こむぎ",meaning:"小麥",type:'word',chapter:"餐廳篇"},
+{id:"c_0106",jp:"乳",ruby:"乳|にゅう",reading:"にゅう",meaning:"牛奶製品",type:'word',chapter:"餐廳篇"},
+{id:"c_0107",jp:"落花生",ruby:"落花生|らっかせい",reading:"らっかせい",meaning:"花生",type:'word',chapter:"餐廳篇"},
+{id:"c_0108",jp:"アーモンド",ruby:"アーモンド",reading:"アーモンド",meaning:"杏仁",type:'word',chapter:"餐廳篇"},
+{id:"c_0109",jp:"あわび",ruby:"あわび",reading:"あわび",meaning:"鮑魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0110",jp:"いか",ruby:"いか",reading:"いか",meaning:"魷魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0111",jp:"オレンジ",ruby:"オレンジ",reading:"オレンジ",meaning:"柳橙",type:'word',chapter:"餐廳篇"},
+{id:"c_0112",jp:"カシューナッツ",ruby:"カシューナッツ",reading:"カシューナッツ",meaning:"腰果",type:'word',chapter:"餐廳篇"},
+{id:"c_0113",jp:"キウイフルーツ",ruby:"キウイフルーツ",reading:"キウイフルーツ",meaning:"奇異果",type:'word',chapter:"餐廳篇"},
+{id:"c_0114",jp:"ごま",ruby:"ごま",reading:"ごま",meaning:"芝麻",type:'word',chapter:"餐廳篇"},
+{id:"c_0115",jp:"さけ",ruby:"さけ",reading:"さけ",meaning:"鮭魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0116",jp:"さば",ruby:"さば",reading:"さば",meaning:"鯖魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0117",jp:"大豆",ruby:"大豆|だいず",reading:"だいず",meaning:"大豆",type:'word',chapter:"餐廳篇"},
+{id:"c_0118",jp:"マカダミアナッツ",ruby:"マカダミアナッツ",reading:"マカダミアナッツ",meaning:"夏威夷果",type:'word',chapter:"餐廳篇"},
+{id:"c_0119",jp:"もも",ruby:"もも",reading:"もも",meaning:"桃子",type:'word',chapter:"餐廳篇"},
+{id:"c_0120",jp:"やまいも",ruby:"やまいも",reading:"やまいも",meaning:"山藥",type:'word',chapter:"餐廳篇"},
+{id:"c_0121",jp:"りんご",ruby:"りんご",reading:"りんご",meaning:"蘋果",type:'word',chapter:"餐廳篇"},
+{id:"c_0122",jp:"ゼラチン",ruby:"ゼラチン",reading:"ゼラチン",meaning:"吉利丁",type:'word',chapter:"餐廳篇"},
+{id:"c_0123",jp:"くるみ",ruby:"くるみ",reading:"くるみ",meaning:"核桃",type:'word',chapter:"餐廳篇"},
+{id:"c_0124",jp:"バイキング",ruby:"バイキング",reading:"バイキング",meaning:"吃到飽",type:'word',chapter:"餐廳篇"},
+{id:"c_0125",jp:"ビュッフェ",ruby:"ビュッフェ",reading:"ビュッフェ",meaning:"自助餐",type:'word',chapter:"餐廳篇"},
+{id:"c_0126",jp:"放題",ruby:"放題|ほうだい",reading:"ほうだい",meaning:"無限供應",type:'word',chapter:"餐廳篇",note:"カニ食べ放題螃蟹吃到飽"},
+{id:"c_0127",jp:"焼肉",ruby:"焼肉|やきにく",reading:"やきにく",meaning:"烤肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0128",jp:"刺身",ruby:"刺身|さしみ",reading:"さしみ",meaning:"生魚片",type:'word',chapter:"餐廳篇"},
+{id:"c_0129",jp:"しゃぶしゃぶ",ruby:"しゃぶしゃぶ",reading:"しゃぶしゃぶ",meaning:"涮涮鍋",type:'word',chapter:"餐廳篇"},
+{id:"c_0130",jp:"天ぷら",ruby:"天|てん ぷら",reading:"てんぷら",meaning:"天婦羅",type:'word',chapter:"餐廳篇"},
+{id:"c_0131",jp:"蕎麦",ruby:"蕎麦|そば",reading:"そば",meaning:"蕎麥麵",type:'word',chapter:"餐廳篇"},
+{id:"c_0132",jp:"うどん",ruby:"うどん",reading:"うどん",meaning:"烏龍麵",type:'word',chapter:"餐廳篇"},
+{id:"c_0133",jp:"茶碗蒸",ruby:"茶碗蒸|ちゃわんむし",reading:"ちゃわんむし",meaning:"茶碗蒸",type:'word',chapter:"餐廳篇"},
+{id:"c_0134",jp:"麻婆豆腐",ruby:"麻婆豆腐|まーぼーどうふ",reading:"まーぼーどうふ",meaning:"麻婆豆腐",type:'word',chapter:"餐廳篇"},
+{id:"c_0135",jp:"担々麺",ruby:"担々麺|たんたんめん",reading:"たんたんめん",meaning:"擔擔麺",type:'word',chapter:"餐廳篇"},
+{id:"c_0136",jp:"エビチリ",ruby:"エビチリ",reading:"エビチリ",meaning:"乾燒蝦仁",type:'word',chapter:"餐廳篇"},
+{id:"c_0137",jp:"小籠包",ruby:"小籠包|ショーロンポー",reading:"ショーロンポー",meaning:"小籠包",type:'word',chapter:"餐廳篇"},
+{id:"c_0138",jp:"チヂミ",ruby:"チヂミ",reading:"チヂミ",meaning:"韓式煎餅",type:'word',chapter:"餐廳篇"},
+{id:"c_0139",jp:"ビビンバ",ruby:"ビビンバ",reading:"ビビンバ",meaning:"石鍋拌飯",type:'word',chapter:"餐廳篇"},
+{id:"c_0140",jp:"チゲ",ruby:"チゲ",reading:"チゲ",meaning:"韓式鍋",type:'word',chapter:"餐廳篇"},
+{id:"c_0141",jp:"パスタ",ruby:"パスタ",reading:"パスタ",meaning:"義大利麵",type:'word',chapter:"餐廳篇"},
+{id:"c_0142",jp:"ピザ",ruby:"ピザ",reading:"ピザ",meaning:"披薩",type:'word',chapter:"餐廳篇"},
+{id:"c_0143",jp:"ステーキ",ruby:"ステーキ",reading:"ステーキ",meaning:"牛排",type:'word',chapter:"餐廳篇"},
+{id:"c_0144",jp:"ハンバーグ",ruby:"ハンバーグ",reading:"ハンバーグ",meaning:"漢堡排",type:'word',chapter:"餐廳篇"},
+{id:"c_0145",jp:"チーズフォンデュ",ruby:"チーズフォンデュ",reading:"チーズフォンデュ",meaning:"起司火鍋",type:'word',chapter:"餐廳篇"},
+{id:"c_0146",jp:"チョコレートフォンデュ",ruby:"チョコレートフォンデュ",reading:"チョコレートフォンデュ",meaning:"巧克力火鍋",type:'word',chapter:"餐廳篇"},
+{id:"c_0147",jp:"味噌汁",ruby:"味噌汁|みそしる",reading:"みそしる",meaning:"味噌湯",type:'word',chapter:"餐廳篇"},
+{id:"c_0148",jp:"ケーキ",ruby:"ケーキ",reading:"ケーキ",meaning:"蛋糕",type:'word',chapter:"餐廳篇"},
+{id:"c_0149",jp:"アイスクリーム",ruby:"アイスクリーム",reading:"アイスクリーム",meaning:"冰淇淋",type:'word',chapter:"餐廳篇"},
+{id:"c_0150",jp:"ドレッシング",ruby:"ドレッシング",reading:"ドレッシング",meaning:"沙拉醬",type:'word',chapter:"餐廳篇"},
+{id:"c_0151",jp:"ビール",ruby:"ビール",reading:"ビール",meaning:"啤酒",type:'word',chapter:"餐廳篇"},
+{id:"c_0152",jp:"焼酎",ruby:"焼酎|しょうちゅう",reading:"しょうちゅう",meaning:"燒酎",type:'word',chapter:"餐廳篇"},
+{id:"c_0153",jp:"ワイン",ruby:"ワイン",reading:"ワイン",meaning:"葡萄酒",type:'word',chapter:"餐廳篇"},
+{id:"c_0154",jp:"酎ハイ",ruby:"酎|チュー ハイ",reading:"チューハイ",meaning:"燒酎調酒",type:'word',chapter:"餐廳篇",note:"燒酎加汽水或果汁"},
+{id:"c_0155",jp:"カクテル",ruby:"カクテル",reading:"カクテル",meaning:"雞尾酒",type:'word',chapter:"餐廳篇"},
+{id:"c_0156",jp:"サワー",ruby:"サワー",reading:"サワー",meaning:"沙瓦調酒",type:'word',chapter:"餐廳篇"},
+{id:"c_0157",jp:"ソフトドリンク",ruby:"ソフトドリンク",reading:"ソフトドリンク",meaning:"軟性飲料",type:'word',chapter:"餐廳篇"},
+{id:"c_0158",jp:"炭酸飲料",ruby:"炭酸飲料|たんさんいんりょう",reading:"たんさんいんりょう",meaning:"汽水",type:'word',chapter:"餐廳篇"},
+{id:"c_0159",jp:"コーラ",ruby:"コーラ",reading:"コーラ",meaning:"可樂",type:'word',chapter:"餐廳篇"},
+{id:"c_0160",jp:"スプライト",ruby:"スプライト",reading:"スプライト",meaning:"雪碧",type:'word',chapter:"餐廳篇"},
+{id:"c_0161",jp:"ラムネ",ruby:"ラムネ",reading:"ラムネ",meaning:"彈珠汽水",type:'word',chapter:"餐廳篇"},
+{id:"c_0162",jp:"オレンジジュース",ruby:"オレンジジュース",reading:"オレンジジュース",meaning:"柳橙汁",type:'word',chapter:"餐廳篇"},
+{id:"c_0163",jp:"烏龍茶",ruby:"烏龍茶|ウーロンちゃ",reading:"ウーロンちゃ",meaning:"烏龍茶",type:'word',chapter:"餐廳篇"},
+{id:"c_0164",jp:"とり肉",ruby:"とり 肉|にく",reading:"とりにく",meaning:"雞肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0165",jp:"ラム肉",ruby:"ラム 肉|にく",reading:"ラムにく",meaning:"羊肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0166",jp:"牛タン",ruby:"牛|ぎゅう タン",reading:"ぎゅうタン",meaning:"牛舌",type:'word',chapter:"餐廳篇"},
+{id:"c_0167",jp:"カルビ",ruby:"カルビ",reading:"カルビ",meaning:"牛五花",type:'word',chapter:"餐廳篇"},
+{id:"c_0168",jp:"ロース",ruby:"ロース",reading:"ロース",meaning:"里脊肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0169",jp:"ハラミ",ruby:"ハラミ",reading:"ハラミ",meaning:"橫隔膜",type:'word',chapter:"餐廳篇"},
+{id:"c_0170",jp:"スペアリブ",ruby:"スペアリブ",reading:"スペアリブ",meaning:"排骨",type:'word',chapter:"餐廳篇"},
+{id:"c_0171",jp:"サーロイン",ruby:"サーロイン",reading:"サーロイン",meaning:"沙朗 / 腰內肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0172",jp:"ヒレ",ruby:"ヒレ",reading:"ヒレ",meaning:"菲力",type:'word',chapter:"餐廳篇"},
+{id:"c_0173",jp:"シャトーブリアン",ruby:"シャトーブリアン",reading:"シャトーブリアン",meaning:"夏多布里昂",type:'word',chapter:"餐廳篇",note:"高級部位"},
+{id:"c_0174",jp:"肩ロース",ruby:"肩|かた ロース",reading:"かたロース",meaning:"豬梅花",type:'word',chapter:"餐廳篇"},
+{id:"c_0175",jp:"モモ",ruby:"モモ",reading:"モモ",meaning:"豬臀肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0176",jp:"ミノ",ruby:"ミノ",reading:"ミノ",meaning:"牛肚",type:'word',chapter:"餐廳篇"},
+{id:"c_0177",jp:"レバー",ruby:"レバー",reading:"レバー",meaning:"肝臟",type:'word',chapter:"餐廳篇"},
+{id:"c_0178",jp:"ハツ",ruby:"ハツ",reading:"ハツ",meaning:"心臟",type:'word',chapter:"餐廳篇"},
+{id:"c_0179",jp:"サンチュ",ruby:"サンチュ",reading:"サンチュ",meaning:"韓式萵苣",type:'word',chapter:"餐廳篇",note:"可以把肉夾進去"},
+{id:"c_0180",jp:"焼肉のたれ",ruby:"焼肉|やきにく のたれ",reading:"やきにくのたれ",meaning:"烤肉醬",type:'word',chapter:"餐廳篇"},
+{id:"c_0181",jp:"塩だれ",ruby:"塩|しお だれ",reading:"しおだれ",meaning:"鹽味醬汁",type:'word',chapter:"餐廳篇"},
+{id:"c_0182",jp:"レモン汁",ruby:"レモン 汁|じる",reading:"レモンじる",meaning:"檸檬汁",type:'word',chapter:"餐廳篇"},
+{id:"c_0183",jp:"焼肉奉行",ruby:"焼肉奉行|やきにくぶぎょう",reading:"やきにくぶぎょう",meaning:"烤肉指揮官",type:'word',chapter:"餐廳篇",note:"讚，覺得他很專業；有時候也"},
+{id:"c_0184",jp:"熱っ",ruby:"熱|あつ っ",reading:"あつっ",meaning:"好燙",type:'word',chapter:"餐廳篇"},
+{id:"c_0185",jp:"やばっ",ruby:"やばっ",reading:"やばっ",meaning:"天啊",type:'word',chapter:"餐廳篇"},
+{id:"c_0186",jp:"すごっ",ruby:"すごっ",reading:"すごっ",meaning:"哇，好棒",type:'word',chapter:"餐廳篇"},
+{id:"c_0187",jp:"うまっ",ruby:"うまっ",reading:"うまっ",meaning:"好好吃",type:'word',chapter:"餐廳篇"},
+{id:"c_0188",jp:"めっちゃ美味",ruby:"めっちゃ 美味|おい",reading:"めっちゃおい",meaning:"太好吃了",type:'word',chapter:"餐廳篇",note:"しい"},
+{id:"c_0189",jp:"超美味",ruby:"超美味|ちょうおい",reading:"ちょうおい",meaning:"超級好吃",type:'word',chapter:"餐廳篇",note:"しい"},
+{id:"c_0190",jp:"鉄板",ruby:"鉄板|てっぱん",reading:"てっぱん",meaning:"鐵板",type:'word',chapter:"餐廳篇"},
+{id:"c_0191",jp:"七輪",ruby:"七輪|しちりん",reading:"しちりん",meaning:"炭火小烤爐",type:'word',chapter:"餐廳篇"},
+{id:"c_0192",jp:"焼き網",ruby:"焼|や き 網|あみ",reading:"やきあみ",meaning:"烤網",type:'word',chapter:"餐廳篇"},
+{id:"c_0193",jp:"トング",ruby:"トング",reading:"トング",meaning:"夾子",type:'word',chapter:"餐廳篇"},
+{id:"c_0194",jp:"換気扇",ruby:"換気扇|かんきせん",reading:"かんきせん",meaning:"抽風扇",type:'word',chapter:"餐廳篇"},
+{id:"c_0195",jp:"炭",ruby:"炭|すみ",reading:"すみ",meaning:"木炭",type:'word',chapter:"餐廳篇"},
+{id:"c_0196",jp:"着火剤",ruby:"着火剤|ちゃっかざい",reading:"ちゃっかざい",meaning:"點火器",type:'word',chapter:"餐廳篇"},
+{id:"c_0197",jp:"消臭スプレー",ruby:"消臭|しょうしゅう スプレー",reading:"しょうしゅうスプレー",meaning:"除臭噴霧",type:'word',chapter:"餐廳篇"},
+{id:"c_0198",jp:"コート掛",ruby:"コート 掛|か",reading:"コートか",meaning:"掛外套的地方",type:'word',chapter:"餐廳篇",note:"け"},
+{id:"c_0199",jp:"紙ナプキン",ruby:"紙|かみ ナプキン",reading:"かみナプキン",meaning:"餐巾紙",type:'word',chapter:"餐廳篇"},
+{id:"c_0200",jp:"おしぼり",ruby:"おしぼり",reading:"おしぼり",meaning:"熱毛巾",type:'word',chapter:"餐廳篇"},
+{id:"c_0201",jp:"エプロン",ruby:"エプロン",reading:"エプロン",meaning:"圍裙",type:'word',chapter:"餐廳篇"},
+{id:"c_0202",jp:"生肉",ruby:"生肉|なまにく",reading:"なまにく",meaning:"生肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0203",jp:"中はまだ",ruby:"中|なか はまだ",reading:"なかはまだ",meaning:"裡面還是生的",type:'word',chapter:"餐廳篇",note:"生"},
+{id:"c_0204",jp:"焼き過",ruby:"焼|や き 過|す",reading:"やきす",meaning:"烤太過頭了",type:'word',chapter:"餐廳篇",note:"ぎ"},
+{id:"c_0205",jp:"焦げる",ruby:"焦|こ げる",reading:"こげる",meaning:"燒焦了",type:'word',chapter:"餐廳篇"},
+{id:"c_0206",jp:"炙る",ruby:"炙|あぶ る",reading:"あぶる",meaning:"炙燒",type:'word',chapter:"餐廳篇"},
+{id:"c_0207",jp:"外はカリカリ",ruby:"外|そと はカリカリ",reading:"そとはカリカリ",meaning:"外面烤得酥脆了",type:'word',chapter:"餐廳篇"},
+{id:"c_0208",jp:"両面を焼",ruby:"両面|りょうめん を 焼|や",reading:"りょうめんをや",meaning:"兩面都烤一下",type:'word',chapter:"餐廳篇",note:"く"},
+{id:"c_0209",jp:"ひっくり",ruby:"ひっくり",reading:"ひっくり",meaning:"翻面",type:'word',chapter:"餐廳篇",note:"返す"},
+{id:"c_0210",jp:"炭火焼",ruby:"炭火焼|すみびや",reading:"すみびや",meaning:"炭火烤",type:'word',chapter:"餐廳篇",note:"き"},
+{id:"c_0211",jp:"イートインスペース",ruby:"イートインスペース",reading:"イートインスペース",meaning:"內用區",type:'word',chapter:"餐廳篇"},
+{id:"c_0212",jp:"ベイクドチーズケーキ",ruby:"ベイクドチーズケーキ",reading:"ベイクドチーズケーキ",meaning:"烤起司蛋糕",type:'word',chapter:"餐廳篇"},
+{id:"c_0213",jp:"レアチーズケーキ",ruby:"レアチーズケーキ",reading:"レアチーズケーキ",meaning:"半熟起司蛋糕",type:'word',chapter:"餐廳篇"},
+{id:"c_0214",jp:"モンブラン",ruby:"モンブラン",reading:"モンブラン",meaning:"蒙布朗",type:'word',chapter:"餐廳篇"},
+{id:"c_0215",jp:"チョコレートケーキ",ruby:"チョコレートケーキ",reading:"チョコレートケーキ",meaning:"巧克力蛋糕",type:'word',chapter:"餐廳篇"},
+{id:"c_0216",jp:"ミルクレープ",ruby:"ミルクレープ",reading:"ミルクレープ",meaning:"千層可麗餅",type:'word',chapter:"餐廳篇"},
+{id:"c_0217",jp:"ミルフィーユ",ruby:"ミルフィーユ",reading:"ミルフィーユ",meaning:"千層酥",type:'word',chapter:"餐廳篇"},
+{id:"c_0218",jp:"ティラミス",ruby:"ティラミス",reading:"ティラミス",meaning:"提拉米蘇",type:'word',chapter:"餐廳篇"},
+{id:"c_0219",jp:"シュークリーム",ruby:"シュークリーム",reading:"シュークリーム",meaning:"泡芙",type:'word',chapter:"餐廳篇"},
+{id:"c_0220",jp:"エクレア",ruby:"エクレア",reading:"エクレア",meaning:"閃電泡芙",type:'word',chapter:"餐廳篇"},
+{id:"c_0221",jp:"ムース",ruby:"ムース",reading:"ムース",meaning:"慕斯",type:'word',chapter:"餐廳篇"},
+{id:"c_0222",jp:"フルーツタルト",ruby:"フルーツタルト",reading:"フルーツタルト",meaning:"水果塔",type:'word',chapter:"餐廳篇"},
+{id:"c_0223",jp:"ロールケーキ",ruby:"ロールケーキ",reading:"ロールケーキ",meaning:"蛋糕卷",type:'word',chapter:"餐廳篇"},
+{id:"c_0224",jp:"カップケーキ",ruby:"カップケーキ",reading:"カップケーキ",meaning:"杯子蛋糕",type:'word',chapter:"餐廳篇"},
+{id:"c_0225",jp:"シフォンケーキ",ruby:"シフォンケーキ",reading:"シフォンケーキ",meaning:"戚風蛋糕",type:'word',chapter:"餐廳篇"},
+{id:"c_0226",jp:"ショートケーキ",ruby:"ショートケーキ",reading:"ショートケーキ",meaning:"草莓蛋糕",type:'word',chapter:"餐廳篇"},
+{id:"c_0227",jp:"パンケーキ",ruby:"パンケーキ",reading:"パンケーキ",meaning:"鬆餅",type:'word',chapter:"餐廳篇"},
+{id:"c_0228",jp:"カフェラテ",ruby:"カフェラテ",reading:"カフェラテ",meaning:"拿鐵",type:'word',chapter:"餐廳篇"},
+{id:"c_0229",jp:"カプチーノ",ruby:"カプチーノ",reading:"カプチーノ",meaning:"卡布奇諾",type:'word',chapter:"餐廳篇"},
+{id:"c_0230",jp:"ココア",ruby:"ココア",reading:"ココア",meaning:"可可",type:'word',chapter:"餐廳篇"},
+{id:"c_0231",jp:"ミルクティー",ruby:"ミルクティー",reading:"ミルクティー",meaning:"奶茶",type:'word',chapter:"餐廳篇"},
+{id:"c_0232",jp:"フルーツティー",ruby:"フルーツティー",reading:"フルーツティー",meaning:"水果茶",type:'word',chapter:"餐廳篇"},
+{id:"c_0233",jp:"りんごジュース",ruby:"りんごジュース",reading:"りんごジュース",meaning:"蘋果汁",type:'word',chapter:"餐廳篇"},
+{id:"c_0234",jp:"ぶどうジュース",ruby:"ぶどうジュース",reading:"ぶどうジュース",meaning:"葡萄汁",type:'word',chapter:"餐廳篇"},
+{id:"c_0235",jp:"スポーツドリンク",ruby:"スポーツドリンク",reading:"スポーツドリンク",meaning:"運動飲料",type:'word',chapter:"餐廳篇"},
+{id:"c_0236",jp:"ソフトクリーム",ruby:"ソフトクリーム",reading:"ソフトクリーム",meaning:"霜淇淋",type:'word',chapter:"餐廳篇"},
+{id:"c_0237",jp:"シャーベット",ruby:"シャーベット",reading:"シャーベット",meaning:"冰沙",type:'word',chapter:"餐廳篇"},
+{id:"c_0238",jp:"ジェラート",ruby:"ジェラート",reading:"ジェラート",meaning:"義式冰淇淋",type:'word',chapter:"餐廳篇"},
+{id:"c_0239",jp:"カスタードクリーム",ruby:"カスタードクリーム",reading:"カスタードクリーム",meaning:"卡士達醬",type:'word',chapter:"餐廳篇"},
+{id:"c_0240",jp:"マシュマロ",ruby:"マシュマロ",reading:"マシュマロ",meaning:"棉花糖",type:'word',chapter:"餐廳篇"},
+{id:"c_0241",jp:"フルーツ",ruby:"フルーツ",reading:"フルーツ",meaning:"水果",type:'word',chapter:"餐廳篇"},
+{id:"c_0242",jp:"あんこ",ruby:"あんこ",reading:"あんこ",meaning:"紅豆餡",type:'word',chapter:"餐廳篇"},
+{id:"c_0243",jp:"会員限定",ruby:"会員限定|かいいんげんてい",reading:"かいいんげんてい",meaning:"會員限定",type:'word',chapter:"餐廳篇"},
+{id:"c_0244",jp:"サクサク",ruby:"サクサク",reading:"サクサク",meaning:"酥脆的",type:'word',chapter:"餐廳篇"},
+{id:"c_0245",jp:"なめらか",ruby:"なめらか",reading:"なめらか",meaning:"滑順的",type:'word',chapter:"餐廳篇"},
+{id:"c_0246",jp:"ふわふわ",ruby:"ふわふわ",reading:"ふわふわ",meaning:"蓬鬆的",type:'word',chapter:"餐廳篇"},
+{id:"c_0247",jp:"しっとり",ruby:"しっとり",reading:"しっとり",meaning:"濕潤的",type:'word',chapter:"餐廳篇"},
+{id:"c_0248",jp:"コクのある",ruby:"コクのある",reading:"コクのある",meaning:"香濃的",type:'word',chapter:"餐廳篇"},
+{id:"c_0249",jp:"カラフル",ruby:"カラフル",reading:"カラフル",meaning:"色彩繽紛的",type:'word',chapter:"餐廳篇"},
+{id:"c_0250",jp:"シンプル",ruby:"シンプル",reading:"シンプル",meaning:"簡約的",type:'word',chapter:"餐廳篇"},
+{id:"c_0251",jp:"ピンク",ruby:"ピンク",reading:"ピンク",meaning:"粉色",type:'word',chapter:"餐廳篇"},
+{id:"c_0252",jp:"はかなさ",ruby:"はかなさ",reading:"はかなさ",meaning:"短暫美",type:'word',chapter:"餐廳篇"},
+{id:"c_0253",jp:"すっきり",ruby:"すっきり",reading:"すっきり",meaning:"清爽",type:'word',chapter:"餐廳篇"},
+{id:"c_0254",jp:"ひんやり",ruby:"ひんやり",reading:"ひんやり",meaning:"冰涼",type:'word',chapter:"餐廳篇"},
+{id:"c_0255",jp:"ほっこり",ruby:"ほっこり",reading:"ほっこり",meaning:"暖心",type:'word',chapter:"餐廳篇"},
+{id:"c_0256",jp:"お一人様ワンドリ",ruby:"お 一人様|ひとりさま ワンドリ",reading:"おひとりさまワンドリ",meaning:"每人至少要點",type:'word',chapter:"餐廳篇"},
+{id:"c_0257",jp:"お名前を書いて",ruby:"お 名前|なまえ を 書|か いて",reading:"おなまえをかいて",meaning:"請留下名字等",type:'word',chapter:"餐廳篇"},
+{id:"c_0258",jp:"大声での会話は",ruby:"大声|おおごえ での 会話|かいわ は",reading:"おおごえでのかいわは",meaning:"請勿大聲喧嘩",type:'word',chapter:"餐廳篇"},
+{id:"c_0259",jp:"ねぎま",ruby:"ねぎま",reading:"ねぎま",meaning:"蔥雞肉串",type:'word',chapter:"餐廳篇"},
+{id:"c_0260",jp:"つくね",ruby:"つくね",reading:"つくね",meaning:"雞肉丸",type:'word',chapter:"餐廳篇"},
+{id:"c_0261",jp:"ささみ",ruby:"ささみ",reading:"ささみ",meaning:"雞胸肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0262",jp:"せせり",ruby:"せせり",reading:"せせり",meaning:"雞頸肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0263",jp:"ぼんじり",ruby:"ぼんじり",reading:"ぼんじり",meaning:"雞屁股",type:'word',chapter:"餐廳篇"},
+{id:"c_0264",jp:"シロ",ruby:"シロ",reading:"シロ",meaning:"雞小腸",type:'word',chapter:"餐廳篇"},
+{id:"c_0265",jp:"ぎんなん",ruby:"ぎんなん",reading:"ぎんなん",meaning:"銀杏",type:'word',chapter:"餐廳篇"},
+{id:"c_0266",jp:"サイコロステーキ",ruby:"サイコロステーキ",reading:"サイコロステーキ",meaning:"骰子牛",type:'word',chapter:"餐廳篇"},
+{id:"c_0267",jp:"ズッキーニ",ruby:"ズッキーニ",reading:"ズッキーニ",meaning:"櫛瓜",type:'word',chapter:"餐廳篇"},
+{id:"c_0268",jp:"トマトベーコン",ruby:"トマトベーコン",reading:"トマトベーコン",meaning:"蕃茄培根",type:'word',chapter:"餐廳篇"},
+{id:"c_0269",jp:"まぐろ",ruby:"まぐろ",reading:"まぐろ",meaning:"鮪魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0270",jp:"サーモン",ruby:"サーモン",reading:"サーモン",meaning:"鮭魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0271",jp:"カジキマグロ",ruby:"カジキマグロ",reading:"カジキマグロ",meaning:"旗魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0272",jp:"はまち",ruby:"はまち",reading:"はまち",meaning:"鰤魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0273",jp:"かんぱち",ruby:"かんぱち",reading:"かんぱち",meaning:"紅甘",type:'word',chapter:"餐廳篇"},
+{id:"c_0274",jp:"すずき",ruby:"すずき",reading:"すずき",meaning:"び魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0275",jp:"ひらめ",ruby:"ひらめ",reading:"ひらめ",meaning:"比目魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0276",jp:"えんがわ",ruby:"えんがわ",reading:"えんがわ",meaning:"鰈魚鰭邊肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0277",jp:"かつお",ruby:"かつお",reading:"かつお",meaning:"鰹魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0278",jp:"あじ",ruby:"あじ",reading:"あじ",meaning:"竹莢魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0279",jp:"いわし",ruby:"いわし",reading:"いわし",meaning:"沙丁魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0280",jp:"ふぐ",ruby:"ふぐ",reading:"ふぐ",meaning:"河豚",type:'word',chapter:"餐廳篇"},
+{id:"c_0281",jp:"たこ",ruby:"たこ",reading:"たこ",meaning:"章魚",type:'word',chapter:"餐廳篇"},
+{id:"c_0282",jp:"うに",ruby:"うに",reading:"うに",meaning:"海膽",type:'word',chapter:"餐廳篇"},
+{id:"c_0283",jp:"ほたて",ruby:"ほたて",reading:"ほたて",meaning:"扇貝",type:'word',chapter:"餐廳篇"},
+{id:"c_0284",jp:"ガリ",ruby:"ガリ",reading:"ガリ",meaning:"薑片",type:'word',chapter:"餐廳篇"},
+{id:"c_0285",jp:"わさび",ruby:"わさび",reading:"わさび",meaning:"芥末",type:'word',chapter:"餐廳篇"},
+{id:"c_0286",jp:"ハイボール",ruby:"ハイボール",reading:"ハイボール",meaning:"威士忌蘇打",type:'word',chapter:"餐廳篇",note:"也稱 highball"},
+{id:"c_0287",jp:"チューハイ",ruby:"チューハイ",reading:"チューハイ",meaning:"燒酎調酒",type:'word',chapter:"餐廳篇",note:"一種燒酎加汽水或果汁的調酒"},
+{id:"c_0288",jp:"カルピス",ruby:"カルピス",reading:"カルピス",meaning:"可爾必思",type:'word',chapter:"餐廳篇",note:"乳酸菌飲料，小朋友也很愛"},
+{id:"c_0289",jp:"レモネード",ruby:"レモネード",reading:"レモネード",meaning:"檸檬水",type:'word',chapter:"餐廳篇"},
+{id:"c_0290",jp:"ジンジャーエール",ruby:"ジンジャーエール",reading:"ジンジャーエール",meaning:"薑汁汽水",type:'word',chapter:"餐廳篇"},
+{id:"c_0291",jp:"二次会",ruby:"二次会|にじかい",reading:"にじかい",meaning:"2",type:'word',chapter:"餐廳篇"},
+{id:"c_0292",jp:"やわめ",ruby:"やわめ",reading:"やわめ",meaning:"軟一點",type:'word',chapter:"餐廳篇"},
+{id:"c_0293",jp:"かため",ruby:"かため",reading:"かため",meaning:"硬一點",type:'word',chapter:"餐廳篇"},
+{id:"c_0294",jp:"バリやわ",ruby:"バリやわ",reading:"バリやわ",meaning:"非常軟",type:'word',chapter:"餐廳篇"},
+{id:"c_0295",jp:"バリカタ",ruby:"バリカタ",reading:"バリカタ",meaning:"非常硬",type:'word',chapter:"餐廳篇"},
+{id:"c_0296",jp:"ハリガネ",ruby:"ハリガネ",reading:"ハリガネ",meaning:"像鐵絲一樣硬",type:'word',chapter:"餐廳篇"},
+{id:"c_0297",jp:"ねぎ",ruby:"ねぎ",reading:"ねぎ",meaning:"蔥",type:'word',chapter:"餐廳篇"},
+{id:"c_0298",jp:"チャーシュー",ruby:"チャーシュー",reading:"チャーシュー",meaning:"叉燒肉",type:'word',chapter:"餐廳篇"},
+{id:"c_0299",jp:"チャーハン",ruby:"チャーハン",reading:"チャーハン",meaning:"炒飯",type:'word',chapter:"餐廳篇"},
+{id:"c_0300",jp:"濃さ",ruby:"濃|こ さ",reading:"こさ",meaning:"濃度",type:'word',chapter:"餐廳篇",note:"濃い去掉い＋さ"},
+{id:"c_0301",jp:"高さ",ruby:"高|たか さ",reading:"たかさ",meaning:"高度",type:'word',chapter:"餐廳篇",note:"高い去掉い＋さ"},
+{id:"c_0302",jp:"甘さ",ruby:"甘|あま さ",reading:"あまさ",meaning:"甜度",type:'word',chapter:"餐廳篇",note:"甘い去掉い＋さ"},
+{id:"c_0303",jp:"辛さ",ruby:"辛|から さ",reading:"からさ",meaning:"辣度",type:'word',chapter:"餐廳篇",note:"辛い去掉い＋さ"},
+{id:"c_0304",jp:"速さ",ruby:"速|はや さ",reading:"はやさ",meaning:"速度",type:'word',chapter:"餐廳篇",note:"速い去掉い＋さ"},
+{id:"c_0305",jp:"職人系",ruby:"職人系|しょくにんけい",reading:"しょくにんけい",meaning:"職人風格的拉麵",type:'word',chapter:"餐廳篇",note:"製作，不追求大量生產或效率，"},
+{id:"c_0306",jp:"白ご飯",ruby:"白|しろ ご 飯|はん",reading:"しろごはん",meaning:"白飯",type:'word',chapter:"餐廳篇",note:"湯頭都比較濃、鹹度高，很"},
+{id:"c_0307",jp:"り寿司一貫",ruby:"り 寿司|ずし 一貫|いっかん",reading:"りずしいっかん",meaning:"握壽司",type:'word',chapter:"餐廳篇"},
+{id:"c_0308",jp:"き一貫",ruby:"き 一貫|いっかん",reading:"きいっかん",meaning:"軍艦壽司",type:'word',chapter:"餐廳篇",note:"ます"},
+{id:"c_0309",jp:"寿司一切",ruby:"寿司|ずし 一切|ひとき",reading:"ずしひとき",meaning:"巻",type:'word',chapter:"餐廳篇",note:"れ"},
+{id:"c_0310",jp:"しらたき",ruby:"しらたき",reading:"しらたき",meaning:"蒟蒻絲",type:'word',chapter:"餐廳篇"},
+{id:"c_0311",jp:"しいたけ",ruby:"しいたけ",reading:"しいたけ",meaning:"香菇",type:'word',chapter:"餐廳篇"},
+{id:"c_0312",jp:"セット",ruby:"セット",reading:"セット",meaning:"套餐",type:'word',chapter:"餐廳篇"},
+{id:"c_0313",jp:"サンドイッチ",ruby:"サンドイッチ",reading:"サンドイッチ",meaning:"三明治",type:'word',chapter:"餐廳篇"},
+{id:"c_0314",jp:"クロワッサン",ruby:"クロワッサン",reading:"クロワッサン",meaning:"可頌",type:'word',chapter:"餐廳篇"},
+{id:"c_0315",jp:"クッキー",ruby:"クッキー",reading:"クッキー",meaning:"餅乾",type:'word',chapter:"餐廳篇"},
+{id:"c_0316",jp:"キャップ",ruby:"キャップ",reading:"キャップ",meaning:"棒球帽",type:'word',chapter:"購物篇"},
+{id:"c_0317",jp:"バケットハット",ruby:"バケットハット",reading:"バケットハット",meaning:"漁夫帽",type:'word',chapter:"購物篇"},
+{id:"c_0318",jp:"ビーニー",ruby:"ビーニー",reading:"ビーニー",meaning:"毛帽",type:'word',chapter:"購物篇"},
+{id:"c_0319",jp:"パーカー",ruby:"パーカー",reading:"パーカー",meaning:"連帽衛衣",type:'word',chapter:"購物篇",note:"/ フーディ"},
+{id:"c_0320",jp:"カーディガン",ruby:"カーディガン",reading:"カーディガン",meaning:"開襟針織毛衣",type:'word',chapter:"購物篇"},
+{id:"c_0321",jp:"ブラウス",ruby:"ブラウス",reading:"ブラウス",meaning:"女士襯衫",type:'word',chapter:"購物篇"},
+{id:"c_0322",jp:"ポロシャツ",ruby:"ポロシャツ",reading:"ポロシャツ",meaning:"Polo衫",type:'word',chapter:"購物篇"},
+{id:"c_0323",jp:"タンクトップ",ruby:"タンクトップ",reading:"タンクトップ",meaning:"背心",type:'word',chapter:"購物篇"},
+{id:"c_0324",jp:"キャミソール",ruby:"キャミソール",reading:"キャミソール",meaning:"細肩帶",type:'word',chapter:"購物篇"},
+{id:"c_0325",jp:"トレンチコート",ruby:"トレンチコート",reading:"トレンチコート",meaning:"風衣",type:'word',chapter:"購物篇"},
+{id:"c_0326",jp:"フリースジャケット",ruby:"フリースジャケット",reading:"フリースジャケット",meaning:"刷毛外套",type:'word',chapter:"購物篇"},
+{id:"c_0327",jp:"ダウンジャケット",ruby:"ダウンジャケット",reading:"ダウンジャケット",meaning:"羽絨外套",type:'word',chapter:"購物篇"},
+{id:"c_0328",jp:"デニムジャケット",ruby:"デニムジャケット",reading:"デニムジャケット",meaning:"牛仔外套",type:'word',chapter:"購物篇"},
+{id:"c_0329",jp:"ライダースジャケット",ruby:"ライダースジャケット",reading:"ライダースジャケット",meaning:"騎士外套",type:'word',chapter:"購物篇"},
+{id:"c_0330",jp:"コーチジャケット",ruby:"コーチジャケット",reading:"コーチジャケット",meaning:"教練外套",type:'word',chapter:"購物篇"},
+{id:"c_0331",jp:"スタジャン",ruby:"スタジャン",reading:"スタジャン",meaning:"棒球外套",type:'word',chapter:"購物篇"},
+{id:"c_0332",jp:"スーツ",ruby:"スーツ",reading:"スーツ",meaning:"西裝",type:'word',chapter:"購物篇"},
+{id:"c_0333",jp:"カジュアルウェア",ruby:"カジュアルウェア",reading:"カジュアルウェア",meaning:"休閒裝",type:'word',chapter:"購物篇"},
+{id:"c_0334",jp:"パジャマ",ruby:"パジャマ",reading:"パジャマ",meaning:"睡衣",type:'word',chapter:"購物篇"},
+{id:"c_0335",jp:"チノパン",ruby:"チノパン",reading:"チノパン",meaning:"卡其褲",type:'word',chapter:"購物篇"},
+{id:"c_0336",jp:"カーゴパンツ",ruby:"カーゴパンツ",reading:"カーゴパンツ",meaning:"工裝褲",type:'word',chapter:"購物篇"},
+{id:"c_0337",jp:"スウェットパンツ",ruby:"スウェットパンツ",reading:"スウェットパンツ",meaning:"運動棉褲",type:'word',chapter:"購物篇"},
+{id:"c_0338",jp:"シェフパンツ",ruby:"シェフパンツ",reading:"シェフパンツ",meaning:"主廚褲",type:'word',chapter:"購物篇"},
+{id:"c_0339",jp:"レギンス",ruby:"レギンス",reading:"レギンス",meaning:"leggings",type:'word',chapter:"購物篇"},
+{id:"c_0340",jp:"ミニスカート",ruby:"ミニスカート",reading:"ミニスカート",meaning:"迷你裙",type:'word',chapter:"購物篇"},
+{id:"c_0341",jp:"プリーツスカート",ruby:"プリーツスカート",reading:"プリーツスカート",meaning:"百褶裙",type:'word',chapter:"購物篇"},
+{id:"c_0342",jp:"ワンピース",ruby:"ワンピース",reading:"ワンピース",meaning:"洋裝",type:'word',chapter:"購物篇"},
+{id:"c_0343",jp:"オーバーオール",ruby:"オーバーオール",reading:"オーバーオール",meaning:"吊帶褲",type:'word',chapter:"購物篇"},
+{id:"c_0344",jp:"タイツ",ruby:"タイツ",reading:"タイツ",meaning:"褲襪",type:'word',chapter:"購物篇"},
+{id:"c_0345",jp:"ストッキング",ruby:"ストッキング",reading:"ストッキング",meaning:"絲襪",type:'word',chapter:"購物篇"},
+{id:"c_0346",jp:"ルーズソックス",ruby:"ルーズソックス",reading:"ルーズソックス",meaning:"泡泡襪",type:'word',chapter:"購物篇"},
+{id:"c_0347",jp:"スニーカー",ruby:"スニーカー",reading:"スニーカー",meaning:"運動鞋",type:'word',chapter:"購物篇"},
+{id:"c_0348",jp:"ローファー",ruby:"ローファー",reading:"ローファー",meaning:"樂福鞋",type:'word',chapter:"購物篇"},
+{id:"c_0349",jp:"スリッポン",ruby:"スリッポン",reading:"スリッポン",meaning:"懶人鞋",type:'word',chapter:"購物篇"},
+{id:"c_0350",jp:"サンダル",ruby:"サンダル",reading:"サンダル",meaning:"涼鞋",type:'word',chapter:"購物篇"},
+{id:"c_0351",jp:"ハイヒール",ruby:"ハイヒール",reading:"ハイヒール",meaning:"高跟鞋",type:'word',chapter:"購物篇"},
+{id:"c_0352",jp:"パンプス",ruby:"パンプス",reading:"パンプス",meaning:"低跟鞋",type:'word',chapter:"購物篇"},
+{id:"c_0353",jp:"ブーツ",ruby:"ブーツ",reading:"ブーツ",meaning:"靴子",type:'word',chapter:"購物篇"},
+{id:"c_0354",jp:"レインシューズ",ruby:"レインシューズ",reading:"レインシューズ",meaning:"雨鞋",type:'word',chapter:"購物篇"},
+{id:"c_0355",jp:"スリッパ",ruby:"スリッパ",reading:"スリッパ",meaning:"拖鞋",type:'word',chapter:"購物篇"},
+{id:"c_0356",jp:"トートバッグ",ruby:"トートバッグ",reading:"トートバッグ",meaning:"托特包",type:'word',chapter:"購物篇"},
+{id:"c_0357",jp:"ショルダーバッグ",ruby:"ショルダーバッグ",reading:"ショルダーバッグ",meaning:"肩背包",type:'word',chapter:"購物篇"},
+{id:"c_0358",jp:"ウエストポーチ",ruby:"ウエストポーチ",reading:"ウエストポーチ",meaning:"腰包",type:'word',chapter:"購物篇"},
+{id:"c_0359",jp:"リュックサック",ruby:"リュックサック",reading:"リュックサック",meaning:"後背包",type:'word',chapter:"購物篇",note:"通常會縮寫成リュック"},
+{id:"c_0360",jp:"ボストンバッグ",ruby:"ボストンバッグ",reading:"ボストンバッグ",meaning:"波士頓包",type:'word',chapter:"購物篇"},
+{id:"c_0361",jp:"スーツケース",ruby:"スーツケース",reading:"スーツケース",meaning:"行李箱",type:'word',chapter:"購物篇"},
+{id:"c_0362",jp:"キャリーバッグ",ruby:"キャリーバッグ",reading:"キャリーバッグ",meaning:"行李箱",type:'word',chapter:"購物篇"},
+{id:"c_0363",jp:"ショッピングバッグ",ruby:"ショッピングバッグ",reading:"ショッピングバッグ",meaning:"購物袋",type:'word',chapter:"購物篇"},
+{id:"c_0364",jp:"エコバッグ",ruby:"エコバッグ",reading:"エコバッグ",meaning:"環保袋",type:'word',chapter:"購物篇"},
+{id:"c_0365",jp:"サングラス",ruby:"サングラス",reading:"サングラス",meaning:"太陽眼鏡",type:'word',chapter:"購物篇"},
+{id:"c_0366",jp:"ネックレス",ruby:"ネックレス",reading:"ネックレス",meaning:"項鍊",type:'word',chapter:"購物篇"},
+{id:"c_0367",jp:"ブレスレット",ruby:"ブレスレット",reading:"ブレスレット",meaning:"手鍊",type:'word',chapter:"購物篇"},
+{id:"c_0368",jp:"ピアス",ruby:"ピアス",reading:"ピアス",meaning:"耳針式耳環",type:'word',chapter:"購物篇"},
+{id:"c_0369",jp:"イヤリング",ruby:"イヤリング",reading:"イヤリング",meaning:"耳環",type:'word',chapter:"購物篇"},
+{id:"c_0370",jp:"スカーフ",ruby:"スカーフ",reading:"スカーフ",meaning:"領巾",type:'word',chapter:"購物篇"},
+{id:"c_0371",jp:"マフラー",ruby:"マフラー",reading:"マフラー",meaning:"圍巾",type:'word',chapter:"購物篇"},
+{id:"c_0372",jp:"ベルト",ruby:"ベルト",reading:"ベルト",meaning:"腰帶",type:'word',chapter:"購物篇"},
+{id:"c_0373",jp:"オフホワイト",ruby:"オフホワイト",reading:"オフホワイト",meaning:"米白色",type:'word',chapter:"購物篇"},
+{id:"c_0374",jp:"アイボリー",ruby:"アイボリー",reading:"アイボリー",meaning:"象牙色",type:'word',chapter:"購物篇"},
+{id:"c_0375",jp:"ベージュ",ruby:"ベージュ",reading:"ベージュ",meaning:"米色",type:'word',chapter:"購物篇"},
+{id:"c_0376",jp:"カーキ",ruby:"カーキ",reading:"カーキ",meaning:"卡其色",type:'word',chapter:"購物篇"},
+{id:"c_0377",jp:"チャコールグレー",ruby:"チャコールグレー",reading:"チャコールグレー",meaning:"碳灰色",type:'word',chapter:"購物篇"},
+{id:"c_0378",jp:"ダークグレー",ruby:"ダークグレー",reading:"ダークグレー",meaning:"深灰色",type:'word',chapter:"購物篇"},
+{id:"c_0379",jp:"ちょうどいい",ruby:"ちょうどいい",reading:"ちょうどいい",meaning:"剛剛好、合適",type:'word',chapter:"購物篇"},
+{id:"c_0380",jp:"クーポン",ruby:"クーポン",reading:"クーポン",meaning:"優惠券",type:'word',chapter:"購物篇"},
+{id:"c_0381",jp:"割引券",ruby:"割引券|わりびきけん",reading:"わりびきけん",meaning:"折價券",type:'word',chapter:"購物篇"},
+{id:"c_0382",jp:"ポイントカード",ruby:"ポイントカード",reading:"ポイントカード",meaning:"集點卡",type:'word',chapter:"購物篇"},
+{id:"c_0383",jp:"試食券",ruby:"試食券|ししょくけん",reading:"ししょくけん",meaning:"試吃券",type:'word',chapter:"購物篇",note:"試食券使えますか"},
+{id:"c_0384",jp:"体験券",ruby:"体験券|たいけんけん",reading:"たいけんけん",meaning:"體驗券",type:'word',chapter:"購物篇",note:"体験券でお願いします"},
+{id:"c_0385",jp:"併用不可",ruby:"併用不可|へいようふか",reading:"へいようふか",meaning:"一起使用",type:'word',chapter:"購物篇"},
+{id:"c_0386",jp:"会計時に提示してくだ",ruby:"会計時|かいけいじ に 提示|ていじ してくだ",reading:"かいけいじにていじしてくだ",meaning:"請在結帳時就要",type:'word',chapter:"購物篇"},
+{id:"c_0387",jp:"お支払いの際",ruby:"お 支払|しはらい いの 際|さい",reading:"おしはらいいのさい",meaning:"請在付款時出示",type:'word',chapter:"購物篇",note:"にご"},
+{id:"c_0388",jp:"カード",ruby:"カード",reading:"カード",meaning:"IC",type:'word',chapter:"購物篇"},
+{id:"c_0389",jp:"不良品",ruby:"不良品|ふりょうひん",reading:"ふりょうひん",meaning:"的商品",type:'word',chapter:"餐廳篇"},
+{id:"c_0390",jp:"レシート",ruby:"レシート",reading:"レシート",meaning:"收據",type:'word',chapter:"餐廳篇"},
+{id:"c_0391",jp:"フィット",ruby:"フィット",reading:"フィット",meaning:"合身",type:'word',chapter:"購物篇"},
+{id:"c_0392",jp:"きつい",ruby:"きつい",reading:"きつい",meaning:"太緊",type:'word',chapter:"購物篇"},
+{id:"c_0393",jp:"ゆったり",ruby:"ゆったり",reading:"ゆったり",meaning:"寬鬆",type:'word',chapter:"購物篇"},
+{id:"c_0394",jp:"オシャレ",ruby:"オシャレ",reading:"オシャレ",meaning:"時尚",type:'word',chapter:"購物篇"},
+{id:"c_0395",jp:"カジュアル",ruby:"カジュアル",reading:"カジュアル",meaning:"休閒",type:'word',chapter:"購物篇"},
+{id:"c_0396",jp:"レトロ",ruby:"レトロ",reading:"レトロ",meaning:"復古",type:'word',chapter:"購物篇"},
+{id:"c_0397",jp:"何にでも合",ruby:"何|なん にでも 合|あ",reading:"なんにでもあ",meaning:"好搭配",type:'word',chapter:"購物篇",note:"う"},
+{id:"c_0398",jp:"セルフレジ",ruby:"セルフレジ",reading:"セルフレジ",meaning:"自助結帳機",type:'word',chapter:"購物篇"},
+{id:"c_0399",jp:"ホットスナック",ruby:"ホットスナック",reading:"ホットスナック",meaning:"熟食",type:'word',chapter:"購物篇",note:"炸雞、關東煮這些熱食"},
+{id:"c_0400",jp:"レンチン",ruby:"レンチン",reading:"レンチン",meaning:"用微波爐加熱",type:'word',chapter:"購物篇",note:"日本人日常生活很常用"},
+{id:"c_0401",jp:"マスク",ruby:"マスク",reading:"マスク",meaning:"口罩",type:'word',chapter:"購物篇"},
+{id:"c_0402",jp:"ハンドクリーム",ruby:"ハンドクリーム",reading:"ハンドクリーム",meaning:"護手霜",type:'word',chapter:"購物篇"},
+{id:"c_0403",jp:"リップクリーム",ruby:"リップクリーム",reading:"リップクリーム",meaning:"護唇膏",type:'word',chapter:"購物篇"},
+{id:"c_0404",jp:"カイロ",ruby:"カイロ",reading:"カイロ",meaning:"暖暖包",type:'word',chapter:"購物篇"},
+{id:"c_0405",jp:"しっとりタイプ",ruby:"しっとりタイプ",reading:"しっとりタイプ",meaning:"保濕型",type:'word',chapter:"購物篇"},
+{id:"c_0406",jp:"さっぱりタイプ",ruby:"さっぱりタイプ",reading:"さっぱりタイプ",meaning:"清爽型",type:'word',chapter:"購物篇"},
+{id:"c_0407",jp:"シートマスク",ruby:"シートマスク",reading:"シートマスク",meaning:"面膜",type:'word',chapter:"購物篇"},
+{id:"c_0408",jp:"パック",ruby:"パック",reading:"パック",meaning:"面膜",type:'word',chapter:"購物篇"},
+{id:"c_0409",jp:"ファンデーション",ruby:"ファンデーション",reading:"ファンデーション",meaning:"粉底",type:'word',chapter:"購物篇"},
+{id:"c_0410",jp:"コンシーラー",ruby:"コンシーラー",reading:"コンシーラー",meaning:"遮瑕膏",type:'word',chapter:"購物篇"},
+{id:"c_0411",jp:"アイブロウ",ruby:"アイブロウ",reading:"アイブロウ",meaning:"眉粉 / 眉筆",type:'word',chapter:"購物篇"},
+{id:"c_0412",jp:"アイライナー",ruby:"アイライナー",reading:"アイライナー",meaning:"眼線 / 眼線筆",type:'word',chapter:"購物篇"},
+{id:"c_0413",jp:"アイシャドウ",ruby:"アイシャドウ",reading:"アイシャドウ",meaning:"眼影",type:'word',chapter:"購物篇"},
+{id:"c_0414",jp:"マスカラ",ruby:"マスカラ",reading:"マスカラ",meaning:"睫毛膏",type:'word',chapter:"購物篇"},
+{id:"c_0415",jp:"チーク",ruby:"チーク",reading:"チーク",meaning:"腮紅",type:'word',chapter:"購物篇"},
+{id:"c_0416",jp:"シャンプー",ruby:"シャンプー",reading:"シャンプー",meaning:"洗髮精",type:'word',chapter:"購物篇"},
+{id:"c_0417",jp:"コンディショナー",ruby:"コンディショナー",reading:"コンディショナー",meaning:"潤髮乳",type:'word',chapter:"購物篇"},
+{id:"c_0418",jp:"トリートメント",ruby:"トリートメント",reading:"トリートメント",meaning:"護髮乳",type:'word',chapter:"購物篇"},
+{id:"c_0419",jp:"ヘアオイル",ruby:"ヘアオイル",reading:"ヘアオイル",meaning:"護髮油",type:'word',chapter:"購物篇"},
+{id:"c_0420",jp:"ヘアワックス",ruby:"ヘアワックス",reading:"ヘアワックス",meaning:"髮蠟",type:'word',chapter:"購物篇"},
+{id:"c_0421",jp:"ヘアスプレー",ruby:"ヘアスプレー",reading:"ヘアスプレー",meaning:"噴髮膠",type:'word',chapter:"購物篇"},
+{id:"c_0422",jp:"かゆみ",ruby:"かゆみ",reading:"かゆみ",meaning:"搔癢",type:'word',chapter:"購物篇"},
+{id:"c_0423",jp:"地域限定",ruby:"地域限定|ちいきげんてい",reading:"ちいきげんてい",meaning:"商品",type:'word',chapter:"購物篇"},
+{id:"c_0424",jp:"ロビー",ruby:"ロビー",reading:"ロビー",meaning:"大廳",type:'word',chapter:"住宿篇"},
+{id:"c_0425",jp:"フロント",ruby:"フロント",reading:"フロント",meaning:"櫃檯",type:'word',chapter:"住宿篇"},
+{id:"c_0426",jp:"エントランス",ruby:"エントランス",reading:"エントランス",meaning:"入口",type:'word',chapter:"住宿篇"},
+{id:"c_0427",jp:"テレビのリモコン",ruby:"テレビのリモコン",reading:"テレビのリモコン",meaning:"電視遙控器",type:'word',chapter:"住宿篇"},
+{id:"c_0428",jp:"エアコンのリモコン",ruby:"エアコンのリモコン",reading:"エアコンのリモコン",meaning:"空調遙控器",type:'word',chapter:"住宿篇"},
+{id:"c_0429",jp:"モーニングコールサービス",ruby:"モーニングコールサービス",reading:"モーニングコールサービス",meaning:"叫醒服務",type:'word',chapter:"住宿篇"},
+{id:"c_0430",jp:"ウォーターサーバー",ruby:"ウォーターサーバー",reading:"ウォーターサーバー",meaning:"飲水機",type:'word',chapter:"住宿篇"},
+{id:"c_0431",jp:"レイトチェックイン",ruby:"レイトチェックイン",reading:"レイトチェックイン",meaning:"延遲入住",type:'word',chapter:"住宿篇"},
+{id:"c_0432",jp:"オーバーブッキング",ruby:"オーバーブッキング",reading:"オーバーブッキング",meaning:"超額預訂",type:'word',chapter:"住宿篇"},
+{id:"c_0433",jp:"ダブルブッキング",ruby:"ダブルブッキング",reading:"ダブルブッキング",meaning:"重複預訂",type:'word',chapter:"住宿篇"},
+{id:"c_0434",jp:"キャンセル",ruby:"キャンセル",reading:"キャンセル",meaning:"取消",type:'word',chapter:"住宿篇"},
+{id:"c_0435",jp:"ルームナンバー",ruby:"ルームナンバー",reading:"ルームナンバー",meaning:"房號",type:'word',chapter:"住宿篇"},
+{id:"c_0436",jp:"アメニティ",ruby:"アメニティ",reading:"アメニティ",meaning:"一次性備品",type:'word',chapter:"住宿篇"},
+{id:"c_0437",jp:"パーキング",ruby:"パーキング",reading:"パーキング",meaning:"停車位",type:'word',chapter:"住宿篇"},
+{id:"c_0438",jp:"シングルルーム",ruby:"シングルルーム",reading:"シングルルーム",meaning:"單人房",type:'word',chapter:"住宿篇"},
+{id:"c_0439",jp:"ダブルルーム",ruby:"ダブルルーム",reading:"ダブルルーム",meaning:"雙人房",type:'word',chapter:"住宿篇",note:"一張雙人床"},
+{id:"c_0440",jp:"ツインルーム",ruby:"ツインルーム",reading:"ツインルーム",meaning:"雙人房",type:'word',chapter:"住宿篇",note:"兩張單人床"},
+{id:"c_0441",jp:"デラックスルーム",ruby:"デラックスルーム",reading:"デラックスルーム",meaning:"豪華客房",type:'word',chapter:"住宿篇"},
+{id:"c_0442",jp:"スイートルーム",ruby:"スイートルーム",reading:"スイートルーム",meaning:"套房",type:'word',chapter:"住宿篇"},
+{id:"c_0443",jp:"バリアフリールーム",ruby:"バリアフリールーム",reading:"バリアフリールーム",meaning:"無障礙房",type:'word',chapter:"住宿篇"},
+{id:"c_0444",jp:"オーシャンビュー",ruby:"オーシャンビュー",reading:"オーシャンビュー",meaning:"海景房",type:'word',chapter:"住宿篇"},
+{id:"c_0445",jp:"ハーバービュー",ruby:"ハーバービュー",reading:"ハーバービュー",meaning:"海港景房",type:'word',chapter:"住宿篇"},
+{id:"c_0446",jp:"レイクビュー",ruby:"レイクビュー",reading:"レイクビュー",meaning:"湖景房",type:'word',chapter:"住宿篇"},
+{id:"c_0447",jp:"マウンテンビュー",ruby:"マウンテンビュー",reading:"マウンテンビュー",meaning:"山景房",type:'word',chapter:"住宿篇"},
+{id:"c_0448",jp:"ガーデンビュー",ruby:"ガーデンビュー",reading:"ガーデンビュー",meaning:"花園景房",type:'word',chapter:"住宿篇"},
+{id:"c_0449",jp:"エキストラベッド",ruby:"エキストラベッド",reading:"エキストラベッド",meaning:"加床",type:'word',chapter:"住宿篇"},
+{id:"c_0450",jp:"スマホ",ruby:"スマホ",reading:"スマホ",meaning:"手機",type:'word',chapter:"住宿篇"},
+{id:"c_0451",jp:"タグ",ruby:"タグ",reading:"タグ",meaning:"行李牌",type:'word',chapter:"住宿篇"},
+{id:"c_0452",jp:"ブランチ",ruby:"ブランチ",reading:"ブランチ",meaning:"早午餐",type:'word',chapter:"住宿篇"},
+{id:"c_0453",jp:"アフタヌーンティー",ruby:"アフタヌーンティー",reading:"アフタヌーンティー",meaning:"下午茶",type:'word',chapter:"住宿篇"},
+{id:"c_0454",jp:"ルームサービス",ruby:"ルームサービス",reading:"ルームサービス",meaning:"客房服務",type:'word',chapter:"住宿篇"},
+{id:"c_0455",jp:"ハウスキーピング",ruby:"ハウスキーピング",reading:"ハウスキーピング",meaning:"客房清潔人員",type:'word',chapter:"住宿篇"},
+{id:"c_0456",jp:"シャワーキャップ",ruby:"シャワーキャップ",reading:"シャワーキャップ",meaning:"浴帽",type:'word',chapter:"住宿篇"},
+{id:"c_0457",jp:"ランドリーサービス",ruby:"ランドリーサービス",reading:"ランドリーサービス",meaning:"洗衣服務",type:'word',chapter:"住宿篇"},
+{id:"c_0458",jp:"お部屋のお掃除",ruby:"お 部屋|へや のお 掃除|そうじ",reading:"おへやのおそうじ",meaning:"不用打掃房間",type:'word',chapter:"住宿篇",note:"は"},
+{id:"c_0459",jp:"エアコン",ruby:"エアコン",reading:"エアコン",meaning:"空調",type:'word',chapter:"住宿篇"},
+{id:"c_0460",jp:"アイロン",ruby:"アイロン",reading:"アイロン",meaning:"熨斗",type:'word',chapter:"住宿篇"},
+{id:"c_0461",jp:"ドライヤー",ruby:"ドライヤー",reading:"ドライヤー",meaning:"吹風機",type:'word',chapter:"住宿篇"},
+{id:"c_0462",jp:"ナイトウェア",ruby:"ナイトウェア",reading:"ナイトウェア",meaning:"睡衣",type:'word',chapter:"住宿篇"},
+{id:"c_0463",jp:"泊まっている千田",ruby:"泊|と まっている 千田|せんだ",reading:"とまっているせんだ",meaning:"今日",type:'word',chapter:"住宿篇",note:"と申しますが…"},
+{id:"c_0464",jp:"つかない",ruby:"つかない",reading:"つかない",meaning:"故障",type:'word',chapter:"住宿篇"},
+{id:"c_0465",jp:"リモコン",ruby:"リモコン",reading:"リモコン",meaning:"遙控器",type:'word',chapter:"住宿篇"},
+{id:"c_0466",jp:"タオル",ruby:"タオル",reading:"タオル",meaning:"毛巾",type:'word',chapter:"住宿篇"},
+{id:"c_0467",jp:"食器",ruby:"食器|しょっき",reading:"しょっき",meaning:"餐具",type:'word',chapter:"住宿篇",note:"記得用完要馬上洗乾淨，放"},
+{id:"c_0468",jp:"デポジット",ruby:"デポジット",reading:"デポジット",meaning:"押金",type:'word',chapter:"住宿篇"},
+{id:"c_0469",jp:"トンネル",ruby:"トンネル",reading:"トンネル",meaning:"隧道",type:'word',chapter:"交通篇",note:"トンネルをくぐる"},
+{id:"c_0470",jp:"ターミナル",ruby:"ターミナル",reading:"ターミナル",meaning:"航廈",type:'word',chapter:"交通篇"},
+{id:"c_0471",jp:"搭乗口",ruby:"搭乗口|とうじょうぐち",reading:"とうじょうぐち",meaning:"登機口",type:'word',chapter:"交通篇",note:"外來語為 搭乗ゲート"},
+{id:"c_0472",jp:"プラットフォーム",ruby:"プラットフォーム",reading:"プラットフォーム",meaning:"月台",type:'word',chapter:"交通篇",note:"簡稱ホーム"},
+{id:"c_0473",jp:"コインロッカー",ruby:"コインロッカー",reading:"コインロッカー",meaning:"投幣式置物櫃",type:'word',chapter:"交通篇"},
+{id:"c_0474",jp:"始発電車",ruby:"始発電車|しはつでんしゃ",reading:"しはつでんしゃ",meaning:"首班車",type:'word',chapter:"交通篇",note:"通常縮寫始発"},
+{id:"c_0475",jp:"最終電車",ruby:"最終電車|さいしゅうでんしゃ",reading:"さいしゅうでんしゃ",meaning:"末班車",type:'word',chapter:"交通篇",note:"通常縮寫終電"},
+{id:"c_0476",jp:"観光列車",ruby:"観光列車|かんこうれっしゃ",reading:"かんこうれっしゃ",meaning:"觀光列車",type:'word',chapter:"交通篇",note:"又稱トロッコ列車"},
+{id:"c_0477",jp:"ハイヤー",ruby:"ハイヤー",reading:"ハイヤー",meaning:"包車服務",type:'word',chapter:"交通篇"},
+{id:"c_0478",jp:"ドライバー",ruby:"ドライバー",reading:"ドライバー",meaning:"司機",type:'word',chapter:"交通篇"},
+{id:"c_0479",jp:"手水舎",ruby:"手水舎|ちょうずや",reading:"ちょうずや",meaning:"手水舍",type:'word',chapter:"觀光篇",note:"也可以說てみずや"},
+{id:"c_0480",jp:"社務所",ruby:"社務所|しゃむしょ",reading:"しゃむしょ",meaning:"社務所",type:'word',chapter:"觀光篇",note:"神社辦公室"},
+{id:"c_0481",jp:"授与所",ruby:"授与所|じゅよしょ",reading:"じゅよしょ",meaning:"授與所",type:'word',chapter:"觀光篇",note:"賣御守、御札的地方"},
+{id:"c_0482",jp:"お",ruby:"お",reading:"お",meaning:"御守",type:'word',chapter:"觀光篇",note:"守り"},
+{id:"c_0483",jp:"おみくじ",ruby:"おみくじ",reading:"おみくじ",meaning:"御神籤",type:'word',chapter:"觀光篇"},
+{id:"c_0484",jp:"御朱印",ruby:"御朱印|ごしゅいん",reading:"ごしゅいん",meaning:"御朱印",type:'word',chapter:"觀光篇",note:"參拜紀念印章"},
+{id:"c_0485",jp:"神職",ruby:"神職|しんしょく",reading:"しんしょく",meaning:"神職",type:'word',chapter:"觀光篇",note:"神社工作人員"},
+{id:"c_0486",jp:"神主",ruby:"神主|かんぬし",reading:"かんぬし",meaning:"神主",type:'word',chapter:"觀光篇",note:"神道祭司"},
+{id:"c_0487",jp:"源泉",ruby:"源泉|げんせん",reading:"げんせん",meaning:"源泉",type:'word',chapter:"觀光篇"},
+{id:"c_0488",jp:"いで",ruby:"いで",reading:"いで",meaning:"溫泉",type:'word',chapter:"觀光篇",note:"湯温泉的另一種說法"},
+{id:"c_0489",jp:"湯の",ruby:"湯|ゆ の",reading:"ゆの",meaning:"湯之花",type:'word',chapter:"觀光篇",note:"花"},
+{id:"c_0490",jp:"源泉かけ",ruby:"源泉|げんせん かけ",reading:"げんせんかけ",meaning:"源泉掛流",type:'word',chapter:"觀光篇",note:"流し"},
+{id:"c_0491",jp:"露天風呂",ruby:"露天風呂|ろてんぶろ",reading:"ろてんぶろ",meaning:"露天溫泉",type:'word',chapter:"觀光篇"},
+{id:"c_0492",jp:"天然温泉",ruby:"天然温泉|てんねんおんせん",reading:"てんねんおんせん",meaning:"天然溫泉",type:'word',chapter:"觀光篇"},
+{id:"c_0493",jp:"足湯",ruby:"足湯|あしゆ",reading:"あしゆ",meaning:"足湯",type:'word',chapter:"觀光篇"},
+{id:"c_0494",jp:"砂湯",ruby:"砂湯|すなゆ",reading:"すなゆ",meaning:"砂湯",type:'word',chapter:"觀光篇"},
+{id:"c_0495",jp:"泥湯",ruby:"泥湯|どろゆ",reading:"どろゆ",meaning:"泥湯",type:'word',chapter:"觀光篇"},
+{id:"c_0496",jp:"泉質",ruby:"泉質|せんしつ",reading:"せんしつ",meaning:"泉質",type:'word',chapter:"觀光篇"},
+{id:"c_0497",jp:"かけ湯",ruby:"かけ 湯|ゆ",reading:"かけゆ",meaning:"淋熱水",type:'word',chapter:"觀光篇",note:"從腳、腿，慢慢往上淋"},
+{id:"c_0498",jp:"体を洗う",ruby:"体|からだ を 洗|あら う",reading:"からだをあらう",meaning:"清洗身體",type:'word',chapter:"觀光篇"},
+{id:"c_0499",jp:"湯船に浸",ruby:"湯船|ゆぶね に 浸|つ",reading:"ゆぶねにつ",meaning:"泡進溫泉水",type:'word',chapter:"觀光篇",note:"かる"},
+{id:"c_0500",jp:"水分補給",ruby:"水分補給|すいぶんほきゅう",reading:"すいぶんほきゅう",meaning:"補充水分",type:'word',chapter:"觀光篇"},
+{id:"c_0501",jp:"休憩",ruby:"休憩|きゅうけい",reading:"きゅうけい",meaning:"休息",type:'word',chapter:"觀光篇"},
+{id:"c_0502",jp:"チケット",ruby:"チケット",reading:"チケット",meaning:"售票口",type:'word',chapter:"觀光篇",note:"売り場"},
+{id:"c_0503",jp:"湿度",ruby:"湿度|しつど",reading:"しつど",meaning:"很潮濕",type:'word',chapter:"交友篇",note:"が高くて、ムシムシしますね"},
+{id:"c_0504",jp:"ぜひ",ruby:"ぜひ",reading:"ぜひ",meaning:"そっか、また",type:'word',chapter:"交友篇"},
+{id:"c_0505",jp:"多いですか",ruby:"多|おお いですか",reading:"おおいですか",meaning:"一何",type:'word',chapter:"交友篇",note:""},
+{id:"c_0506",jp:"、医院",ruby:"、 医院|いいん",reading:"いいん",meaning:"其他說法：",type:'word',chapter:"看病篇"},
+{id:"c_0507",jp:"（私は）千田です",ruby:"（ 私|わたし は） 千田|せんだ です",reading:"わたしはせんだです",meaning:"我是千田",type:'sentence',chapter:"基礎句型"},
+{id:"c_0508",jp:"彼は先生です",ruby:"彼|かれ は 先生|せんせい です",reading:"かれはせんせいです",meaning:"他是老師",type:'sentence',chapter:"基礎句型"},
+{id:"c_0509",jp:"これは日本のお茶です",ruby:"これ は 日本|にほん の お 茶|ちゃ です",reading:"これはにほんのおちゃです",meaning:"這個是日本的茶",type:'sentence',chapter:"基礎句型"},
+{id:"c_0510",jp:"あれは彼の靴です",ruby:"あれは 彼|かれ の 靴|くつ です",reading:"あれはかれのくつです",meaning:"那是他的鞋子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0511",jp:"それは映画の雑誌です",ruby:"それは 映画|えいが の 雑誌|ざっし です",reading:"それはえいがのざっしです",meaning:"那是電影的雜誌",type:'sentence',chapter:"基礎句型"},
+{id:"c_0512",jp:"これは車の伴です",ruby:"これは 車|くるま の 伴|かぎ です",reading:"これはくるまのかぎです",meaning:"這是車子的鑰匙",type:'sentence',chapter:"基礎句型"},
+{id:"c_0513",jp:"あれはブラジルのコーヒーです",ruby:"あれは ブラジル の コーヒー です",reading:"あれはブラジルのコーヒーです",meaning:"那是巴西的咖啡",type:'sentence',chapter:"基礎句型"},
+{id:"c_0514",jp:"これは明治のチョコレートです",ruby:"これは 明治|めいじ の チョコレート です",reading:"これはめいじのチョコレートです",meaning:"這是明治的巧克力",type:'sentence',chapter:"基礎句型"},
+{id:"c_0515",jp:"あの方は桜商事の佐藤さんです",ruby:"あの 方|かた は 桜商事|さくらしょうじ の 佐藤|さとう さん です",reading:"あのかたはさくらしょうじのさとうさんです",meaning:"那個人是櫻花商事的佐藤先生",type:'sentence',chapter:"基礎句型"},
+{id:"c_0516",jp:"私は歌手の千田愛紗です",ruby:"私|わたし は 歌手|かしゅ の 千田愛紗|せんだあいさ です",reading:"わたしはかしゅのせんだあいさです",meaning:"我是歌手千田愛紗",type:'sentence',chapter:"基礎句型"},
+{id:"c_0517",jp:"私は韓国人ではありません",ruby:"私|わたし は 韓国人|かんこくじん ではありません",reading:"わたしはかんこくじんではありません",meaning:"我不是韓國人",type:'sentence',chapter:"基礎句型"},
+{id:"c_0518",jp:"彼は先生じゃありません",ruby:"彼|かれ は 先生|せんせい じゃありません",reading:"かれはせんせいじゃありません",meaning:"他不是老師",type:'sentence',chapter:"基礎句型"},
+{id:"c_0519",jp:"あの人は店員ではありません",ruby:"あの 人|ひと は 店員|てんいん ではありません",reading:"あのひとはてんいんではありません",meaning:"那個人不是店員",type:'sentence',chapter:"基礎句型"},
+{id:"c_0520",jp:"今日は日曜日ですか",ruby:"今日|きょう は 日曜日|にちようび ですか",reading:"きょうはにちようびですか",meaning:"今天是星期天嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0521",jp:"その人は誰ですか",ruby:"その 人|ひと は 誰|だれ ですか",reading:"そのひとはだれですか",meaning:"那個人是誰",type:'sentence',chapter:"基礎句型"},
+{id:"c_0522",jp:"トイレはどこですか",ruby:"トイレ は どこ ですか",reading:"トイレはどこですか",meaning:"請問廁所在哪裡",type:'sentence',chapter:"基礎句型"},
+{id:"c_0523",jp:"チェックインカウンターはどちらですか",ruby:"チェックインカウンター は どちら ですか",reading:"チェックインカウンターはどちらですか",meaning:"請問報到櫃檯在哪裡",type:'sentence',chapter:"基礎句型"},
+{id:"c_0524",jp:"苺味はどれですか",ruby:"苺味|いちごあじ は どれ ですか",reading:"いちごあじはどれですか",meaning:"草莓口味是哪一個",type:'sentence',chapter:"基礎句型"},
+{id:"c_0525",jp:"旅行はいつですか",ruby:"旅行|りょこう は いつ ですか",reading:"りょこうはいつですか",meaning:"旅行是什麼時候",type:'sentence',chapter:"基礎句型"},
+{id:"c_0526",jp:"何名様ですか",ruby:"何名様|なんめいさま ですか",reading:"なんめいさまですか",meaning:"請問有幾位",type:'sentence',chapter:"基礎句型"},
+{id:"c_0527",jp:"何本ですか",ruby:"何本|なんぼん ですか",reading:"なんぼんですか",meaning:"請問有幾支",type:'sentence',chapter:"基礎句型"},
+{id:"c_0528",jp:"何枚ですか",ruby:"何枚|なんまい ですか",reading:"なんまいですか",meaning:"請問有幾張",type:'sentence',chapter:"基礎句型"},
+{id:"c_0529",jp:"何回ですか",ruby:"何回|なんかい ですか",reading:"なんかいですか",meaning:"請問有幾次",type:'sentence',chapter:"基礎句型"},
+{id:"c_0530",jp:"いくつですか",ruby:"いくつ ですか",reading:"いくつですか",meaning:"請問有幾個",type:'sentence',chapter:"基礎句型"},
+{id:"c_0531",jp:"いくらですか",ruby:"いくら ですか",reading:"いくらですか",meaning:"請問多少錢",type:'sentence',chapter:"基礎句型"},
+{id:"c_0532",jp:"何階ですか",ruby:"何階|なんかい ですか",reading:"なんかいですか",meaning:"請問幾樓呢",type:'sentence',chapter:"基礎句型"},
+{id:"c_0533",jp:"トイレはありますか",ruby:"トイレ は ありますか",reading:"トイレはありますか",meaning:"有廁所嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0534",jp:"Wi-Fiはありますか",ruby:"Wi-Fi は ありますか",reading:"はありますか",meaning:"有Wi-Fi嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0535",jp:"このサイズはありますか",ruby:"このサイズ は ありますか",reading:"このサイズはありますか",meaning:"有這個尺寸嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0536",jp:"時間はありますか",ruby:"時間|じかん は ありますか",reading:"じかんはありますか",meaning:"有空嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0537",jp:"お水(を)お願いします",ruby:"お 水|みず ( を)お 願|ねが いします",reading:"おみずをおねがいします",meaning:"麻煩給我水",type:'sentence',chapter:"基礎句型"},
+{id:"c_0538",jp:"メニュー(を)お願いします",ruby:"メニュー ( を)お 願|ねが いします",reading:"メニューをおねがいします",meaning:"麻煩給我菜單",type:'sentence',chapter:"基礎句型"},
+{id:"c_0539",jp:"これ(を)お願いします",ruby:"これ ( を)お 願|ねが いします",reading:"これをおねがいします",meaning:"我要這個，麻煩你了",type:'sentence',chapter:"基礎句型"},
+{id:"c_0540",jp:"チェックイン(を)お願いします",ruby:"チェックイン ( を)お 願|ねが いします",reading:"チェックインをおねがいします",meaning:"我要辦理入住，麻煩你了",type:'sentence',chapter:"基礎句型"},
+{id:"c_0541",jp:"タクシー(を)お願いします",ruby:"タクシー ( を)お 願|ねが いします",reading:"タクシーをおねがいします",meaning:"麻煩幫我叫計程車",type:'sentence',chapter:"基礎句型"},
+{id:"c_0542",jp:"予約(を)お願いします",ruby:"予約|よやく ( を)お 願|ねが いします",reading:"よやくをおねがいします",meaning:"麻煩幫我預約",type:'sentence',chapter:"基礎句型"},
+{id:"c_0543",jp:"写真(を)お願いします",ruby:"写真|しゃしん ( を)お 願|ねが いします",reading:"しゃしんをおねがいします",meaning:"麻煩幫我拍照",type:'sentence',chapter:"基礎句型"},
+{id:"c_0544",jp:"袋(を)お願いします",ruby:"袋|ふくろ ( を)お 願|ねが いします",reading:"ふくろをおねがいします",meaning:"麻煩給我袋子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0545",jp:"領収書(を)お願いします",ruby:"領収書|りょうしゅうしょ ( を)お 願|ねが いします",reading:"りょうしゅうしょをおねがいします",meaning:"麻煩開收據",type:'sentence',chapter:"基礎句型"},
+{id:"c_0546",jp:"よろしくお願いします",ruby:"よろしく お 願|ねが いします",reading:"よろしくおねがいします",meaning:"請多多指教",type:'sentence',chapter:"基礎句型"},
+{id:"c_0547",jp:"コーヒー(を)二つお願いします",ruby:"コーヒー ( を) 二|ふた つ お 願|ねが いします",reading:"コーヒーをふたつおねがいします",meaning:"麻煩給我兩杯咖啡",type:'sentence',chapter:"基礎句型"},
+{id:"c_0548",jp:"おしぼり(を)三本お願いします",ruby:"おしぼり ( を) 三本|さんぼん お 願|ねが いします",reading:"おしぼりをさんぼんおねがいします",meaning:"麻煩給我三條濕紙巾",type:'sentence',chapter:"基礎句型"},
+{id:"c_0549",jp:"コップ(を)一つお願いします",ruby:"コップ ( を) 一|ひと つ お 願|ねが いします",reading:"コップをひとつおねがいします",meaning:"麻煩給我一個杯子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0550",jp:"フォーク(を)二本お願いします",ruby:"フォーク ( を) 二本|にほん お 願|ねが いします",reading:"フォークをにほんおねがいします",meaning:"麻煩給我兩支叉子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0551",jp:"スプーン(を)三本お願いします",ruby:"スプーン ( を) 三本|さんぼん お 願|ねが いします",reading:"スプーンをさんぼんおねがいします",meaning:"麻煩給我三支湯匙",type:'sentence',chapter:"基礎句型"},
+{id:"c_0552",jp:"お皿(を)二枚お願いします",ruby:"お 皿|さら ( を) 二枚|にまい お 願|ねが いします",reading:"おさらをにまいおねがいします",meaning:"麻煩給我兩個盤子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0553",jp:"ストロー(を)一本お願いします",ruby:"ストロー ( を) 一本|いっぽん お 願|ねが いします",reading:"ストローをいっぽんおねがいします",meaning:"麻煩給我一根吸管",type:'sentence',chapter:"基礎句型"},
+{id:"c_0554",jp:"チケット(を)四枚お願いします",ruby:"チケット ( を) 四枚|よんまい お 願|ねが いします",reading:"チケットをよんまいおねがいします",meaning:"麻煩給我四張票",type:'sentence',chapter:"基礎句型"},
+{id:"c_0555",jp:"ホットでお願いします",ruby:"ホット でお 願|ねが いします",reading:"ホットでおねがいします",meaning:"我要熱的",type:'sentence',chapter:"基礎句型"},
+{id:"c_0556",jp:"アイスでお願いします",ruby:"アイス でお 願|ねが いします",reading:"アイスでおねがいします",meaning:"我要冰的",type:'sentence',chapter:"基礎句型"},
+{id:"c_0557",jp:"Lサイズでお願いします",ruby:"L サイズ でお 願|ねが いします",reading:"サイズでおねがいします",meaning:"我要大杯的",type:'sentence',chapter:"基礎句型"},
+{id:"c_0558",jp:"ソース多めでお願いします",ruby:"ソース 多|おお め でお 願|ねが いします",reading:"ソースおおめでおねがいします",meaning:"醬汁請多一點",type:'sentence',chapter:"基礎句型"},
+{id:"c_0559",jp:"現金でお願いします",ruby:"現金|げんきん でお 願|ねが いします",reading:"げんきんでおねがいします",meaning:"麻煩用現金付款",type:'sentence',chapter:"基礎句型"},
+{id:"c_0560",jp:"カードでお願いします",ruby:"カード でお 願|ねが いします",reading:"カードでおねがいします",meaning:"麻煩用信用卡結帳",type:'sentence',chapter:"基礎句型"},
+{id:"c_0561",jp:"paypayでお願いします",ruby:"paypay でお 願|ねが いします",reading:"でおねがいします",meaning:"paypay",type:'sentence',chapter:"基礎句型"},
+{id:"c_0562",jp:"これ(を)ください",ruby:"これ ( を)ください ",reading:"これをください",meaning:"請給我這個",type:'sentence',chapter:"基礎句型"},
+{id:"c_0563",jp:"お水(を)ください",ruby:"お 水|みず ( を)ください",reading:"おみずをください",meaning:"請給我水",type:'sentence',chapter:"基礎句型"},
+{id:"c_0564",jp:"メニュー(を)ください",ruby:"メニュー ( を)ください",reading:"メニューをください",meaning:"請給我菜單",type:'sentence',chapter:"基礎句型"},
+{id:"c_0565",jp:"このパン(を)ください",ruby:"このパン ( を)ください",reading:"このパンをください",meaning:"請給我這個麵包",type:'sentence',chapter:"基礎句型"},
+{id:"c_0566",jp:"チケット(を)ください",ruby:"チケット ( を)ください",reading:"チケットをください",meaning:"請給我票",type:'sentence',chapter:"基礎句型"},
+{id:"c_0567",jp:"アイスコーヒー(を)ください",ruby:"アイスコーヒー ( を)ください",reading:"アイスコーヒーをください",meaning:"請給我冰咖啡",type:'sentence',chapter:"基礎句型"},
+{id:"c_0568",jp:"領収書(を)ください",ruby:"領収書|りょうしゅうしょ ( を)ください",reading:"りょうしゅうしょをください",meaning:"請給我收據",type:'sentence',chapter:"基礎句型"},
+{id:"c_0569",jp:"袋(を)ください",ruby:"袋|ふくろ ( を)ください",reading:"ふくろをください",meaning:"請給我袋子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0570",jp:"コーヒー(を)二つください",ruby:"コーヒー ( を) 二|ふた つ ください",reading:"コーヒーをふたつください",meaning:"請給我兩杯咖啡",type:'sentence',chapter:"基礎句型"},
+{id:"c_0571",jp:"お皿(を)二枚ください",ruby:"お 皿|さら ( を) 二枚|にまい ください",reading:"おさらをにまいください",meaning:"請給我兩個盤子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0572",jp:"フォーク(を)三本ください",ruby:"フォーク ( を) 三本|さんぼん ください",reading:"フォークをさんぼんください",meaning:"請給我三支叉子",type:'sentence',chapter:"基礎句型"},
+{id:"c_0573",jp:"おしぼり(を)二本ください",ruby:"おしぼり ( を) 二本|にほん ください",reading:"おしぼりをにほんください",meaning:"請給我兩條濕紙巾",type:'sentence',chapter:"基礎句型"},
+{id:"c_0574",jp:"チケット(を)四枚ください",ruby:"チケット ( を) 四枚|よんまい ください",reading:"チケットをよんまいください",meaning:"請給我四張票",type:'sentence',chapter:"基礎句型"},
+{id:"c_0575",jp:"ストロー(を)二本ください",ruby:"ストロー ( を) 二本|にほん ください",reading:"ストローをにほんください",meaning:"請給我兩根吸管",type:'sentence',chapter:"基礎句型"},
+{id:"c_0576",jp:"スプーン(を)一つください",ruby:"スプーン ( を) 一|ひと つ ください",reading:"スプーンをひとつください",meaning:"請給我一支湯匙",type:'sentence',chapter:"基礎句型"},
+{id:"c_0577",jp:"パン(を)三つください",ruby:"パン ( を) 三|みっ つ ください",reading:"パンをみっつください",meaning:"請給我三個麵包",type:'sentence',chapter:"基礎句型"},
+{id:"c_0578",jp:"水(を)二本ください",ruby:"水|みず ( を) 二本|にほん ください",reading:"みずをにほんください",meaning:"請給我兩瓶水",type:'sentence',chapter:"基礎句型"},
+{id:"c_0579",jp:"メニューをくださいませんか",ruby:"メニュー をくださいませんか",reading:"メニューをくださいませんか",meaning:"可以請您給我菜單嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0580",jp:"領収書をくださいませんか",ruby:"領収書|りょうしゅうしょ をくださいませんか",reading:"りょうしゅうしょをくださいませんか",meaning:"可以請您開收據嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0581",jp:"タオルをくださいませんか",ruby:"タオル をくださいませんか",reading:"タオルをくださいませんか",meaning:"可以請您給我毛巾嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0582",jp:"お店は10時から1８時までです",ruby:"お 店|みせ は 10 時|じゅうじ から 1８ 時|じゅうはちじ まで です",reading:"おみせはじゅうじからじゅうはちじまでです",meaning:"商店從早上 10 點開到晚上 6 點",type:'sentence',chapter:"基礎句型"},
+{id:"c_0583",jp:"朝食は6時から９時までです",ruby:"朝食|ちょうしょく は 6  時|ろくじ から ９ 時|くじ まで です",reading:"ちょうしょくはろくじからくじまでです",meaning:"6  9",type:'sentence',chapter:"基礎句型"},
+{id:"c_0584",jp:"展示会は金曜日から日曜日までです",ruby:"展示会|てんじかい は 金曜日|きんようび から 日曜日|にちようび まで です",reading:"てんじかいはきんようびからにちようびまでです",meaning:"展覽從星期五到星期天",type:'sentence',chapter:"基礎句型"},
+{id:"c_0585",jp:"チェックアウトは11時までです",ruby:"チェックアウトは 11 時|じゅういちじ まで です",reading:"チェックアウトはじゅういちじまでです",meaning:"退房到 11 點為止",type:'sentence',chapter:"基礎句型"},
+{id:"c_0586",jp:"スーパーは夜10時までやっています",ruby:"スーパーは 夜|よるじゅうじ 10時 まで やっています",reading:"スーパーはよるじゅうじまでやっています",meaning:"10",type:'sentence',chapter:"基礎句型"},
+{id:"c_0587",jp:"映画は７時からです",ruby:"映画|えいが は ７ 時|しちじ から です",reading:"えいがはしちじからです",meaning:"電影 7 點開始",type:'sentence',chapter:"基礎句型"},
+{id:"c_0588",jp:"ここから駅まで歩きます",ruby:"ここ から 駅|えき まで 歩|ある きます",reading:"ここからえきまであるきます",meaning:"從這裡走到車站",type:'sentence',chapter:"基礎句型"},
+{id:"c_0589",jp:"東京から大阪まで新幹線で行きます",ruby:"東京|とうきょう から 大阪|おおさか まで 新幹線|しんかんせん で 行|い きます",reading:"とうきょうからおおさかまでしんかんせんでいきます",meaning:"我從東京搭新幹線到大阪",type:'sentence',chapter:"基礎句型"},
+{id:"c_0590",jp:"このお菓子は一人3個までです",ruby:"このお 菓子|かし は 一人|ひとりさんこ 3 個 まで です",reading:"このおかしはひとりさんこまでです",meaning:"3",type:'sentence',chapter:"基礎句型"},
+{id:"c_0591",jp:"ランチは1200円からです",ruby:"ランチは 1200  円|せんにひゃくえん から です",reading:"ランチはせんにひゃくえんからです",meaning:"午餐從 1200 日元起",type:'sentence',chapter:"基礎句型"},
+{id:"c_0592",jp:"予約できますか",ruby:"予約|よやく できますか",reading:"よやくできますか",meaning:"可以預約嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0593",jp:"両替できますか",ruby:"両替|りょうがえ できますか",reading:"りょうがえできますか",meaning:"可以換錢嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0594",jp:"持ち帰りできますか",ruby:"持|も ち 帰|かえ り できますか",reading:"もちかえりできますか",meaning:"可以外帶嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0595",jp:"写真を撮ってもいいですか",ruby:"写真|しゃしん を 撮|と っ てもいいですか",reading:"しゃしんをとってもいいですか",meaning:"我可以拍照嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0596",jp:"座ってもいいですか",ruby:"座|すわ っ てもいいですか",reading:"すわってもいいですか",meaning:"我可以坐這裡嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0597",jp:"ここに置いてもいいですか",ruby:"ここに 置|お い てもいいですか",reading:"ここにおいてもいいですか",meaning:"可以放在這裡嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0598",jp:"開けてもいいですか",ruby:"開|あ け てもいいですか",reading:"あけてもいいですか",meaning:"我可以打開嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0599",jp:"試着してもいいですか",ruby:"試着|しちゃく し てもいいですか",reading:"しちゃくしてもいいですか",meaning:"我可以試穿嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0600",jp:"ここで食べてもいいですか",ruby:"ここで 食|た べ てもいいですか",reading:"ここでたべてもいいですか",meaning:"我可以在這裡吃嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0601",jp:"質問してもいいですか",ruby:"質問|しつもん し てもいいですか",reading:"しつもんしてもいいですか",meaning:"我可以提問嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0602",jp:"トイレを使ってもいいですか",ruby:"トイレを 使|つか っ てもいいですか",reading:"トイレをつかってもいいですか",meaning:"我可以用廁所嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0603",jp:"見てもいいですか",ruby:"見|み てもいいですか",reading:"みてもいいですか",meaning:"我可以看一下嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0604",jp:"触ってもいいですか",ruby:"触|さわ っ てもいいですか",reading:"さわってもいいですか",meaning:"我可以摸一下嗎",type:'sentence',chapter:"基礎句型"},
+{id:"c_0605",jp:"写真を撮っていただけますか",ruby:"写真|しゃしん を 撮|と っ ていただけますか",reading:"しゃしんをとっていただけますか",meaning:"可以請您幫我拍張照嗎？",type:'sentence',chapter:"基礎句型"},
+{id:"c_0606",jp:"荷物を預かっていただけますか",ruby:"荷物|にもつ を 預|あず かっ ていただけますか",reading:"にもつをあずかっていただけますか",meaning:"可以請您幫我保管行李嗎？",type:'sentence',chapter:"基礎句型"},
+{id:"c_0607",jp:"おすすめを教えていただけますか",ruby:"おすすめを 教|おし え ていただけますか",reading:"おすすめをおしえていただけますか",meaning:"可以請您告訴我推薦的嗎？",type:'sentence',chapter:"基礎句型"},
+{id:"c_0608",jp:"Ｗi-Fiのパスワードを教えていただけますか",ruby:"Ｗi-Fi のパスワードを 教|おし え ていただけますか",reading:"のパスワードをおしえていただけますか",meaning:"Wi-Fi",type:'sentence',chapter:"基礎句型"},
+{id:"c_0609",jp:"チェックインの時間を確認していただけますか",ruby:"チェックインの 時間|じかん を 確認|かくにん し ていただけますか",reading:"チェックインのじかんをかくにんしていただけますか",meaning:"可以請您幫我確認一下入住時間嗎？",type:'sentence',chapter:"基礎句型"},
+{id:"c_0610",jp:"地図を見せていただけますか",ruby:"地図|ちず を 見|み せ ていただけますか",reading:"ちずをみせていただけますか",meaning:"可以請您給我一下看地圖嗎？",type:'sentence',chapter:"基礎句型"},
+{id:"c_0611",jp:"もう一度説明していただけますか",ruby:"もう 一度説明|いちどせつめい し ていただけますか",reading:"もういちどせつめいしていただけますか",meaning:"可以請您再解釋一次嗎？",type:'sentence',chapter:"基礎句型"},
+{id:"c_0612",jp:"すみません、もう一度言っていただけますか",ruby:"すみません 、 もう 一度言|いちどい っ ていただけますか",reading:"すみませんもういちどいっていただけますか",meaning:"不好意思，可以請您再說一次嗎？",type:'sentence',chapter:"基礎句型"},
+{id:"c_0613",jp:"遅れてしまって、すみません",ruby:"遅|おく れてしまって、 すみません",reading:"おくれてしまってすみません",meaning:"對不起，我遲到了",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0614",jp:"すみません、ありがとうございます",ruby:"すみません 、 ありがとうございます",reading:"すみませんありがとうございます",meaning:"不好意思，謝謝您",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0615",jp:"申し訳ございません",ruby:"申|もう し 訳|もうわけ ございません",reading:"もうしもうわけございません",meaning:"對不起",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0616",jp:"ごめんなさい/ごめん",ruby:"ごめんなさい / ごめん",reading:"ごめんなさいごめん",meaning:"抱歉",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0617",jp:"初めまして。千田と申します。よろしくお願いします",ruby:"初|はじ めまして。 千田|せんだ と 申|もう します。 よろしくお 願|ねが いします ",reading:"はじめましてせんだともうしますよろしくおねがいします",meaning:"初次見面，我是千田，請多多指教",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0618",jp:"失礼します",ruby:"失礼|しつれい します",reading:"しつれいします",meaning:"打擾了",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0619",jp:"お先に失礼します",ruby:"お 先|さき に 失礼|しつれい します",reading:"おさきにしつれいします",meaning:"不好意思，我先離開了",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0620",jp:"すみません、失礼します",ruby:"すみません、 失礼|しつれい します",reading:"すみませんしつれいします",meaning:"不好意思，打擾了",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0621",jp:"お疲れ様です。失礼します",ruby:"お 疲|つか れ 様|さま です。 失礼|しつれい します",reading:"おつかれさまですしつれいします",meaning:"您辛苦了，打擾一下",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0622",jp:"あ、お疲れ様、ん、どうしたの",ruby:"あ、お 疲|つか れ 様|さま 、 ん、どうしたの",reading:"あおつかれさまんどうしたの",meaning:"你辛苦了，有什麼事嗎",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0623",jp:"えっ、ありがとう。そんな、気を遣わなくていいのに",ruby:"えっ、ありがとう。そんな、 気|き を 遣|つか わなくていいのに",reading:"えっありがとうそんなきをつかわなくていいのに",meaning:"哎呀，謝謝你啦，不用特地破費的啦",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0624",jp:"中山さんにはいつもお世話になっているので",ruby:"中山|なかやま さんにはいつもお 世話|せわ になっているので",reading:"なかやまさんにはいつもおせわになっているので",meaning:"因為一直受中山先生照顧",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0625",jp:"ありがとう。あとで食べるね",ruby:"ありがとう。あとで 食|た べるね",reading:"ありがとうあとでたべるね",meaning:"謝謝你，我等一下吃喔",type:'sentence',chapter:"禮儀篇"},
+{id:"c_0626",jp:"レストランの予約したいんです",ruby:"レストラン の 予約|よやく し た い んです",reading:"レストランのよやくしたいんです",meaning:"我想預訂餐廳〜たい表達「想做某個動作」",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0627",jp:"ホテルの予約したいんです",ruby:"ホテル の 予約|よやく し たい んです ",reading:"ホテルのよやくしたいんです",meaning:"我想預訂飯店",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0628",jp:"レストランの予約したいんですが…",ruby:"レストラン の 予約|よやく し たい んですが…",reading:"レストランのよやくしたいんですが",meaning:"…",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0629",jp:"2時間くらい",ruby:"2 時間|じかん くらい",reading:"じかんくらい",meaning:"ぐらい更自然大約～時間大概小時",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0630",jp:"いらっしゃいませ",ruby:"いらっしゃいませ",reading:"いらっしゃいませ",meaning:"歡迎光臨",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0631",jp:"ご来店ありがとうございます",ruby:"ご 来店|らいてん ありがとうございます ",reading:"ごらいてんありがとうございます",meaning:"謝謝光臨",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0632",jp:"受付はこちらです",ruby:"受付|うけつけ はこちらです",reading:"うけつけはこちらです",meaning:"請先到櫃台報到",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0633",jp:"チケットをご提示ください",ruby:"チケットをご 提示|ていじ ください",reading:"チケットをごていじください",meaning:"請出示票券",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0634",jp:"ご予約ありがとうございます",ruby:"ご 予約|よやく ありがとうございます",reading:"ごよやくありがとうございます",meaning:"感謝您的預訂",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0635",jp:"ご予約承りました",ruby:"ご 予約承|よやくうけたまわ りました ",reading:"ごよやくうけたまわりました",meaning:"您的預約已經受理了",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0636",jp:"はい、こちらへどうぞ",ruby:"はい、こちらへどうぞ",reading:"はいこちらへどうぞ",meaning:"麻煩～座位請幫我安排在座位",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0637",jp:"禁煙席でお願いします",ruby:"禁煙席|きんえんせき でお 願|ねが いします",reading:"きんえんせきでおねがいします",meaning:"請安排在禁菸座位",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0638",jp:"ベビーチェアはありますか",ruby:"ベビーチェア はありますか",reading:"ベビーチェアはありますか",meaning:"請問有嬰兒坐椅嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0639",jp:"子ども用の椅子をお願いします",ruby:"子|こ ども 用|よう の 椅子|いす をお 願|がん いします",reading:"こどもようのいすをおがんいします",meaning:"請提供兒童椅",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0640",jp:"冷房を少し下げていただけますか",ruby:"冷房|れいぼう を 少|すこ し 下|さ げ ていただけますか",reading:"れいぼうをすこしさげていただけますか",meaning:"能不能把冷氣調低一點呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0641",jp:"すみません、注文をお願いします",ruby:"すみません、 注文|ちゅうもん をお 願|ねが いします",reading:"すみませんちゅうもんをおねがいします",meaning:"不好意思，我想點餐",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0642",jp:"豚骨ラーメンを一つと、餃子一皿をお願いします",ruby:"豚骨|とんこつ ラーメンを 一|ひと つ と 、 餃子一皿|ぎょうざひとさら をお 願|ねが いします",reading:"とんこつラーメンをひとつとぎょうざひとさらをおねがいします",meaning:"我想要一碗豚骨拉麵和一盤煎餃",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0643",jp:"麺は硬めでお願いします",ruby:"麺|めん は 硬|かた め で お 願|ねが いします",reading:"めんはかためでおねがいします",meaning:"我想要麵硬一點的拉麵",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0644",jp:"すみません、オーダーいいですか",ruby:"すみません、 オーダー いいですか",reading:"すみませんオーダーいいですか",meaning:"不好意思，我可以點餐嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0645",jp:"ナポリタンと明太子スパゲッティをひとつずつお願いします",ruby:"ナポリタン と 明太子|めんたいこ スパゲッティ を ひとつずつ お 願|ねが いします",reading:"ナポリタンとめんたいこスパゲッティをひとつずつおねがいします",meaning:"要拿坡里義大利麵和明太子義大利麵各一份",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0646",jp:"水は氷なしでお願いします",ruby:"水|みず は 氷|こおり なしで お 願|ねが いします",reading:"みずはこおりなしでおねがいします",meaning:"請給我一杯不加冰塊的水",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0647",jp:"お冷のおかわりお願いします",ruby:"お 冷|ひや のおかわり お 願|ねが いします",reading:"おひやのおかわりおねがいします",meaning:"可以再給我一杯冷水嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0648",jp:"セットになさいますか",ruby:"セット になさいますか",reading:"セットになさいますか",meaning:"要不要升級成套餐呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0649",jp:"セットは何が付いてますか",ruby:"セット は 何|なに が 付|つ いて ますか",reading:"セットはなにがついてますか",meaning:"套餐裡面包含什麼",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0650",jp:"パンとサラダとドリンクが付いてます",ruby:"パン と サラダ と ドリンクが 付|つ いてます",reading:"パンとサラダとドリンクがついてます",meaning:"套餐包含麵包、沙拉和飲料",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0651",jp:"ドリンクはこの中から選んでください",ruby:"ドリンクはこの 中|なか から 選|えら んでください",reading:"ドリンクはこのなかからえらんでください",meaning:"請從這之中選擇一種飲料",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0652",jp:"じゃあ、セットでお願いします。飲み物は二つともアイスコー",ruby:"じゃあ、 セット で お 願|ねが いします 。 飲|の み 物|もの は 二|ふた つともアイスコー",reading:"じゃあセットでおねがいしますのみものはふたつともアイスコー",meaning:"那麼，我要套餐兩杯飲料都要冰咖啡",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0653",jp:"はい、かしこまりました",ruby:"はい、かしこまりました",reading:"はいかしこまりました",meaning:"追加餐點加點",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0654",jp:"餃子を追加でお願いします",ruby:"餃子|ぎょうざ を 追加|ついか で お 願|ねが いします",reading:"ぎょうざをついかでおねがいします",meaning:"請再加點一份餃子",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0655",jp:"おかわりお願いします",ruby:"おかわり お 願|ねが いします",reading:"おかわりおねがいします",meaning:"/",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0656",jp:"もう1杯お願いします",ruby:"もう1 杯|ぱい お 願|ねが いします",reading:"もうぱいおねがいします",meaning:"再來一杯",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0657",jp:"替え玉をお願いします",ruby:"替|か え 玉|だま をお 願|ねが いします",reading:"かえだまをおねがいします",meaning:"請幫我加麵",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0658",jp:"売り切れです",ruby:"売|う り 切|き れです",reading:"うりきれです",meaning:"賣完了",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0659",jp:"完売しました",ruby:"完売|かんばい しました",reading:"かんばいしました",meaning:"賣完了",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0660",jp:"ラストオーダー",ruby:"ラストオーダー",reading:"ラストオーダー",meaning:"最後點餐時間",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0661",jp:"海老と蟹抜きでお願いします",ruby:"海老|えび と 蟹|かに 抜|かにぬ きで お 願|ねが いします",reading:"えびとかにかにぬきでおねがいします",meaning:"請不要加蝦跟螃蟹",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0662",jp:"わさび抜きでお願いします",ruby:"わさび 抜|ぬ きで お 願|ねが いします",reading:"わさびぬきでおねがいします",meaning:"我對～過敏我對          過敏…",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0663",jp:"牛乳アレルギーなんですけど、この料理に使ってますか",ruby:"牛乳|ぎゅうにゅう アレルギー なんですけど、この 料理|りょうり に 使|つか ってますか ",reading:"ぎゅうにゅうアレルギーなんですけどこのりょうりにつかってますか",meaning:"我對牛奶過敏，這道料理裡有用到牛奶嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0664",jp:"この料理に大豆を使ってますか？大豆アレルギーなので食べられ",ruby:"この 料理|りょうり に 大豆|だいず を 使|つか ってますか？ 大豆|だいず アレルギー なので 食|た べられ",reading:"このりょうりにだいずをつかってますかだいずアレルギーなのでたべられ",meaning:"這道菜裡有大豆嗎？我對大豆過敏，所以不能吃",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0665",jp:"食べ放題コースにします",ruby:"食|た べ 放題|ほうだい コース にします",reading:"たべほうだいコースにします",meaning:"我要選吃到飽的方案",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0666",jp:"飲み放題コースにします",ruby:"飲|の み 放題|ほうだい コース にします",reading:"のみほうだいコースにします",meaning:"我要選喝到飽的方案",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0667",jp:"食べ放題は何分間ですか",ruby:"食|た べ 放題|ほうだい は 何分間|なんぷんかん ですか",reading:"たべほうだいはなんぷんかんですか",meaning:"吃到飽的時間是幾分鐘呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0668",jp:"飲み放題は別料金ですか",ruby:"飲|の み 放題|ほうだい は 別料金|べつりょうきん ですか",reading:"のみほうだいはべつりょうきんですか",meaning:"喝到飽要另外加錢嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0669",jp:"飲み放題を追加できますか",ruby:"飲|の み 放題|ほうだい を 追加|ついか できますか",reading:"のみほうだいをついかできますか",meaning:"可以加購喝到飽嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0670",jp:"牛タンは塩だれでお願いします！",ruby:"牛|ぎゅう タン は 塩|しお だれ で お 願|ねが いします！",reading:"ぎゅうタンはしおだれでおねがいします",meaning:"可以吃～嗎＿＿＿＿，可以嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0671",jp:"ホルモンとか、大丈夫？",ruby:"ホルモンとか 、 大丈夫|だいじょうぶ ？",reading:"ホルモンとかだいじょうぶ",meaning:"內臟類，可以嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0672",jp:"うん、大丈夫！",ruby:"うん、 大丈夫|だいじょうぶ ！",reading:"うんだいじょうぶ",meaning:"好的，可以喔",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0673",jp:"店内でお願いします",ruby:"店内|てんない でお 願|ねが いします",reading:"てんないでおねがいします",meaning:"我要在店內用",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0674",jp:"お持ち帰りでお願いします",ruby:"お 持|も ち 帰|かえ り でお 願|ねが いします",reading:"おもちかえりでおねがいします",meaning:"詢問有無請問有嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0675",jp:"イートインスペースはありますか",ruby:"イートインスペース はありますか",reading:"イートインスペースはありますか",meaning:"請問有內用區嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0676",jp:"季節限定のスイーツはありますか",ruby:"季節限定|きせつげんてい の スイーツ はありますか",reading:"きせつげんていのスイーツはありますか",meaning:"請問有季節限定的甜點嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0677",jp:"いつまでですか",ruby:"いつまでですか",reading:"いつまでですか",meaning:"到什麼時候呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0678",jp:"ここだけですか",ruby:"ここだけですか",reading:"ここだけですか",meaning:"只有這裡有嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0679",jp:"このケーキは期間限定なんですか",ruby:"このケーキは 期間限定|きかんげんてい なんですか",reading:"このケーキはきかんげんていなんですか",meaning:"這個蛋糕是期間限定的嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0680",jp:"マンゴームースはもう売り切れですか",ruby:"マンゴームースはもう 売|う り 切|き れ ですか",reading:"マンゴームースはもううりきれですか",meaning:"芒果慕斯賣完了嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0681",jp:"じゃあ、ほかにおすすめはありますか",ruby:"じゃあ、ほかに おすすめ はありますか",reading:"じゃあほかにおすすめはありますか",meaning:"那麼，還有什麼推薦嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0682",jp:"取り皿を二人分もらえますか",ruby:"取|と り 皿|ざら を 二人|ふたりぶん 分|ふたりぶん もらえますか",reading:"とりざらをふたりぶんふたりぶんもらえますか",meaning:"可以給我兩個小碟子嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0683",jp:"このケーキ、ふわふわでしっとりしていますね",ruby:"この ケーキ 、 ふわふわ で しっとり していますね",reading:"このケーキふわふわでしっとりしていますね",meaning:"外觀描述看起來         ，而且……",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0684",jp:"見た目もカラフルで、インスタ映えしますね",ruby:"見|み た 目|め も カラフル で 、 インスタ 映|ば えしますね",reading:"みためもカラフルでインスタばえしますね",meaning:"綜合評論是具有          又            風味的",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0685",jp:"なめらかで上品な味わいのプリンです",ruby:"なめらか で 上品|じょうひん な 味|あじ わいの プリン です",reading:"なめらかでじょうひんなあじわいのプリンです",meaning:"這是滑順且高雅風味的布丁",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0686",jp:"この食感、やみつきになりそう！",ruby:"この 食感|しょっかん 、 やみつきになりそう！",reading:"このしょっかんやみつきになりそう",meaning:"這口感讓人停不下來耶！",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0687",jp:"ソフトドリンクはありますか",ruby:"ソフトドリンク はありますか",reading:"ソフトドリンクはありますか",meaning:"請問有無酒精飲料嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0688",jp:"お冷ください",ruby:"お 冷|ひや ください",reading:"おひやください",meaning:"請給我一杯冰水",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0689",jp:"梅酒、ロックでお願いします",ruby:"梅酒|うめしゅ 、 ロック でお 願|ねが いします",reading:"うめしゅロックでおねがいします",meaning:"梅酒請給我加冰的",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0690",jp:"ウイスキー、水割りでお願いします",ruby:"ウイスキー 、 水割|みずわ り でお 願|ねが いします",reading:"ウイスキーみずわりでおねがいします",meaning:"威士忌請幫我加水",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0691",jp:"梅酒、ソーダ割りでお願いします",ruby:"梅酒|うめしゅ 、 ソーダ 割|わ り でお 願|ねが いします",reading:"うめしゅソーダわりでおねがいします",meaning:"梅酒請幫我加氣泡水",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0692",jp:"ハイボール、氷なしでお願いします",ruby:"ハイボール 、 氷|こおり なし でお 願|ねが いします",reading:"ハイボールこおりなしでおねがいします",meaning:"Highball",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0693",jp:"レモンサワー、氷少なめでお願いします",ruby:"レモンサワー 、 氷少|こおりすく なめ でお 願|ねが いします",reading:"レモンサワーこおりすくなめでおねがいします",meaning:"請給我檸檬沙瓦少冰「加冰」是ロック；「加氣泡水」是ソーダ割り；",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0694",jp:"とりあえず生で！",ruby:"とりあえず 生|なま で！",reading:"とりあえずなまで",meaning:"先來一杯生啤！",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0695",jp:"おすすめありますか",ruby:"おすすめありますか",reading:"おすすめありますか",meaning:"有推薦的嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0696",jp:"今日はちょっと…",ruby:"今日|きょう はちょっと…",reading:"きょうはちょっと",meaning:"今天有點不方便…",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0697",jp:"また今度お願いします",ruby:"また 今度|こんど お 願|ねが いします",reading:"またこんどおねがいします",meaning:"下次再邀我一起吧",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0698",jp:"行けそうですか",ruby:"行|い けそうですか",reading:"いけそうですか",meaning:"有辦法去嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0699",jp:"味の濃さはどうしますか",ruby:"味|あじ の 濃|こ さはどうしますか",reading:"あじのこさはどうしますか",meaning:"味道的濃度要怎麼調呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0700",jp:"濃いめでお願いします",ruby:"濃|こ いめ でお 願|ねが いします",reading:"こいめでおねがいします",meaning:"味道請偏濃",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0701",jp:"薄めでお願いします",ruby:"薄|うす め でお 願|ねが いします",reading:"うすめでおねがいします",meaning:"味道請偏淡",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0702",jp:"麺の硬さはどうしますか",ruby:"麺|めん の 硬|かた さはどうしますか",reading:"めんのかたさはどうしますか",meaning:"麵的硬度要怎麼做呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0703",jp:"かためでお願いします",ruby:"かため でお 願|ねが いします",reading:"かためでおねがいします",meaning:"麵請硬一點",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0704",jp:"やわめでお願いします",ruby:"やわめ でお 願|ねが いします",reading:"やわめでおねがいします",meaning:"麵請軟一點",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0705",jp:"麺の太さはどうしますか",ruby:"麺|めん の 太|ふと さはどうしますか",reading:"めんのふとさはどうしますか",meaning:"麵條要粗一點還是細一點呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0706",jp:"太麺でお願いします",ruby:"太麺|ふとめん でお 願|ねが いします",reading:"ふとめんでおねがいします",meaning:"請給我粗麵",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0707",jp:"細麵でお願いします",ruby:"細麵|ほそめん でお 願|ねが いします",reading:"ほそめんでおねがいします",meaning:"份量請給我",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0708",jp:"麺の量はどうしますか",ruby:"麺|めん の 量|りょう はどうしますか",reading:"めんのりょうはどうしますか",meaning:"/",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0709",jp:"多めでお願いします",ruby:"多|おお め でお 願|ねが いします",reading:"おおめでおねがいします",meaning:"請給我多一點的麵",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0710",jp:"少なめでお願いします",ruby:"少|すく なめ でお 願|ねが いします",reading:"すくなめでおねがいします",meaning:"請給我少一點的麵",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0711",jp:"甘さ調整できますか",ruby:"甘|あま さ 調整|ちょうせい できますか",reading:"あまさちょうせいできますか",meaning:"可以調整甜度嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0712",jp:"氷少なめできますか",ruby:"氷少|こおりすく なめ できますか",reading:"こおりすくなめできますか",meaning:"冰塊可以少一點嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0713",jp:"辛さ控えめにできますか",ruby:"辛|から さ 控|ひか えめに できますか",reading:"からさひかえめにできますか",meaning:"辣度可以調整低一點嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0714",jp:"サイズ変更できますか",ruby:"サイズ 変更|へんこう できますか",reading:"サイズへんこうできますか",meaning:"可以更改大小嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0715",jp:"トッピング追加できますか",ruby:"トッピング 追加|ついか できますか",reading:"トッピングついかできますか",meaning:"可以加配料嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0716",jp:"チャーシュー多めでお願いします",ruby:"チャーシュー 多|おお め でお 願|ねが いします",reading:"チャーシューおおめでおねがいします",meaning:"叉燒多一點",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0717",jp:"ねぎ抜きでお願いします",ruby:"ねぎ 抜|ぬ き でお 願|ねが いします",reading:"ねぎぬきでおねがいします",meaning:"不要蔥",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0718",jp:"餃子、持ち帰りでお願いします",ruby:"餃子|ぎょうざも 、持 ち 帰|かえ り でお 願|ねが いします",reading:"ぎょうざもちかえりでおねがいします",meaning:"煎餃請做外帶",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0719",jp:"お任せでお願いします",ruby:"お 任|まか せでお 願|ねが いします",reading:"おまかせでおねがいします",meaning:"請師傅幫我出餐，您覺得最好的就好",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0720",jp:"牛肉と豚肉、どちらになさいますか",ruby:"牛肉|ぎゅうにく と 豚肉|ぶたにく 、 どちらになさいますか",reading:"ぎゅうにくとぶたにくどちらになさいますか",meaning:"你想要牛肉的，還是豬肉的呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0721",jp:"牛肉でお願いします",ruby:"牛肉|ぎゅうにく でお 願|ねが いします",reading:"ぎゅうにくでおねがいします",meaning:"我選擇牛肉方案",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0722",jp:"豚肉でお願いします",ruby:"豚肉|ぶたにく でお 願|ねが いします",reading:"ぶたにくでおねがいします",meaning:"請給我～我用方案",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0723",jp:"牛肉のすき焼きをお願いします",ruby:"牛肉|ぎゅうにく の すき 焼|や き をお 願|ねが いします",reading:"ぎゅうにくのすきやきをおねがいします",meaning:"我要點牛肉壽喜燒",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0724",jp:"豚肉のすき焼きをお願いします",ruby:"豚肉|ぶたにく の すき 焼|や き をお 願|ねが いします",reading:"ぶたにくのすきやきをおねがいします",meaning:"我要點豬肉壽喜燒",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0725",jp:"野菜のすき焼きをお願いします",ruby:"野菜|やさい の すき 焼|や き をお 願|ねが いします",reading:"やさいのすきやきをおねがいします",meaning:"我要點純蔬菜的壽喜燒",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0726",jp:"特選和牛のすき焼きをお願いします",ruby:"特選和牛|とくせんわぎゅう の すき 焼|や き をお 願|ねが いします",reading:"とくせんわぎゅうのすきやきをおねがいします",meaning:"裡面有什麼這道裡面有什麼呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0727",jp:"すき焼きには何が入っていますか",ruby:"すき 焼|や き には 何|なに が 入|はい っていますか",reading:"すきやきにはなにがはいっていますか",meaning:"壽喜燒裡面有什麼呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0728",jp:"野菜盛り合せには何が入っていますか",ruby:"野菜盛|やさいも り 合|あわ せ には 何|なに が 入|はい っていますか",reading:"やさいもりあわせにはなにがはいっていますか",meaning:"蔬菜拼盤裡有什麼呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0729",jp:"うどんを追加でお願いします",ruby:"うどん を 追加|ついか で お 願|ねが いします",reading:"うどんをついかでおねがいします",meaning:"請再加點烏龍麵",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0730",jp:"生卵を追加でお願いします",ruby:"生卵|なまたまご を 追加|ついか で お 願|ねが いします",reading:"なまたまごをついかでおねがいします",meaning:"可以再加一顆生蛋嗎",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0731",jp:"タレ多めでお願いします",ruby:"タレ 多|おお め でお 願|ねが いします",reading:"タレおおめでおねがいします",meaning:"請多加一點醬汁",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0732",jp:"タレ少なめでお願いします",ruby:"タレ 少|すく なめ でお 願|ねが いします",reading:"タレすくなめでおねがいします",meaning:"請少放一點醬汁",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0733",jp:"店内ですか？お持ち帰りですか？",ruby:"店内|てんない ですか？お 持|も ち 帰|かえ りですか？",reading:"てんないですかおもちかえりですか",meaning:"內用還是外帶？",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0734",jp:"コーヒーを一つお願いします",ruby:"コーヒー を 一|ひと つ お 願|ねが いします",reading:"コーヒーをひとつおねがいします",meaning:"我想要一杯咖啡",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0735",jp:"カフェラテを一つお願いします",ruby:"カフェラテ を 一|ひと つ お 願|ねが いします",reading:"カフェラテをひとつおねがいします",meaning:"我想要一杯拿鐵",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0736",jp:"アメリカーノを一つお願いします",ruby:"アメリカーノ を 一|ひと つ お 願|ねが いします",reading:"アメリカーノをひとつおねがいします",meaning:"我想要一杯美式咖啡",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0737",jp:"アイスティーを一つお願いします",ruby:"アイスティー を 一|ひと つ お 願|ねが いします",reading:"アイスティーをひとつおねがいします",meaning:"我想要一杯冰紅茶",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0738",jp:"ホットティーを一つお願いします",ruby:"ホットティー を 一|ひと つ お 願|ねが いします",reading:"ホットティーをひとつおねがいします",meaning:"我想要一杯熱紅茶",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0739",jp:"ミルクティーを一つお願いします",ruby:"ミルクティー を 一|ひと つ お 願|ねが いします",reading:"ミルクティーをひとつおねがいします",meaning:"我想要一杯奶茶",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0740",jp:"グリーンティーを一つお願いします",ruby:"グリーンティー を 一|ひと つ お 願|ねが いします",reading:"グリーンティーをひとつおねがいします",meaning:"我想要一杯綠茶",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0741",jp:"抹茶を一つお願いします",ruby:"抹茶|まっちゃ を 一|ひと つ お 願|ねが いします",reading:"まっちゃをひとつおねがいします",meaning:"我想要一杯抹茶",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0742",jp:"フラッペを一つお願いします",ruby:"フラッペ を 一|ひと つ お 願|ねが いします",reading:"フラッペをひとつおねがいします",meaning:"我要～尺寸請給我",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0743",jp:"サイズはLでお願いします",ruby:"サイズは L でお 願|ねが いします",reading:"サイズはでおねがいします",meaning:"請給我大杯",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0744",jp:"氷少なめでお願いします",ruby:"氷少|こおりすく なめ でお 願|ねが いします",reading:"こおりすくなめでおねがいします",meaning:"請給我少冰",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0745",jp:"氷なしでお願いします",ruby:"氷|こおり なし でお 願|ねが いします",reading:"こおりなしでおねがいします",meaning:"請去冰",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0746",jp:"甘さ控えめでお願いします",ruby:"甘|あま さ 控|ひか えめ でお 願|ねが いします",reading:"あまさひかえめでおねがいします",meaning:"請做成少糖",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0747",jp:"ミルク多めでお願いします",ruby:"ミルク 多|おお め でお 願|ねが いします",reading:"ミルクおおめでおねがいします",meaning:"請加多一點牛奶",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0748",jp:"ホイップなしでお願いします",ruby:"ホイップなし でお 願|ねが いします",reading:"ホイップなしでおねがいします",meaning:"一起加購要不要一起加購呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0749",jp:"ご一緒にケーキはいかがですか",ruby:"ご 一緒|いっしょ に ケーキ はいかがですか",reading:"ごいっしょにケーキはいかがですか",meaning:"要不要一起加購蛋糕呢",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0750",jp:"飲み物とセットにするとお得ですよ",ruby:"飲|の み 物|もの とセットにするとお 得|とく ですよ",reading:"のみものとセットにするとおとくですよ",meaning:"飲料加套餐會比較划算喔",type:'sentence',chapter:"餐廳篇"},
+{id:"c_0751",jp:"このシャツを探しているんですが",ruby:"このシャツ を 探|さが している んですが",reading:"このシャツをさがしているんですが",meaning:"我在找這件襯衫",type:'sentence',chapter:"購物篇"},
+{id:"c_0752",jp:"白いスニーカーを探しているんですが",ruby:"白|しろ いスニーカー を 探|さが している んですが",reading:"しろいスニーカーをさがしているんですが",meaning:"我在找白色的球鞋",type:'sentence',chapter:"購物篇"},
+{id:"c_0753",jp:"プレゼント用の包装紙を探しているんですが",ruby:"プレゼント 用|よう の 包装紙|ほうそうし を 探|さが している んですが",reading:"プレゼントようのほうそうしをさがしているんですが",meaning:"我在找禮品用的包裝紙",type:'sentence',chapter:"購物篇"},
+{id:"c_0754",jp:"これと同じTシャツを探しているんですが",ruby:"これと 同|おな じTシャツ を 探|さが している んですが",reading:"これとおなじシャツをさがしているんですが",meaning:"我在找一件和這件一樣的Ｔ恤",type:'sentence',chapter:"購物篇"},
+{id:"c_0755",jp:"このワンピースに合うバッグを探しているんですが",ruby:"このワンピースに 合|あ うバッグ を 探|さが している んですが",reading:"このワンピースにあうバッグをさがしているんですが",meaning:"洋裝搭配的包包",type:'sentence',chapter:"購物篇"},
+{id:"c_0756",jp:"すみません、これ、まだありますか",ruby:"すみません、これ、まだありますか ",reading:"すみませんこれまだありますか",meaning:"不好意思，請問這個還有庫存嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0757",jp:"今日はもう売り切れてしまいました",ruby:"今日|きょう はもう 売|う り 切|き れてしまいました",reading:"きょうはもううりきれてしまいました",meaning:"今天已經賣完了",type:'sentence',chapter:"購物篇"},
+{id:"c_0758",jp:"すみません、これ、まだありますか",ruby:"すみません、これ、 まだ ありますか",reading:"すみませんこれまだありますか",meaning:"不好意思，請問這個還有庫存嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0759",jp:"あ、申し訳ございません。今日はもう売り切れてしまいました",ruby:"あ、 申|もう し 訳|わけ ございません 。 今日|きょう はもう 売|う り 切|き れ てしまいました",reading:"あもうしわけございませんきょうはもううりきれてしまいました",meaning:"思，今天已經賣完了",type:'sentence',chapter:"購物篇"},
+{id:"c_0760",jp:"そうですか…。あ、じゃあ、次は、いつ入荷ですか",ruby:"そうですか…。あ、じゃあ、 次|つぎ は、 いつ 入荷|にゅうか ですか",reading:"そうですかあじゃあつぎはいつにゅうかですか",meaning:"麼時候會再進貨呢",type:'sentence',chapter:"購物篇"},
+{id:"c_0761",jp:"明後日になりますね",ruby:"明後日|あさって になりますね",reading:"あさってになりますね",meaning:"會在後天到貨",type:'sentence',chapter:"購物篇"},
+{id:"c_0762",jp:"来週の土曜日になりますね",ruby:"来週|らいしゅう の 土曜日|どようび になりますね",reading:"らいしゅうのどようびになりますね",meaning:"會在下星期六到貨",type:'sentence',chapter:"購物篇"},
+{id:"c_0763",jp:"来週の火曜日になりますね",ruby:"来週|らいしゅう の 火曜日|かようび になりますね",reading:"らいしゅうのかようびになりますね",meaning:"會在下個星期二到貨",type:'sentence',chapter:"購物篇"},
+{id:"c_0764",jp:"他の色はありますか",ruby:"他|ほか の 色|いろ はありますか",reading:"ほかのいろはありますか",meaning:"有沒有別的顏色",type:'sentence',chapter:"購物篇"},
+{id:"c_0765",jp:"他のサイズはありますか",ruby:"他|ほか のサイズはありますか ",reading:"ほかのサイズはありますか",meaning:"有其他尺寸嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0766",jp:"このサイズはちょっと大きいです",ruby:"このサイズはちょっと 大|おお きい です",reading:"このサイズはちょっとおおきいです",meaning:"這個尺寸有點大",type:'sentence',chapter:"購物篇"},
+{id:"c_0767",jp:"この靴は小さいです",ruby:"この 靴|くつ は 小|ちい さい です",reading:"このくつはちいさいです",meaning:"這雙鞋太小了",type:'sentence',chapter:"購物篇"},
+{id:"c_0768",jp:"このサイズでちょうどいいです",ruby:"このサイズで ちょうどいい です",reading:"このサイズでちょうどいいです",meaning:"這個尺寸剛剛好",type:'sentence',chapter:"購物篇"},
+{id:"c_0769",jp:"はい、使ます",ruby:"はい、 使|つか ます ",reading:"はいつかます",meaning:"可以用",type:'sentence',chapter:"購物篇"},
+{id:"c_0770",jp:"はい、大丈夫です",ruby:"はい、 大丈夫|だいじょうぶ です ",reading:"はいだいじょうぶです",meaning:"可以用",type:'sentence',chapter:"購物篇"},
+{id:"c_0771",jp:"割引後は円になります",ruby:"割引後|わりびきご は 円|えん になります ",reading:"わりびきごはえんになります",meaning:"折扣後是日圓",type:'sentence',chapter:"購物篇"},
+{id:"c_0772",jp:"はい、使えますよ。割引後は円です",ruby:"はい、 使|つか えますよ。 割引後|わりびきご は 円|えん です",reading:"はいつかえますよわりびきごはえんです",meaning:"好的，可以用。折扣後是日圓",type:'sentence',chapter:"購物篇"},
+{id:"c_0773",jp:"免税できますか",ruby:"免税|めんぜい できますか ",reading:"めんぜいできますか",meaning:"可以免稅嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0774",jp:"すみません、これ、免税できますか",ruby:"すみません、これ、 免税|めんぜい できますか",reading:"すみませんこれめんぜいできますか",meaning:"不好意思，請問這些可以免稅嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0775",jp:"パスポートをお持ちでしょうか",ruby:"パスポート をお 持|も ちでしょうか ",reading:"パスポートをおもちでしょうか",meaning:"請問有沒有帶護照呢",type:'sentence',chapter:"購物篇"},
+{id:"c_0776",jp:"免税の手続きをしますね",ruby:"免税|めんぜい の 手続|てつづ きをしますね ",reading:"めんぜいのてつづきをしますね",meaning:"我來幫您辦理免稅手續",type:'sentence',chapter:"購物篇"},
+{id:"c_0777",jp:"未開封のまま、出国まで保管してください",ruby:"未開封|みかいふう のまま、 出国|しゅっこく まで 保管|ほかん してください",reading:"みかいふうのまましゅっこくまでほかんしてください",meaning:"請保持封條未開封，直到出境為止",type:'sentence',chapter:"購物篇"},
+{id:"c_0778",jp:"円以上で免税になります",ruby:"円以上|えん で 免税|めんぜい になります",reading:"えんでめんぜいになります",meaning:"日圓以上才可以免稅",type:'sentence',chapter:"購物篇"},
+{id:"c_0779",jp:"交換したいです",ruby:"交換|こうかん したいです",reading:"こうかんしたいです",meaning:"我想換貨",type:'sentence',chapter:"購物篇"},
+{id:"c_0780",jp:"交換できますか",ruby:"交換|こうかん できますか",reading:"こうかんできますか",meaning:"可以換貨嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0781",jp:"交換したいんですが…",ruby:"交換|こうかん したいんですが…",reading:"こうかんしたいんですが",meaning:"我想換貨…",type:'sentence',chapter:"購物篇"},
+{id:"c_0782",jp:"すみません、昨日このスカートを買ったんですが、サイズが小さ",ruby:"すみません、 昨日|きのう このスカートを 買|か ったんですが、サイズが 小|ちい さ",reading:"すみませんきのうこのスカートをかったんですがサイズがちいさ",meaning:"不好意思，這件裙子昨天買的，但尺寸太小，可以換貨嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0783",jp:"返品したいです",ruby:"返品|へんぴん したいです ",reading:"へんぴんしたいです",meaning:"我想退貨",type:'sentence',chapter:"購物篇"},
+{id:"c_0784",jp:"返品できますか",ruby:"返品|へんぴん できますか ",reading:"へんぴんできますか",meaning:"可以退貨嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0785",jp:"返品したいんですが…",ruby:"返品|へんぴん したいんですが …",reading:"へんぴんしたいんですが",meaning:"我想退貨…可以嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0786",jp:"このワンピースに合うバッグはありますか",ruby:"このワ ンピース に 合|あ う バッグ はありますか",reading:"このワンピースにあうバッグはありますか",meaning:"有跟這件洋裝搭配的包包嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0787",jp:"このシャツに合うズボンはありますか",ruby:"この シャツ に 合|あ う ズボン はありますか",reading:"このシャツにあうズボンはありますか",meaning:"有跟這件襯衫搭配的褲子嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0788",jp:"このジーンズ、試着してもいいですか",ruby:"この ジーンズ 、 試着|しちゃく してもいいですか ",reading:"このジーンズしちゃくしてもいいですか",meaning:"我可以試穿這條牛仔褲嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0789",jp:"マネキンが着てるジャケットを試着してもいいですか",ruby:"マネキンが 着|き てるジャケットを 試着|しちゃく してもいいですか ",reading:"マネキンがきてるジャケットをしちゃくしてもいいですか",meaning:"我可以試穿模特兒身上的那件夾克嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0790",jp:"いかがですか",ruby:"いかがですか",reading:"いかがですか",meaning:"穿起來感覺如何呢",type:'sentence',chapter:"購物篇"},
+{id:"c_0791",jp:"いかがでしょうか",ruby:"いかがでしょうか",reading:"いかがでしょうか",meaning:"穿起來感覺如何呢您覺得怎麼樣呢",type:'sentence',chapter:"購物篇"},
+{id:"c_0792",jp:"ゆったりして着心地がいいですね。こちらをいただきます",ruby:"ゆったり して 着心地|きごこち がいいですね。こちらをいただきます",reading:"ゆったりしてきごこちがいいですねこちらをいただきます",meaning:"穿起來很寬鬆、很舒服。我就要這件了",type:'sentence',chapter:"購物篇"},
+{id:"c_0793",jp:"Lサイズはありますか",ruby:"L サイズ はありますか",reading:"サイズはありますか",meaning:"請問有 L 尺寸嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0794",jp:"Mサイズはありますか",ruby:"M サイズ はありますか",reading:"サイズはありますか",meaning:"請問有 M 尺寸嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0795",jp:"Sサイズはありますか",ruby:"S サイズ はありますか",reading:"サイズはありますか",meaning:"請問有尺寸嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0796",jp:"もう少し大きいサイズはありますか",ruby:"もう 少|すこ し 大|おお きいサイズ はありますか",reading:"もうすこしおおきいサイズはありますか",meaning:"請問有再大一點的尺寸嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0797",jp:"もう少し小さいサイズはありますか",ruby:"もう 少|すこ し 小|ちい さいサイズ はありますか",reading:"もうすこしちいさいサイズはありますか",meaning:"請問有再小一點的尺寸嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0798",jp:"こちら今日入荷したばかりなんですよ。いかがですか",ruby:"こちら 今日入荷|きょうにゅうか したばかりなんですよ。いかがですか",reading:"こちらきょうにゅうかしたばかりなんですよいかがですか",meaning:"這件衣服今天才剛到貨喔，穿起來感覺如何呢",type:'sentence',chapter:"購物篇"},
+{id:"c_0799",jp:"ちょっときついので、Lサイズはありますか？他の色も見てみ",ruby:"ちょっときついので、Lサイズはありますか？ 他|ほか の 色|いろ も 見|み てみ",reading:"ちょっときついのでサイズはありますかほかのいろもみてみ",meaning:"有點緊，請問有Ｌ號的嗎另外，我也想看看其他顏色",type:'sentence',chapter:"購物篇"},
+{id:"c_0800",jp:"このシャツだけにします",ruby:"この シャツ だけにします",reading:"このシャツだけにします",meaning:"就只要這件襯衫",type:'sentence',chapter:"購物篇"},
+{id:"c_0801",jp:"今日はこのバッグだけにします",ruby:"今日|きょう は この バッグ だけにします",reading:"きょうはこのバッグだけにします",meaning:"今天就只買這個包包",type:'sentence',chapter:"購物篇"},
+{id:"c_0802",jp:"温めてもらえますか",ruby:"温|あたた め て もらえますか ",reading:"あたためてもらえますか",meaning:"可以幫我加熱嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0803",jp:"すみません、これ温めてもらえますか",ruby:"すみません 、 これ 温|あたた め て もらえますか",reading:"すみませんこれあたためてもらえますか",meaning:"可不可以幫我加熱",type:'sentence',chapter:"購物篇"},
+{id:"c_0804",jp:"温めますか",ruby:"温|あたた め ますか",reading:"あたためますか",meaning:"需要加熱嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0805",jp:"スプーンもらえますか",ruby:"スプーン もらえますか",reading:"スプーンもらえますか",meaning:"可以給我湯匙嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0806",jp:"お箸もらえますか",ruby:"お 箸|はし もらえますか",reading:"おはしもらえますか",meaning:"可以給我筷子嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0807",jp:"フォークもらえますか",ruby:"フォーク もらえますか",reading:"フォークもらえますか",meaning:"可以給我叉子嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0808",jp:"ストローもらえますか",ruby:"ストロー もらえますか",reading:"ストローもらえますか",meaning:"可以給我吸管嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0809",jp:"すみません、スプーンもらえますか",ruby:"すみません 、 スプーン もらえますか",reading:"すみませんスプーンもらえますか",meaning:"不好意思，可以給我湯匙嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0810",jp:"お箸お付けしましょうか",ruby:"お 箸|はし お 付|つ けしましょうか",reading:"おはしおつけしましょうか",meaning:"要附上筷子嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0811",jp:"スプーンお付けしましょうか",ruby:"スプーン お 付|つ けしましょうか",reading:"スプーンおつけしましょうか",meaning:"要附上湯匙嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0812",jp:"ストローお付けしましょうか",ruby:"ストロー お 付|つ けしましょうか",reading:"ストローおつけしましょうか",meaning:"要附上吸管嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0813",jp:"有料のレジ袋はご利用になりますか",ruby:"有料|ゆうりょう のレジ 袋|ぶくろ はご 利用|りよう になりますか ",reading:"ゆうりょうのレジぶくろはごりようになりますか",meaning:"需要購買袋子嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0814",jp:"はい、お願いします",ruby:"はい、お 願|ねが いします",reading:"はいおねがいします",meaning:"好的，麻煩您",type:'sentence',chapter:"購物篇"},
+{id:"c_0815",jp:"大丈夫です",ruby:"大丈夫|だいじょうぶ です",reading:"だいじょうぶです",meaning:"不用，謝謝",type:'sentence',chapter:"購物篇"},
+{id:"c_0816",jp:"同じもの、ありますか",ruby:"同|おな じもの、ありますか",reading:"おなじものありますか",meaning:"有跟這個一樣的嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0817",jp:"これに似ているもの、ありますか",ruby:"これに 似|に ているもの、ありますか",reading:"これににているものありますか",meaning:"有類似這個的藥嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0818",jp:"風邪薬のおすすめありますか",ruby:"風邪|かぜぐすり 薬|ぐすり の おすすめありますか ",reading:"かぜぐすりぐすりのおすすめありますか",meaning:"有推薦的感冒藥嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0819",jp:"化粧水のおすすめありますか",ruby:"化粧水|けしょうすい の おすすめありますか",reading:"けしょうすいのおすすめありますか",meaning:"有推薦的化妝水嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0820",jp:"シャンプーのおすすめありますか",ruby:"シャンプーの おすすめありますか",reading:"シャンプーのおすすめありますか",meaning:"有推薦的洗髮精嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0821",jp:"試供品ありますか",ruby:"試供品|しきょうひん ありますか",reading:"しきょうひんありますか",meaning:"請問有試用品嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0822",jp:"頭痛に効く薬ありますか",ruby:"頭痛|ずつう に 効|き く 薬|くすり ありますか ",reading:"ずつうにきくくすりありますか",meaning:"有對頭痛有效的藥嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0823",jp:"のどに効く薬ありますか",ruby:"のど に 効|き く 薬|くすり ありますか",reading:"のどにきくくすりありますか",meaning:"有對喉嚨痛有效的藥嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0824",jp:"このお菓子の賞味期限はいつまでですか",ruby:"この お 菓子|かし の 賞味期限|しょうみきげん はいつまでですか ",reading:"このおかしのしょうみきげんはいつまでですか",meaning:"這個點心的賞味期限到什麼時候呢",type:'sentence',chapter:"購物篇"},
+{id:"c_0825",jp:"この羊羹の賞味期限はいつまでですか",ruby:"この 羊羹|ようかん の 賞味期限|しょうみきげん はいつまでですか ",reading:"このようかんのしょうみきげんはいつまでですか",meaning:"這個羊羹的賞味期限到什麼時候呢",type:'sentence',chapter:"購物篇"},
+{id:"c_0826",jp:"このクッキー（は）日持ちしますか",ruby:"この クッキー （ は） 日持|ひも ちしますか ",reading:"このクッキーはひもちしますか",meaning:"店員在回答保存期限的時候，常常會用「可以保存多少～日」這樣的這餅乾能保存很久嗎說法",type:'sentence',chapter:"購物篇"},
+{id:"c_0827",jp:"常温で十日間保存できます",ruby:"常温|じょうおん で 十日間保存|とおかかんほぞん できます",reading:"じょうおんでとおかかんほぞんできます",meaning:"常溫可以保存十天",type:'sentence',chapter:"購物篇"},
+{id:"c_0828",jp:"冷蔵庫なら一ヶ月は大丈夫ですよ",ruby:"冷蔵庫|れいぞうこ なら 一|いっかげつ ヶ 月|いっかげつ は 大丈夫|だいじょうぶ ですよ",reading:"れいぞうこならいっかげつヶいっかげつはだいじょうぶですよ",meaning:"如果放冰箱，可以放一個月",type:'sentence',chapter:"購物篇"},
+{id:"c_0829",jp:"来週の金曜日までです。常温で十日間保存できます",ruby:"来週|らいしゅう の 金曜日|きんようび までです。 常温|じょうおん で 十日間保存|とおかかんほぞん できます",reading:"らいしゅうのきんようびまでですじょうおんでとおかかんほぞんできます",meaning:"到下星期五為止，常溫可以保存十天",type:'sentence',chapter:"購物篇"},
+{id:"c_0830",jp:"お一人様2個まで",ruby:"お 一人様|ひとりさまにこ 2個 まで",reading:"おひとりさまにこまで",meaning:"每個人最多可以買三個",type:'sentence',chapter:"購物篇"},
+{id:"c_0831",jp:"申し訳ございません。こちらはお一人様四個までとなっておりま",ruby:"申 し 訳|わけ ございません。こちらは お 一人様四個|ひとりさまよんこ まで となっておりま",reading:"しわけございませんこちらはおひとりさまよんこまでとなっておりま",meaning:"不好意思，這個商品每位客人最多只能買四個",type:'sentence',chapter:"購物篇"},
+{id:"c_0832",jp:"プレゼント用にラッピングをお願いできますか",ruby:"プレゼント 用|よう に ラッピングを お 願|ねが いできますか ",reading:"プレゼントようにラッピングをおねがいできますか",meaning:"可以幫我包裝成送禮用的嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0833",jp:"すみません、野菜売り場はどこですか",ruby:"すみません、 野菜|やさい 売|う り 場|ば はどこですか",reading:"すみませんやさいうりばはどこですか",meaning:"不好意思，蔬菜區在哪裡",type:'sentence',chapter:"購物篇"},
+{id:"c_0834",jp:"すみません、このお肉、セールですか",ruby:"すみません、このお 肉|にく 、 セールですか",reading:"すみませんこのおにくセールですか",meaning:"不好意思，這個肉有特價嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0835",jp:"レジはどこですか",ruby:"レジはどこですか",reading:"レジはどこですか",meaning:"收銀台在哪裡",type:'sentence',chapter:"購物篇"},
+{id:"c_0836",jp:"すみません、漫画のコーナーはどこですか",ruby:"すみません、 漫画|まんが のコーナー はどこですか ",reading:"すみませんまんがのコーナーはどこですか",meaning:"不好意思，漫畫區在哪裡",type:'sentence',chapter:"購物篇"},
+{id:"c_0837",jp:"すみません、日本語の参考書でおすすめはありますか",ruby:"すみません、 日本語|にほんご の 参考書|さんこうしょ で お すすめはありますか ",reading:"すみませんにほんごのさんこうしょでおすすめはありますか",meaning:"不好意思，有推薦的日文參考書嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0838",jp:"英語版はありますか",ruby:"英語版|えいごばん はありますか",reading:"えいごばんはありますか",meaning:"有英文版嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0839",jp:"韓国語版はありますか",ruby:"韓国語版|かんこくごばん はありますか",reading:"かんこくごばんはありますか",meaning:"有韓文版嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0840",jp:"中国語版はありますか",ruby:"中国語版|ちゅうごくごばん はありますか",reading:"ちゅうごくごばんはありますか",meaning:"有中文版嗎",type:'sentence',chapter:"購物篇"},
+{id:"c_0841",jp:"チェックインしたいんですけど…",ruby:"チェックインし たいんですけど … ",reading:"チェックインしたいんですけど",meaning:"我想辦理入住手續",type:'sentence',chapter:"住宿篇"},
+{id:"c_0842",jp:"はい、お名前よろしいでしょうか",ruby:"はい、お 名前|なまえ よろしいでしょうか ",reading:"はいおなまえよろしいでしょうか",meaning:"好的，請問您貴姓",type:'sentence',chapter:"住宿篇"},
+{id:"c_0843",jp:"チェックインお願いします",ruby:"チェックインお 願|ねが いします",reading:"チェックインおねがいします",meaning:"麻煩幫我辦理入住",type:'sentence',chapter:"住宿篇"},
+{id:"c_0844",jp:"はい、少々お待ちください",ruby:"はい、 少々|しょうしょう お 待|ま ちください",reading:"はいしょうしょうおまちください",meaning:"好的，請稍等",type:'sentence',chapter:"住宿篇"},
+{id:"c_0845",jp:"すみません、チェックインしたいんですけど",ruby:"すみません、チェックインしたいんですけど",reading:"すみませんチェックインしたいんですけど",meaning:"不好意思，我想辦理入住",type:'sentence',chapter:"住宿篇"},
+{id:"c_0846",jp:"はい、お名前よろしいでしょうか",ruby:"はい、 お 名前|なまえ よろしいでしょうか",reading:"はいおなまえよろしいでしょうか",meaning:"好的，請問貴姓",type:'sentence',chapter:"住宿篇"},
+{id:"c_0847",jp:"はい、こちらです",ruby:"はい、こちらです",reading:"はいこちらです",meaning:"確認預約～我們有預約",type:'sentence',chapter:"住宿篇"},
+{id:"c_0848",jp:"２人で予約しました",ruby:"２ 人|ふたり で 予約|よやく しました",reading:"ふたりでよやくしました",meaning:"2",type:'sentence',chapter:"住宿篇"},
+{id:"c_0849",jp:"２人で今日から２泊ツインルームを予約した千田です",ruby:"２ 人|ふたり で 今日|きょう から ２ 泊|にはく ツインルームを 予約|よやく した 千田|せんだ です",reading:"ふたりできょうからにはくツインルームをよやくしたせんだです",meaning:"我是千田，我們預訂了一間雙人房，從今天開始住兩晚",type:'sentence',chapter:"住宿篇"},
+{id:"c_0850",jp:"３人でオンラインから予約した千田です",ruby:"３ 人|さんにん でオンラインから 予約|よやく した 千田|せんだ です ",reading:"さんにんでオンラインからよやくしたせんだです",meaning:"我們三個人是線上訂房，我的名字是千田",type:'sentence',chapter:"住宿篇"},
+{id:"c_0851",jp:"２人で今日から２泊予約しました",ruby:"２ 人|たり で 今日|きょう から ２ 泊|はくよやく 予約|はくよやく しました",reading:"たりできょうからはくよやくはくよやくしました",meaning:"我們兩位有預約今天入住兩晚",type:'sentence',chapter:"住宿篇"},
+{id:"c_0852",jp:"３人でオンラインから予約しました",ruby:"３ 人|さんにん で オンライン から 予約|よやく しました",reading:"さんにんでオンラインからよやくしました",meaning:"我們三位是從網路上訂的",type:'sentence',chapter:"住宿篇"},
+{id:"c_0853",jp:"２人で楽天トラベルから予約しました",ruby:"２ 人|ふたり で 楽天|らくてん トラベル から 予約|よやく しました",reading:"ふたりでらくてんトラベルからよやくしました",meaning:"我們兩位是從樂天網站訂的",type:'sentence',chapter:"住宿篇"},
+{id:"c_0854",jp:"２名様で２泊ですね",ruby:"２ 名様|めいさま で ２ 泊|にはく ですね",reading:"めいさまでにはくですね",meaning:"兩位，住兩晚對吧",type:'sentence',chapter:"住宿篇"},
+{id:"c_0855",jp:"５階のご案内になります",ruby:"５ 階|ごかい のご 案内|あんない になります",reading:"ごかいのごあんないになります",meaning:"您的房間在五樓",type:'sentence',chapter:"住宿篇"},
+{id:"c_0856",jp:"朝食は１階のレストランにて７時から９時まで",ruby:"朝食|ちょうしょく は １ 階|いっかい の レストラン にて ７ 時|しちじ から ９ 時|くじ まで ",reading:"ちょうしょくはいっかいのレストランにてしちじからくじまで",meaning:"早餐在一樓餐廳，時間是七點到九點",type:'sentence',chapter:"住宿篇"},
+{id:"c_0857",jp:"チェックアウトは１１時です",ruby:"チェックアウトは １１ 時|じゅういちじ です",reading:"チェックアウトはじゅういちじです",meaning:"退房時間是十一點",type:'sentence',chapter:"住宿篇"},
+{id:"c_0858",jp:"チェックアウトは何時ですか",ruby:"チェックアウトは 何時|なんじ です か",reading:"チェックアウトはなんじですか",meaning:"退房時間是幾點呢",type:'sentence',chapter:"住宿篇"},
+{id:"c_0859",jp:"すみません、Wi-Fiのパスワードを教えていただけませんか",ruby:"すみません、 Wi-Fi のパスワード を 教|おし えていただけませんか ",reading:"すみませんのパスワードをおしえていただけませんか",meaning:"不好意思，請問 Wi-Fi 密碼是多少",type:'sentence',chapter:"住宿篇"},
+{id:"c_0860",jp:"すみません、近くにドラッグストアがあれば教えていただけません",ruby:"すみません、 近|ちか くに ドラッグストア があれば 教|おし えていただけません",reading:"すみませんちかくにドラッグストアがあればおしえていただけません",meaning:"不好意思，請問附近有沒有藥局",type:'sentence',chapter:"住宿篇"},
+{id:"c_0861",jp:"早く着いてしまったんですけど、先に荷物だけ預けてもよろしいで",ruby:"早|はや く 着|つ いてしまったんですけど、 先|さき に 荷物|にもつ だけ 預|あず けてもよろしいで",reading:"はやくついてしまったんですけどさきににもつだけあずけてもよろしいで",meaning:"我們提早到了，可以先把行李寄放在飯店嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0862",jp:"はい、ではお荷物にタグ付けしておきますね。",ruby:"はい、ではお 荷物|にもつ にタグ 付|つ けしておきますね。",reading:"はいではおにもつにタグつけしておきますね",meaning:"好的，那我先幫您的行李掛上行李牌",type:'sentence',chapter:"住宿篇"},
+{id:"c_0863",jp:"すみません、チェックアウトお願いします",ruby:"すみません、 チェックアウト お 願|ねが いします",reading:"すみませんチェックアウトおねがいします",meaning:"不好意思，我要退房",type:'sentence',chapter:"住宿篇"},
+{id:"c_0864",jp:"ルームナンバーよろしいでしょうか",ruby:"ルームナンバーよろしいでしょうか",reading:"ルームナンバーよろしいでしょうか",meaning:"請問您的房號",type:'sentence',chapter:"住宿篇"},
+{id:"c_0865",jp:"ありがとうございました。またのお越しをお待ちしております",ruby:"ありがとうございました。またのお 越|こ しをお 待|まち ちしております",reading:"ありがとうございましたまたのおこしをおまちちしております",meaning:"謝謝您，歡迎再次入住",type:'sentence',chapter:"住宿篇"},
+{id:"c_0866",jp:"部屋に忘れ物をしたかもしれません",ruby:"部屋|へや に 忘|わす れ 物|もの をした かもしれません ",reading:"へやにわすれものをしたかもしれません",meaning:"我可能把東西忘在房間裡",type:'sentence',chapter:"住宿篇"},
+{id:"c_0867",jp:"ホテルに伴を落としたかもしれません、落とし物は届いてませんか",ruby:"ホテルに 伴|かぎ を 落|お とした かもしれません、 落|お とし 物|もの は 届|とど いてませんか ",reading:"ホテルにかぎをおとしたかもしれませんおとしものはとどいてませんか",meaning:"我的鑰匙可能掉在飯店了，遺失物有送到櫃檯嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0868",jp:"部屋にパスポートを忘れたようなんですが、もう一度探しに入ってもい",ruby:"部屋|へや にパスポートを 忘|わす れたようなんですが、もう 一度探|いちどさが しに 入|はい ってもい",reading:"へやにパスポートをわすれたようなんですがもういちどさがしにはいってもい",meaning:"我好像把護照忘在房間，可以再進去找嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0869",jp:"携帯を忘れました",ruby:"携帯|けいたい を 忘|わす れました",reading:"けいたいをわすれました",meaning:"我忘了帶手機",type:'sentence',chapter:"住宿篇"},
+{id:"c_0870",jp:"財布を落としました",ruby:"財布|さいふ を 落|お としました",reading:"さいふをおとしました",meaning:"我把錢包弄掉了",type:'sentence',chapter:"住宿篇"},
+{id:"c_0871",jp:"カメラをなくしました",ruby:"カメラ をなくしました",reading:"カメラをなくしました",meaning:"我把相機弄丟了",type:'sentence',chapter:"住宿篇"},
+{id:"c_0872",jp:"伴を見ませんでしたか",ruby:"伴|かぎ を 見|み ませんでしたか",reading:"かぎをみませんでしたか",meaning:"請問有沒有看到鑰匙",type:'sentence',chapter:"住宿篇"},
+{id:"c_0873",jp:"ホテルに忘れたかもしれません",ruby:"ホテルに 忘|わす れた かもしれません",reading:"ホテルにわすれたかもしれません",meaning:"可能忘在飯店了",type:'sentence',chapter:"住宿篇"},
+{id:"c_0874",jp:"鞄を探しています",ruby:"鞄|かばん を 探|さが しています",reading:"かばんをさがしています",meaning:"我在找包包",type:'sentence',chapter:"住宿篇"},
+{id:"c_0875",jp:"スマホを預かっています",ruby:"スマホ を 預|あず かっています",reading:"スマホをあずかっています",meaning:"我們有保管一支手機",type:'sentence',chapter:"住宿篇"},
+{id:"c_0876",jp:"すみません、今朝チェックアウトしたんですが、パソコンを忘れてし",ruby:"すみません、 今朝|けさ チェックアウトしたんですが、パソコンを 忘|わす れてし",reading:"すみませんけさチェックアウトしたんですがパソコンをわすれてし",meaning:"不好意思，我今天退房時忘了筆電…",type:'sentence',chapter:"住宿篇"},
+{id:"c_0877",jp:"はい、ございます。フロントでお預かりしていますので、いつでもお",ruby:"はい、ございます。フロントでお 預|あず かりしていますので、いつでもお",reading:"はいございますフロントでおあずかりしていますのでいつでもお",meaning:"有的，我們放在櫃檯保管，您隨時可以來領取",type:'sentence',chapter:"住宿篇"},
+{id:"c_0878",jp:"あ、すみません。ありがとうございます。あとで取りに行きます",ruby:"あ、すみません。ありがとうございます。あとで 取|と りに 行|い きます",reading:"あすみませんありがとうございますあとでとりにいきます",meaning:"啊、不好意思，謝謝您，我等等會過去拿",type:'sentence',chapter:"住宿篇"},
+{id:"c_0879",jp:"見つかりましたら、連絡をしていただけますか",ruby:"見|み つかりましたら、 連絡|れんらく をしていただけますか",reading:"みつかりましたられんらくをしていただけますか",meaning:"如果找到了，可以請您通知我嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0880",jp:"電話番号をお伝えしておきます",ruby:"電話番号|でんわばんごう をお 伝|つた えしておきます",reading:"でんわばんごうをおつたえしておきます",meaning:"我把電話留給您",type:'sentence',chapter:"住宿篇"},
+{id:"c_0881",jp:"夕方５時まで大丈夫です",ruby:"夕方|ゆうがたごじ ５時 まで 大丈夫|だいじょうぶ です",reading:"ゆうがたごじまでだいじょうぶです",meaning:"可以到下午五點都沒問題",type:'sentence',chapter:"住宿篇"},
+{id:"c_0882",jp:"厳しいです",ruby:"厳|きび しいです",reading:"きびしいです",meaning:"有點困難",type:'sentence',chapter:"住宿篇"},
+{id:"c_0883",jp:"難しいです",ruby:"難|むずか しいです",reading:"むずかしいです",meaning:"不太方便",type:'sentence',chapter:"住宿篇"},
+{id:"c_0884",jp:"清掃は不要ですが、タオルの交換やアメニティの補充をお願いします",ruby:"清掃|せいそう は 不要|ふよう ですが、タオルの 交換|こうかん やアメニティの 補充|ほじゅう をお 願|ねが いします",reading:"せいそうはふようですがタオルのこうかんやアメニティのほじゅうをおねがいします",meaning:"不用打掃，但請幫忙換毛巾，還有補充備品",type:'sentence',chapter:"住宿篇"},
+{id:"c_0885",jp:"タクシーを呼んでいただけますか",ruby:"タクシー を 呼|よ んでいただけますか",reading:"タクシーをよんでいただけますか",meaning:"可以幫我叫一台計程車嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0886",jp:"空港送迎サービスはありますか",ruby:"空港送迎|くうこうそうげい サービス はありますか",reading:"くうこうそうげいサービスはありますか",meaning:"有機場接送服務嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0887",jp:"空港行きのバスはどこから出ますか",ruby:"空港|くうこう 行|くうこうい きの バス はどこから 出|で ますか ",reading:"くうこうくうこういきのバスはどこからでますか",meaning:"前往機場的巴士是從哪裡發車呢",type:'sentence',chapter:"住宿篇"},
+{id:"c_0888",jp:"エアコンが壊れてしまったみたいなんですが…",ruby:"エアコン が 壊|こわ れてしまった みたいなんですが…",reading:"エアコンがこわれてしまったみたいなんですが",meaning:"冷氣好像壞掉了",type:'sentence',chapter:"住宿篇"},
+{id:"c_0889",jp:"お湯が出ないみたいなんですが…",ruby:"お 湯|ゆ が 出|で ない みたいなんですが…",reading:"おゆがでないみたいなんですが",meaning:"熱水好像出不來",type:'sentence',chapter:"住宿篇"},
+{id:"c_0890",jp:"Wi-Fiが繋がらないみたいなんですが…（",ruby:"Wi- Fi が 繋|つな がらない みたいなんですが… （",reading:"がつながらないみたいなんですが",meaning:"好像連不上Wi-Fi …",type:'sentence',chapter:"住宿篇"},
+{id:"c_0891",jp:"エアコンを見ていただけませんか",ruby:"エアコン を 見|み ていただけませんか",reading:"エアコンをみていただけませんか",meaning:"能不能請您幫我看一下冷氣",type:'sentence',chapter:"住宿篇"},
+{id:"c_0892",jp:"お湯が出ないんですが、見ていただけませんか",ruby:"お 湯|ゆ が 出|で ないんですが、 見|み ていただけませんか",reading:"おゆがでないんですがみていただけませんか",meaning:"熱水出不來，可以幫我看一下嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0893",jp:"Wi-Fiが繫がらないんですが、確認していただけませんか",ruby:"Wi-Fi が 繫|つな がら ないんですが、 確認|かくにん していただけませんか ",reading:"がつながらないんですがかくにんしていただけませんか",meaning:"連不上，可以幫我確認一下嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0894",jp:"ドライヤーの場所を教えていただけませんか",ruby:"ドライヤーの 場所|ばしょ を 教|おし えていただけませんか ",reading:"ドライヤーのばしょをおしえていただけませんか",meaning:"可以告訴我吹風機在哪裡嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0895",jp:"ゴミの出し方を教えていただけませんか",ruby:"ゴミの 出|だ し 方|かた を 教|おし えていただけませんか ",reading:"ゴミのだしかたをおしえていただけませんか",meaning:"可以告訴我垃圾要怎麼丟嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0896",jp:"洗剤はどこにあるか教えていただけませんか",ruby:"洗剤|せんざい はどこにあるか 教|おし えていただけませんか ",reading:"せんざいはどこにあるかおしえていただけませんか",meaning:"可以告訴我洗衣精放在哪裡嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0897",jp:"タオルをもう一枚いただけませんか",ruby:"タオル をもう 一枚|いちまい いただけませんか",reading:"タオルをもういちまいいただけませんか",meaning:"可以再給我一條毛巾嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0898",jp:"洗濯機を使ってもいいですか（",ruby:"洗濯機|せんたくき を 使|つか っ てもいいですか （",reading:"せんたくきをつかってもいいですか",meaning:"我可以用洗衣機嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0899",jp:"電子レンジを使ってもいいですか",ruby:"電子|でんし レンジ を 使|つか っ てもいいですか",reading:"でんしレンジをつかってもいいですか",meaning:"我可以用微波爐嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0900",jp:"掃除機を使ってもいいですか",ruby:"掃除機|そうじき を 使|つか っ てもいいですか",reading:"そうじきをつかってもいいですか",meaning:"我可以用吸塵器嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0901",jp:"洗剤を少し使ってもいいですか（",ruby:"洗剤|せんざい を 少|すこ し 使|つか っ てもいいですか （",reading:"せんざいをすこしつかってもいいですか",meaning:"我可以用一點洗衣精嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0902",jp:"ドライヤーを借りてもいいですか（",ruby:"ドライヤー を 借|か りてもいいですか （",reading:"ドライヤーをかりてもいいですか",meaning:"我可以放嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0903",jp:"冷蔵庫に物を入れてもいいですか（",ruby:"冷蔵庫|れいぞうこ に 物|もの を 入|い れてもいいですか （",reading:"れいぞうこにものをいれてもいいですか",meaning:"我可以放東西進冰箱嗎",type:'sentence',chapter:"住宿篇"},
+{id:"c_0904",jp:"お手洗いはどこですか",ruby:"お 手洗|てあら い はどこですか",reading:"おてあらいはどこですか",meaning:"廁所在哪裡",type:'sentence',chapter:"交通篇"},
+{id:"c_0905",jp:"すみません、この近くにある富士山駅に行きたいんですが…",ruby:"すみません、この 近|ちか くにある 富士山駅|ふじさんえき に 行|い きたいんですが… ",reading:"すみませんこのちかくにあるふじさんえきにいきたいんですが",meaning:"…",type:'sentence',chapter:"交通篇"},
+{id:"c_0906",jp:"すみません、金ロ居に行きたいんですが…",ruby:"すみません、 金|かなどりい ロ居 に 行|い きたいんですが…",reading:"すみませんかなどりいロにいきたいんですが",meaning:"...",type:'sentence',chapter:"交通篇"},
+{id:"c_0907",jp:"富士山駅までの行き方を教えていただけませんか",ruby:"富士山駅|ふじさんえき までの 行|い き 方|かた を 教|おし えていただけませんか",reading:"ふじさんえきまでのいきかたをおしえていただけませんか",meaning:"不好意思、可以請你教我怎麼去富士山站嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0908",jp:"もう少しゆっくり話していただけませんか",ruby:"もう 少|すこ しゆっくり 話|はな していただけませんか",reading:"もうすこしゆっくりはなしていただけませんか",meaning:"請講慢一點可以嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0909",jp:"もう少し簡単に教えていただけませんか",ruby:"もう 少|すこ し 簡単|かんたん に 教|おし えていただけませんか",reading:"もうすこしかんたんにおしえていただけませんか",meaning:"請講簡單一點可以嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0910",jp:"もう一度言っていただけませんか",ruby:"もう 一度言|いちどい っていただけませんか",reading:"もういちどいっていただけませんか",meaning:"請再說一次可以嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0911",jp:"お預かりする荷物は１つだけですか",ruby:"お 預|あず かりする 荷物|にもつ は １ つだけですか",reading:"おあずかりするにもつはつだけですか",meaning:"您只托運一件行李嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0912",jp:"はい、スーツケース１つだけです。これは手荷物です",ruby:"はい、スーツケース １ つだけです。これは 手荷物|てにもつ です",reading:"はいスーツケースつだけですこれはてにもつです",meaning:"對，我只托運一件行李箱。這是隨身行李",type:'sentence',chapter:"交通篇"},
+{id:"c_0913",jp:"お席は21Cとご予約が入っております",ruby:"お 席|せき は21Cとご 予約|よやく が 入|はい っております",reading:"おせきはとごよやくがはいっております",meaning:"21C",type:'sentence',chapter:"交通篇"},
+{id:"c_0914",jp:"では、15：45までに搭乗ゲートへお越しください",ruby:"では、15：45までに 搭乗|とうじょう ゲートへお 越|こ しください",reading:"ではまでにとうじょうゲートへおこしください",meaning:"15:45 到登機口",type:'sentence',chapter:"交通篇"},
+{id:"c_0915",jp:"台湾元を日本円にお願いします",ruby:"台湾元|たいわんげん を 日本円|にほんえん に お 願|ねが いします",reading:"たいわんげんをにほんえんにおねがいします",meaning:"我要把新台幣換成日圓",type:'sentence',chapter:"交通篇"},
+{id:"c_0916",jp:"日本円に両替ですね。パスポートをお願いします",ruby:"日本円|にほんえん に 両替|りょうがえ ですね。パスポートを お 願|ねが いします",reading:"にほんえんにりょうがえですねパスポートをおねがいします",meaning:"出示您的護照",type:'sentence',chapter:"交通篇"},
+{id:"c_0917",jp:"渋谷まで行きたいんですけど、どの電車に乗ればいいですか",ruby:"渋谷|しぶや まで 行|い きたいんですけど、どの 電車|でんしゃ に 乗|の れ ばいいですか ",reading:"しぶやまでいきたいんですけどどのでんしゃにのればいいですか",meaning:"我想去澀谷，請問要搭哪一班電車比較好",type:'sentence',chapter:"交通篇"},
+{id:"c_0918",jp:"渋谷までどう行けばいいですか",ruby:"渋谷|しぶや までどう 行|い け ばいいですか",reading:"しぶやまでどういけばいいですか",meaning:"請問要怎麼去澀谷",type:'sentence',chapter:"交通篇"},
+{id:"c_0919",jp:"電車で渋谷まで行けばいいですか",ruby:"電車|でんしゃ で 渋谷|しぶや まで 行|い け ばいいですか",reading:"でんしゃでしぶやまでいけばいいですか",meaning:"要搭電車去澀谷比較好嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0920",jp:"２番ホームから山手線に乗ればすぐですよ",ruby:"２ 番|ばん ホームから 山手線|やまのてせん に 乗|の ればすぐですよ",reading:"ばんホームからやまのてせんにのればすぐですよ",meaning:"從 2 號月台搭山手線，很快就到囉",type:'sentence',chapter:"交通篇"},
+{id:"c_0921",jp:"危ないですから、黄色い線の内側までお下がりください",ruby:"危|あぶ ないですから、 黄色|きいろ い 線|せん の 内側|うちがわ までお 下|さ がりください ",reading:"あぶないですからきいろいせんのうちがわまでおさがりください",meaning:"電車～這班電車有到嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0922",jp:"この電車は品川に行きますか",ruby:"この 電車|でんしゃ は 品川|しながわ に 行|い きますか",reading:"このでんしゃはしながわにいきますか",meaning:"這班電車有到品川嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0923",jp:"行きますけど、８番ホームから快速がありますよ",ruby:"行|い きますけど、 ８ 番|ばん ホーム から 快速|かいそく がありますよ",reading:"いきますけどばんホームからかいそくがありますよ",meaning:"8",type:'sentence',chapter:"交通篇"},
+{id:"c_0924",jp:"これは鎌倉行きです。横浜方面は４番線からです",ruby:"これは 鎌倉行|かまくらい きです。 横浜方面|よこはまほうめん は４ 番線|ばんせん からです",reading:"これはかまくらいきですよこはまほうめんはばんせんからです",meaning:"這班車是去鎌倉的。要去橫濱的話，請到４線月台",type:'sentence',chapter:"交通篇"},
+{id:"c_0925",jp:"スカイツリーまでお願いします",ruby:"スカイツリー までお 願|ねが いします",reading:"スカイツリーまでおねがいします",meaning:"請送我到晴空塔",type:'sentence',chapter:"交通篇"},
+{id:"c_0926",jp:"この住所までお願いします",ruby:"この 住所|じゅうしょ までお 願|ねが いします",reading:"このじゅうしょまでおねがいします",meaning:"請送我到這個地址",type:'sentence',chapter:"交通篇"},
+{id:"c_0927",jp:"すみません、ここで降ります。これでお願いします",ruby:"すみません、ここで 降|お ります。これでお 願|ねが いします ",reading:"すみませんここでおりますこれでおねがいします",meaning:"不好意思，我要在這下車，這樣給你可以嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0928",jp:"すみません、信号のところで降ろしてください。これでお願いします",ruby:"すみません、 信号|しんごう のところで 降|お ろしてください 。 これでお 願|ねが いします",reading:"すみませんしんごうのところでおろしてくださいこれでおねがいします",meaning:"不好意思，請在紅綠燈那邊讓我下車，請用這張卡付款",type:'sentence',chapter:"交通篇"},
+{id:"c_0929",jp:"すみません、ここで降ります。ICカード使えますか",ruby:"すみません、 ここで 降|お ります。 IC カード 使|つか えますか",reading:"すみませんここでおりますカードつかえますか",meaning:"我在這裡下車，可以刷 IC 卡嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0930",jp:"領収書をください",ruby:"領収書|りょうしゅうしょ をください",reading:"りょうしゅうしょをください",meaning:"請給我收據",type:'sentence',chapter:"交通篇"},
+{id:"c_0931",jp:"トランクをお願いします",ruby:"トランク をお 願|ねが いします",reading:"トランクをおねがいします",meaning:"請幫我打開後車箱",type:'sentence',chapter:"交通篇"},
+{id:"c_0932",jp:"タクシーに忘れ物をしました",ruby:"タクシーに 忘|わす れ 物|もの をしました",reading:"タクシーにわすれものをしました",meaning:"我把東西忘在計程車上了",type:'sentence',chapter:"交通篇"},
+{id:"c_0933",jp:"おすすめの場所はありますか",ruby:"おすすめの 場所|ばしょ はありますか",reading:"おすすめのばしょはありますか",meaning:"有推薦的景點嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0934",jp:"このあたりに穴場スポットはありますか",ruby:"このあたりに 穴場|あなば スポット はありますか",reading:"このあたりにあなばスポットはありますか",meaning:"這附近有私房景點嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0935",jp:"絶景スポットはありますか",ruby:"絶景|ぜっけい スポット はありますか",reading:"ぜっけいスポットはありますか",meaning:"有絕美的拍照地點嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0936",jp:"地元の人しか知らないレストランはありますか",ruby:"地元|じもと の 人|ひと しか 知|し らないレストラン はありますか",reading:"じもとのひとしかしらないレストランはありますか",meaning:"有當地人才知道的餐廳嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0937",jp:"足湯ができる温泉はありますか",ruby:"足湯|あしゆ ができる 温泉|おんせん はありますか",reading:"あしゆができるおんせんはありますか",meaning:"有可以泡腳的溫泉嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0938",jp:"富士山が見える場所はありますか",ruby:"富士山|ふじさん が 見|み える 場所|ばしょ はありますか",reading:"ふじさんがみえるばしょはありますか",meaning:"有可以看到富士山的地方嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0939",jp:"寄り道できるところはありますか",ruby:"寄|よ り 道|りみち できるところ はありますか",reading:"よりりみちできるところはありますか",meaning:"有順路可以繞去的地方嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0940",jp:"今日、地元のお祭りはありますか",ruby:"今日|きょうじもと 、地元 のお 祭|まつり り はありますか",reading:"きょうじもとのおまつりりはありますか",meaning:"今天有當地祭典嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0941",jp:"駐車場はありますか",ruby:"駐車場|ちゅうしゃじょう はありますか",reading:"ちゅうしゃじょうはありますか",meaning:"有停車場嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0942",jp:"最初の予定から少し変えていただけませんか",ruby:"最初|さいしょ の 予定|よてい から 少|すこ し 変|か えていただけませんか",reading:"さいしょのよていからすこしかえていただけませんか",meaning:"可以稍微改一下原本的行程嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0943",jp:"富士山にも行けるようにルートを変えていただけませんか",ruby:"富士山|ふじさん にも 行|い けるようにルートを 変|か えていただけませんか",reading:"ふじさんにもいけるようにルートをかえていただけませんか",meaning:"能不能把路線改成，也能去富士山的路呢",type:'sentence',chapter:"交通篇"},
+{id:"c_0944",jp:"少し止まって写真を撮らせていただけませんか",ruby:"少|すこ し 止|と まって 写真|しゃしん を 撮|と らせて いただけませんか ",reading:"すこしとまってしゃしんをとらせていただけませんか",meaning:"可以停一下讓我們拍照嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0945",jp:"すみません、ナビの使い方を教えていただけませんか",ruby:"すみません、 ナビの 使|つか い 方|かた を 教|おし えていただけませんか",reading:"すみませんナビのつかいかたをおしえていただけませんか",meaning:"不好意思，能教我導航怎麼使用嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0946",jp:"あの、ナビの設定方法を教えてもらってもいいですか",ruby:"あの、 ナビの 設定方法|せっていほうほう を 教|おし えてもらってもいいですか",reading:"あのナビのせっていほうほうをおしえてもらってもいいですか",meaning:"那個，能教我怎麼設定導航嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0947",jp:"すみません、このナビなんですが、言語設定を中国語にできますか",ruby:"すみません、このナビなんですが、 言語設定|げんごせってい を 中国語|ちゅうごくご にできますか ",reading:"すみませんこのナビなんですがげんごせっていをちゅうごくごにできますか",meaning:"請問，關於這個導航系統，可以將語言設定更改為中文嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0948",jp:"すみません、ETCカードのレンタルもできますか",ruby:"すみません、ETCカードのレンタルもできますか ",reading:"すみませんカードのレンタルもできますか",meaning:"ETC",type:'sentence',chapter:"交通篇"},
+{id:"c_0949",jp:"すみません、返却時間に遅れてしまいました",ruby:"すみません、 返却時間|へんきゃくじかん に 遅|おく れてしまいました",reading:"すみませんへんきゃくじかんにおくれてしまいました",meaning:"不好意思，我們遲到了",type:'sentence',chapter:"交通篇"},
+{id:"c_0950",jp:"延長料金はいくらになりますか",ruby:"延長料金|えんちょうりょうきん はいくらになりますか",reading:"えんちょうりょうきんはいくらになりますか",meaning:"請問超時費是多少",type:'sentence',chapter:"交通篇"},
+{id:"c_0951",jp:"1時間分の延長料金が加算されます",ruby:"1 時間分|じかん の 延長料金|えんちょうりょうきん が 加算|かさん されます",reading:"じかんのえんちょうりょうきんがかさんされます",meaning:"會加上一小時的延長費",type:'sentence',chapter:"交通篇"},
+{id:"c_0952",jp:"すみません、このバス、京都駅に行きますか",ruby:"すみません、このバス、 京都駅|きょうとえき に 行|い きますか ",reading:"すみませんこのバスきょうとえきにいきますか",meaning:"不好意思，這班車有到京都車站嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0953",jp:"次は東京駅ですか",ruby:"次|つぎ は 東京駅|とうきょうえき ですか",reading:"つぎはとうきょうえきですか",meaning:"下一站是東京車站嗎",type:'sentence',chapter:"交通篇"},
+{id:"c_0954",jp:"すみません、ここで写真を撮ってもいいですか",ruby:"すみません、ここで 写真|しゃしん を 撮|と ってもいいですか",reading:"すみませんここでしゃしんをとってもいいですか",meaning:"請問，我可以在這裡拍照嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0955",jp:"すみません、写真を撮っていただけませんか",ruby:"すみません、 写真|しゃしん を 撮|と っていただけませんか",reading:"すみませんしゃしんをとっていただけませんか",meaning:"不好意思，你可以幫我拍張照片嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0956",jp:"写真を撮りたいんですけど、撮ってもらえますか",ruby:"写真|しゃしん を 撮|と りたいんですけど、 撮|と ってもらえますか",reading:"しゃしんをとりたいんですけどとってもらえますか",meaning:"我想拍照，可以請你幫忙拍一下嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0957",jp:"授乳室はどこですか",ruby:"授乳室|じゅにゅうしつ はどこですか",reading:"じゅにゅうしつはどこですか",meaning:"請問哺乳室在哪裡",type:'sentence',chapter:"觀光篇"},
+{id:"c_0958",jp:"おむつ替えスペースはありますか",ruby:"おむつ 替|が えスペース はありますか",reading:"おむつがえスペースはありますか",meaning:"請問有換尿布的地方嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0959",jp:"ミルク用のお湯はもらえますか",ruby:"ミルク 用|よう のお 湯|ゆ はもらえますか",reading:"ミルクようのおゆはもらえますか",meaning:"請問可以給我泡奶粉用的熱水嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0960",jp:"ベビーカーは入れますか",ruby:"ベビーカー は 入|はい れますか",reading:"ベビーカーははいれますか",meaning:"請問嬰兒推車可以進去嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0961",jp:"エレベーターはありますか",ruby:"エレベーター はありますか",reading:"エレベーターはありますか",meaning:"請問有電梯嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0962",jp:"多目的トイレはどこですか",ruby:"多目的|たもくてき トイレ はどこですか",reading:"たもくてきトイレはどこですか",meaning:"請問無障礙廁所在哪裡",type:'sentence',chapter:"觀光篇"},
+{id:"c_0963",jp:"この道は車椅子で通れますか",ruby:"この 道|みち は 車椅子|くるまいす で 通|とお れますか",reading:"このみちはくるまいすでとおれますか",meaning:"這條路輪椅可以通過嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0964",jp:"スロープはありますか",ruby:"スロープ はありますか",reading:"スロープはありますか",meaning:"請問有無障礙坡道嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0965",jp:"少し休んでもいいですか",ruby:"少|すこ し 休|やす んでもいいですか",reading:"すこしやすんでもいいですか",meaning:"我可以休息一下嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0966",jp:"休憩スペースはどこですか",ruby:"休憩|きゅうけい スペース はどこですか",reading:"きゅうけいスペースはどこですか",meaning:"請問休息區在哪裡",type:'sentence',chapter:"觀光篇"},
+{id:"c_0967",jp:"医務室はどこですか",ruby:"医務室|いむしつ はどこですか",reading:"いむしつはどこですか",meaning:"請問醫護室在哪裡",type:'sentence',chapter:"觀光篇"},
+{id:"c_0968",jp:"気分が悪いです",ruby:"気分|きぶん が 悪|わる いです",reading:"きぶんがわるいです",meaning:"我覺得不太舒服",type:'sentence',chapter:"觀光篇"},
+{id:"c_0969",jp:"すみません、手伝っていただけますか",ruby:"すみません、 手伝|てつだ っていただけますか",reading:"すみませんてつだっていただけますか",meaning:"不好意思，可以幫我一下嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0970",jp:"神社は穢れを嫌うため、死や出産、生理時の参拝は避けましょう",ruby:"神社|じんじゃ は 穢|けが れを 嫌|きら うため、 死|し や 出産|しゅっさんせいりじ 、生理時 の 参拝|さんぱい は 避|さ けましょう",reading:"じんじゃはけがれをきらうためしやしゅっさんせいりじのさんぱいはさけましょう",meaning:"神社忌諱不潔，因此應避免在喪事、分娩或生理期間前往參拜",type:'sentence',chapter:"觀光篇"},
+{id:"c_0971",jp:"神社は静かに参拝する場所です。大声で騒いだり、本殿を撮影する",ruby:"神社|じんじゃ は 静|しず かに 参拝|さんぱい する 場所|ばしょ です。 大声|おおごえ で 騒|さわ いだり、 本殿|ほんでん を 撮影|さつえい する",reading:"じんじゃはしずかにさんぱいするばしょですおおごえでさわいだりほんでんをさつえいする",meaning:"神社是安靜參拜的地方，請不要喧嘩或拍攝主殿",type:'sentence',chapter:"觀光篇"},
+{id:"c_0972",jp:"参道の真ん中は神様の通り道とされているため、左右どちらかを歩",ruby:"参道|さんどう の 真|ま ん 中|なか は 神様|かみさま の 通|とお り 道|みち とされているため、 左右|さゆう どちらかを 歩|ある",reading:"さんどうのまんなかはかみさまのとおりみちとされているためさゆうどちらかをある",meaning:"參拜道的中間是神走的路，要走兩側",type:'sentence',chapter:"觀光篇"},
+{id:"c_0973",jp:"お賽銭は投げずに、優しく入れましょう",ruby:"お 賽銭|さいせん は 投|な げずに、 優|やさ しく 入|い れましょう",reading:"おさいせんはなげずにやさしくいれましょう",meaning:"香錢不要丟進去，要輕輕放入奉獻箱",type:'sentence',chapter:"觀光篇"},
+{id:"c_0974",jp:"アニマル柄の服装や過度な宝飾品は避けるのがマナーです",ruby:"アニマル 柄|がら の 服装|ふくそう や 過度|かど な 宝飾品|ほうしょくひん は 避|さ けるのがマナーです",reading:"アニマルがらのふくそうやかどなほうしょくひんはさけるのがマナーです",meaning:"避免穿著毛皮衣服或佩戴過多飾品是基本禮貌",type:'sentence',chapter:"觀光篇"},
+{id:"c_0975",jp:"ペットを連れて行くのは避けましょう",ruby:"ペットを 連|つ れて 行|い くのは 避|さ けましょう ",reading:"ペットをつれていくのはさけましょう",meaning:"請避免攜帶寵物",type:'sentence',chapter:"觀光篇"},
+{id:"c_0976",jp:"生ものや危険物は持ち込まないようにしましょう",ruby:"生|なま ものや 危険物|きけんぶつ は 持|も ち 込|こ まないようにしましょう",reading:"なまものやきけんぶつはもちこまないようにしましょう",meaning:"不要攜帶生食或危險物品進入神社",type:'sentence',chapter:"觀光篇"},
+{id:"c_0977",jp:"携帯電話を見ながらの参拝は失礼になります",ruby:"携帯電話|けいたいでんわ を 見|み ながらの 参拝|さんぱい は 失礼|しつれい になります",reading:"けいたいでんわをみながらのさんぱいはしつれいになります",meaning:"邊滑手機邊參拜，被認為是非常不禮貌的",type:'sentence',chapter:"觀光篇"},
+{id:"c_0978",jp:"チケット売り場はどこですか",ruby:"チケット 売|う り 場|ば はどこですか",reading:"チケットうりばはどこですか",meaning:"請問售票口在哪裡",type:'sentence',chapter:"觀光篇"},
+{id:"c_0979",jp:"チケットをかざしてください",ruby:"チケットをかざしてください",reading:"チケットをかざしてください",meaning:"請把票放在感應器前",type:'sentence',chapter:"觀光篇"},
+{id:"c_0980",jp:"このアトラクションは今やってますか",ruby:"この アトラクション は 今|いま やってますか",reading:"このアトラクションはいまやってますか",meaning:"這個遊樂設施現在有開放嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0981",jp:"整理券はどこで取れますか",ruby:"整理券|せいりけん はどこで 取|と れますか",reading:"せいりけんはどこでとれますか",meaning:"請問整理券在哪裡拿",type:'sentence',chapter:"觀光篇"},
+{id:"c_0982",jp:"この列はの列ですか",ruby:"この 列|れつ は の 列|れつ ですか ",reading:"このれつはのれつですか",meaning:"請問這是的隊伍嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0983",jp:"ファストパス専用入り口はこっちですか",ruby:"ファストパス 専用入|せんよういり り 口|ぐち はこっちですか",reading:"ファストパスせんよういりりぐちはこっちですか",meaning:"請問快速通關入口在這裡嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0984",jp:"パレードはいつ始まりますか",ruby:"パレード はいつ 始|はじ まりますか",reading:"パレードはいつはじまりますか",meaning:"請問遊行幾點開始",type:'sentence',chapter:"觀光篇"},
+{id:"c_0985",jp:"パレードのルートはどこですか",ruby:"パレード のルートはどこですか",reading:"パレードのルートはどこですか",meaning:"請問遊行路線在哪裡",type:'sentence',chapter:"觀光篇"},
+{id:"c_0986",jp:"チケットを一枚ください",ruby:"チケットを 一枚|いちまい ください ",reading:"チケットをいちまいください",meaning:"請給我一張票",type:'sentence',chapter:"觀光篇"},
+{id:"c_0987",jp:"入館料はいくらですか",ruby:"入館料|にゅうかんりょう はいくらですか ",reading:"にゅうかんりょうはいくらですか",meaning:"請問門票多少錢",type:'sentence',chapter:"觀光篇"},
+{id:"c_0988",jp:"音声ガイドはありますか",ruby:"音声|おんせい ガイド はありますか",reading:"おんせいガイドはありますか",meaning:"請問有語音導覽嗎",type:'sentence',chapter:"觀光篇"},
+{id:"c_0989",jp:"届いた商品が違うんですが…",ruby:"届|とど いた 商品|しょうひん が 違|ちが う んですが…",reading:"とどいたしょうひんがちがうんですが",meaning:"我收到的商品好像不對…",type:'sentence',chapter:"狀況篇"},
+{id:"c_0990",jp:"届いた商品に問題があるんですが…",ruby:"届|とど いた 商品|しょうひん に 問題|もんだい がある んですが… ",reading:"とどいたしょうひんにもんだいがあるんですが",meaning:"我收到的商品好像有問題…",type:'sentence',chapter:"狀況篇"},
+{id:"c_0991",jp:"まだ商品が届いていないんですが…",ruby:"まだ 商品|しょうひん が 届|とど いていない んですが…",reading:"まだしょうひんがとどいていないんですが",meaning:"…",type:'sentence',chapter:"狀況篇"},
+{id:"c_0992",jp:"名前はです",ruby:"名前|なまえ は です",reading:"なまえはです",meaning:"我的名字是＿＿＿",type:'sentence',chapter:"狀況篇"},
+{id:"c_0993",jp:"新しい商品を送っていただけますか",ruby:"新|あたら しい 商品|しょうひん を 送|おく っ ていただけますか",reading:"あたらしいしょうひんをおくっていただけますか",meaning:"可以寄新的商品給我嗎",type:'sentence',chapter:"狀況篇"},
+{id:"c_0994",jp:"宿泊先に送っていただけますか",ruby:"宿泊先|しゅくはくさき に 送|おく っ ていただけますか",reading:"しゅくはくさきにおくっていただけますか",meaning:"可以寄到我住宿的地方嗎",type:'sentence',chapter:"狀況篇"},
+{id:"c_0995",jp:"住所はです",ruby:"住所|じゅうしょ は です",reading:"じゅうしょはです",meaning:"地址是＿＿＿〜でお願いします意思是「請、麻煩了」",type:'sentence',chapter:"狀況篇"},
+{id:"c_0996",jp:"ホテルのフロント宛でお願いします",ruby:"ホテルのフロント 宛|あて でお 願|ねが いします",reading:"ホテルのフロントあてでおねがいします",meaning:"麻煩寄到飯店櫃檯就可以了",type:'sentence',chapter:"狀況篇"},
+{id:"c_0997",jp:"台湾へ送ることはできますか",ruby:"台湾|たいわん へ 送|おく ること はできますか",reading:"たいわんへおくることはできますか",meaning:"可以寄往台灣嗎意思是「可以....嗎」",type:'sentence',chapter:"狀況篇"},
+{id:"c_0998",jp:"手続きを進めます",ruby:"手続|てつづ き を 進|すす めます",reading:"てつづきをすすめます",meaning:"我們會進行相關手續",type:'sentence',chapter:"狀況篇"},
+{id:"c_0999",jp:"返金いたします",ruby:"返金|へんきん いたします",reading:"へんきんいたします",meaning:"我們會退款給您丁寧語「」謙讓語用法します",type:'sentence',chapter:"狀況篇"},
+{id:"c_1000",jp:"新しい商品を発送いたします",ruby:"新|あたら しい 商品|しょうひん を 発送|はっそう いたします",reading:"あたらしいしょうひんをはっそういたします",meaning:"我們會寄出新的商品",type:'sentence',chapter:"狀況篇"},
+{id:"c_1001",jp:"メールでご連絡いたします",ruby:"メール でご 連絡|れんらく いたします",reading:"メールでごれんらくいたします",meaning:"我們會用Email聯絡您",type:'sentence',chapter:"狀況篇"},
+{id:"c_1002",jp:"財布を落としてしまったんですが…",ruby:"財布|さいふ を 落|お としてしまった んですが…",reading:"さいふをおとしてしまったんですが",meaning:"我的錢包不小心掉了…",type:'sentence',chapter:"狀況篇"},
+{id:"c_1003",jp:"パスポートを落としてしまったんですが…",ruby:"パスポート を 落|お としてしまった んですが… ",reading:"パスポートをおとしてしまったんですが",meaning:"我不小心把護照弄丟了…",type:'sentence',chapter:"狀況篇"},
+{id:"c_1004",jp:"スマホを落としてしまったんですが…",ruby:"スマホ を 落|お としてしまった んですが…",reading:"スマホをおとしてしまったんですが",meaning:"我不小心把手機弄丟了…",type:'sentence',chapter:"狀況篇"},
+{id:"c_1005",jp:"駅で落としたかもしれません",ruby:"駅|えき で 落|お としたかもしれません",reading:"えきでおとしたかもしれません",meaning:"可能是在車站掉的",type:'sentence',chapter:"狀況篇"},
+{id:"c_1006",jp:"ホテルのロビーで落としたかもしれません",ruby:"ホテルのロビー で 落|お としたかもしれません",reading:"ホテルのロビーでおとしたかもしれません",meaning:"發現～我在　　　才發現",type:'sentence',chapter:"狀況篇"},
+{id:"c_1007",jp:"三時ごろに気づいたんですが…",ruby:"三時|さんじ ごろ に 気|き づいた んですが…",reading:"さんじごろにきづいたんですが",meaning:"……",type:'sentence',chapter:"狀況篇"},
+{id:"c_1008",jp:"イヤホンの忘れ物、ありますか",ruby:"イヤホン の 忘|わす れ 物|もの 、 ありますか",reading:"イヤホンのわすれものありますか",meaning:"請問有耳機的遺失物嗎",type:'sentence',chapter:"狀況篇"},
+{id:"c_1009",jp:"赤いカバンです",ruby:"赤|あか いカバン です",reading:"あかいカバンです",meaning:"是紅色的包包",type:'sentence',chapter:"狀況篇"},
+{id:"c_1010",jp:"黒い財布です",ruby:"黒|くろ い 財布|さいふ です",reading:"くろいさいふです",meaning:"是黑色的錢包",type:'sentence',chapter:"狀況篇"},
+{id:"c_1011",jp:"見つかったら、連絡していただけますか",ruby:"見|み つかったら、 連絡|れんらく し ていただけますか",reading:"みつかったられんらくしていただけますか",meaning:"如果找到，可以聯絡我嗎",type:'sentence',chapter:"狀況篇"},
+{id:"c_1012",jp:"話しかけないでください",ruby:"話|はな しかけない でください",reading:"はなしかけないでください",meaning:"請不要跟我搭話",type:'sentence',chapter:"狀況篇"},
+{id:"c_1013",jp:"近づかないでください",ruby:"近|ちか づかない でください",reading:"ちかづかないでください",meaning:"請不要靠近我",type:'sentence',chapter:"狀況篇"},
+{id:"c_1014",jp:"触らないでください",ruby:"触|さわ らない でください",reading:"さわらないでください",meaning:"請不要碰我",type:'sentence',chapter:"狀況篇"},
+{id:"c_1015",jp:"やめてください",ruby:"やめ てください",reading:"やめてください",meaning:"請不要這樣",type:'sentence',chapter:"狀況篇"},
+{id:"c_1016",jp:"助けてください",ruby:"助|たす け てください",reading:"たすけてください",meaning:"救命／請救救我",type:'sentence',chapter:"狀況篇"},
+{id:"c_1017",jp:"警察を呼んでください",ruby:"警察|けいさつ を 呼|よ ん でください",reading:"けいさつをよんでください",meaning:"請幫我叫警察",type:'sentence',chapter:"狀況篇"},
+{id:"c_1018",jp:"あの人に付きまとわれています",ruby:"あの 人|ひと に 付|つ きまとわれています",reading:"あのひとにつきまとわれています",meaning:"那個人跟著我",type:'sentence',chapter:"狀況篇"},
+{id:"c_1019",jp:"変なことを言われました",ruby:"変|へん なことを 言|い われました",reading:"へんなことをいわれました",meaning:"他對我說了奇怪的話",type:'sentence',chapter:"狀況篇"},
+{id:"c_1020",jp:"怖いので、離れたいです",ruby:"怖|こわ いので、 離|はな れたいです",reading:"こわいのではなれたいです",meaning:"我覺得很害怕，想離開這裡",type:'sentence',chapter:"狀況篇"},
+{id:"c_1021",jp:"この人に迷惑をかけられています",ruby:"この 人|ひと に 迷惑|めいわく をかけられています",reading:"このひとにめいわくをかけられています",meaning:"這個人在騷擾我",type:'sentence',chapter:"狀況篇"},
+{id:"c_1022",jp:"今日は嬉しいです",ruby:"今日|きょう は 嬉|うれ しい です",reading:"きょうはうれしいです",meaning:"我今天很高興",type:'sentence',chapter:"交友篇"},
+{id:"c_1023",jp:"今日は楽しいです",ruby:"今日|きょう は 楽|たの しい です",reading:"きょうはたのしいです",meaning:"我今天很開心",type:'sentence',chapter:"交友篇"},
+{id:"c_1024",jp:"今日は気分がいいです",ruby:"今日|きょう は 気分|きぶん がいい です",reading:"きょうはきぶんがいいです",meaning:"我今天心情很好",type:'sentence',chapter:"交友篇"},
+{id:"c_1025",jp:"今日は気分が悪いです",ruby:"今日|きょう は 気分|きぶん が 悪|わる い です",reading:"きょうはきぶんがわるいです",meaning:"我今天有點不舒服",type:'sentence',chapter:"交友篇"},
+{id:"c_1026",jp:"今日はちょっとしんどいです",ruby:"今日|きょう は ちょっとしんどい です",reading:"きょうはちょっとしんどいです",meaning:"今天有點累 / 今天有點難受",type:'sentence',chapter:"交友篇"},
+{id:"c_1027",jp:"ちょっと眠いかも",ruby:"ちょっと 眠|ねむ い かも",reading:"ちょっとねむいかも",meaning:"我好像有點睏ドキドキ是心臟蹦蹦跳的狀聲詞可以是『緊張』",type:'sentence',chapter:"交友篇"},
+{id:"c_1028",jp:"ちょっと疲れたかも",ruby:"ちょっと 疲|つか れた かも",reading:"ちょっとつかれたかも",meaning:"我可能有點累也可以是『期待』的意思",type:'sentence',chapter:"交友篇"},
+{id:"c_1029",jp:"ちょっとドキドキするかも",ruby:"ちょっと ドキドキする かも",reading:"ちょっとドキドキするかも",meaning:"我好像有點緊張",type:'sentence',chapter:"交友篇"},
+{id:"c_1030",jp:"今日、どうですか",ruby:"今日|きょう 、 どうですか",reading:"きょうどうですか",meaning:"你今天怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1031",jp:"気分はどうですか",ruby:"気分|きぶん はどうですか",reading:"きぶんはどうですか",meaning:"你身體還好嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1032",jp:"なんでですか",ruby:"なんでですか",reading:"なんでですか",meaning:"為什麼呢",type:'sentence',chapter:"交友篇"},
+{id:"c_1033",jp:"よかったですね！",ruby:"よかったですね！",reading:"よかったですね",meaning:"太好了！",type:'sentence',chapter:"交友篇"},
+{id:"c_1034",jp:"大変でしたね…",ruby:"大変|たいへん でしたね…",reading:"たいへんでしたね",meaning:"辛苦了…",type:'sentence',chapter:"交友篇"},
+{id:"c_1035",jp:"今日は暑いですね",ruby:"今日|きょう は 暑|あつ い ですね",reading:"きょうはあついですね",meaning:"今天好熱喔",type:'sentence',chapter:"交友篇"},
+{id:"c_1036",jp:"今日は寒いですね",ruby:"今日|きょう は 寒|さむ い ですね",reading:"きょうはさむいですね",meaning:"今天好冷喔",type:'sentence',chapter:"交友篇"},
+{id:"c_1037",jp:"めっちゃ寒いですね〜",ruby:"めっちゃ 寒|さむ いですね〜",reading:"めっちゃさむいですね",meaning:"真的好冷喔！",type:'sentence',chapter:"交友篇"},
+{id:"c_1038",jp:"いい天気ですね",ruby:"いい 天気|てんき ですね",reading:"いいてんきですね",meaning:"今天天氣很好耶",type:'sentence',chapter:"交友篇"},
+{id:"c_1039",jp:"雨が降りそうですね",ruby:"雨|あめ が 降|ふ りそうですね",reading:"あめがふりそうですね",meaning:"看起來要下雨了耶",type:'sentence',chapter:"交友篇"},
+{id:"c_1040",jp:"傘、持ってますか",ruby:"傘|かさも 、持 ってますか",reading:"かさもってますか",meaning:"你有帶傘嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1041",jp:"日本の冬はどうですか",ruby:"日本|にほん の 冬|ふゆ はどうですか",reading:"にほんのふゆはどうですか",meaning:"你覺得日本的冬天怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1042",jp:"日本の春はどうですか",ruby:"日本|にほん の 春|はる はどうですか",reading:"にほんのはるはどうですか",meaning:"你覺得日本的春天怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1043",jp:"日本の夏はどうですか",ruby:"日本|にほん の 夏|なつ はどうですか",reading:"にほんのなつはどうですか",meaning:"你覺得日本的夏天怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1044",jp:"日本の秋はどうですか",ruby:"日本|にほん の 秋|あき はどうですか",reading:"にほんのあきはどうですか",meaning:"你覺得日本的秋天怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1045",jp:"台湾は暑いんですか",ruby:"台湾|たいわん は 暑|あつ いんですか",reading:"たいわんはあついんですか",meaning:"台灣很熱嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1046",jp:"明日も寒いらしいですね",ruby:"明日|あした も 寒|さむ いらしいですね",reading:"あしたもさむいらしいですね",meaning:"聽說明天也會很冷呢",type:'sentence',chapter:"交友篇"},
+{id:"c_1047",jp:"そうみたいですね",ruby:"そうみたいですね",reading:"そうみたいですね",meaning:"看起來好像是這樣耶",type:'sentence',chapter:"交友篇"},
+{id:"c_1048",jp:"らしいですね",ruby:"らしいですね",reading:"らしいですね",meaning:"聽說是這樣耶",type:'sentence',chapter:"交友篇"},
+{id:"c_1049",jp:"雪も降るかも…",ruby:"雪|ゆき も 降|ふ るかも…",reading:"ゆきもふるかも",meaning:"可能還會下雪⋯⋯",type:'sentence',chapter:"交友篇"},
+{id:"c_1050",jp:"カフェは好きですか",ruby:"カフェ は 好|す きですか",reading:"カフェはすきですか",meaning:"你喜歡咖啡廳嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1051",jp:"ドラマは好きですか",ruby:"ドラマ は 好|す きですか",reading:"ドラマはすきですか",meaning:"你喜歡追劇嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1052",jp:"何が好きですか",ruby:"何|なに が 好|す きですか",reading:"なにがすきですか",meaning:"有在～嗎最近有在　　嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1053",jp:"最近、読書していますか",ruby:"最近|さいきんどくしょ 、 読書|どくしょ していますか",reading:"さいきんどくしょどくしょしていますか",meaning:"最近有在讀書嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1054",jp:"野球はしますか",ruby:"野球|やきゅう はしますか",reading:"やきゅうはしますか",meaning:"你會打棒球嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1055",jp:"ハイキングはしますか",ruby:"ハイキング はしますか",reading:"ハイキングはしますか",meaning:"你會爬山嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1056",jp:"よく、カフェ巡りしますか",ruby:"よく、 カフェ 巡|めぐ り しますか",reading:"よくカフェめぐりしますか",meaning:"你常常去各種不同的咖啡廳嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1057",jp:"私はサウナが好きです",ruby:"私|わたし は サウナ が 好|す きです",reading:"わたしはサウナがすきです",meaning:"我喜歡去三溫暖",type:'sentence',chapter:"交友篇"},
+{id:"c_1058",jp:"これ、日本では普通ですか",ruby:"これ、 日本|にほん では 普通|ふつう ですか",reading:"これにほんではふつうですか",meaning:"金句2有什麼含義嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1059",jp:"お花見はどんな意味がありますか",ruby:"お 花見|はなみ はどんな 意味|いみ がありますか",reading:"おはなみはどんないみがありますか",meaning:"賞花有什麼含義嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1060",jp:"夏祭りはどんな意味がありますか",ruby:"夏祭|なつまつ り はどんな 意味|いみ がありますか",reading:"なつまつりはどんないみがありますか",meaning:"夏日祭典有什麼含義嗎",type:'sentence',chapter:"交友篇"},
+{id:"c_1061",jp:"この展覧会、おもしろそうですね",ruby:"この 展覧会|てんらんかい 、 おもしろそうですね",reading:"このてんらんかいおもしろそうですね",meaning:"這個展覽看起來好有趣喔",type:'sentence',chapter:"交友篇"},
+{id:"c_1062",jp:"どんな展覧会ですか",ruby:"どんな 展覧会|てんらんかい ですか",reading:"どんなてんらんかいですか",meaning:"這是什麼樣的展覽呢",type:'sentence',chapter:"交友篇"},
+{id:"c_1063",jp:"どこが一番きれいですか",ruby:"どこが 一番|いちばん きれいですか",reading:"どこがいちばんきれいですか",meaning:"哪裡最漂亮",type:'sentence',chapter:"交友篇"},
+{id:"c_1064",jp:"今年の桜はどうですか",ruby:"今年|ことし の 桜|さくら はどうですか",reading:"ことしのさくらはどうですか",meaning:"今年的櫻花怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1065",jp:"雛祭りはどんな日ですか",ruby:"雛祭|ひなまつ り はどんな 日|ひ ですか",reading:"ひなまつりはどんなひですか",meaning:"校園活動怎麼樣 / 覺得如何",type:'sentence',chapter:"交友篇"},
+{id:"c_1066",jp:"学園祭はどうですか",ruby:"学園祭|がくえんさい はどうですか",reading:"がくえんさいはどうですか",meaning:"學園祭怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1067",jp:"文化祭はどうですか",ruby:"文化祭|ぶんかさい はどうですか",reading:"ぶんかさいはどうですか",meaning:"文化祭怎麼樣",type:'sentence',chapter:"交友篇"},
+{id:"c_1068",jp:"台湾にも似たような文化がありますよ",ruby:"台湾|たいわん にも 似|に たような 文化|ぶんか がありますよ",reading:"たいわんにもにたようなぶんかがありますよ",meaning:"台灣也有類似的活動喔",type:'sentence',chapter:"交友篇"},
+{id:"c_1069",jp:"台湾ではよくお花見をします。日本ではどうですか",ruby:"台湾|たいわん ではよく お 花見|はなみ をします。 日本|にほん ではどうですか ",reading:"たいわんではよくおはなみをしますにほんではどうですか",meaning:"在台灣，大家也很常去賞花。那在日本呢",type:'sentence',chapter:"交友篇"},
+{id:"c_1070",jp:"最近K-POP人気ですね",ruby:"最近|さいきん K-POP 人気|にんき ですね",reading:"さいきんにんきですね",meaning:"最近K-POP很受歡迎呢",type:'sentence',chapter:"交友篇"},
+{id:"c_1071",jp:"最近このドラマ人気ですね",ruby:"最近|さいきん このドラマ 人気|にんき ですね",reading:"さいきんこのドラマにんきですね",meaning:"最近這部電視劇很紅耶",type:'sentence',chapter:"交友篇"},
+{id:"c_1072",jp:"最近インスタのリール人気ですね",ruby:"最近|さいきん インスタのリール 人気|にんき ですね",reading:"さいきんインスタのリールにんきですね",meaning:"IG Reels",type:'sentence',chapter:"交友篇"},
+{id:"c_1073",jp:"昨日のニュース見ました？どう思いますか",ruby:"昨日|きのう のニュース 見|み ました？どう 思|おも いますか",reading:"きのうのニュースみましたどうおもいますか",meaning:"你有看到昨天的新聞嗎？你覺得怎麼樣呢",type:'sentence',chapter:"交友篇"},
+{id:"c_1074",jp:"このイベントのできごとを見ました？どう思いますか",ruby:"このイベントのできごと を 見|み ました？どう 思|おも いますか",reading:"このイベントのできごとをみましたどうおもいますか",meaning:"你有看到這個活動發生的事嗎？你覺得怎麼樣呢",type:'sentence',chapter:"交友篇"},
+{id:"c_1075",jp:"へぇ〜そうなんですね",ruby:"へぇ〜 そうなんですね",reading:"へぇそうなんですね",meaning:"喔～原來如此喔",type:'sentence',chapter:"交友篇"},
+{id:"c_1076",jp:"たしかに！",ruby:"たしかに！",reading:"たしかに",meaning:"的確欸！",type:'sentence',chapter:"交友篇"},
+{id:"c_1077",jp:"私もそう思います",ruby:"私|わたし もそう 思|おも います",reading:"わたしもそうおもいます",meaning:"我也這麼覺得",type:'sentence',chapter:"交友篇"},
+{id:"c_1078",jp:"それは違います",ruby:"それは 違|ちが います",reading:"それはちがいます",meaning:"你錯了台灣人在日本最容易被誤會是太直白，左邊這些教科書會教的句子，",type:'sentence',chapter:"交友篇"},
+{id:"c_1079",jp:"行きません",ruby:"行|い きません",reading:"いきません",meaning:"我不去對日本人來說都會覺得太直白",type:'sentence',chapter:"交友篇"},
+{id:"c_1080",jp:"できません",ruby:"できません",reading:"できません",meaning:"我不能、我辦不到",type:'sentence',chapter:"交友篇"},
+{id:"c_1081",jp:"どうでしょうね…",ruby:"どうでしょうね…",reading:"どうでしょうね",meaning:"…",type:'sentence',chapter:"交友篇"},
+{id:"c_1082",jp:"ちょっと難しいですね",ruby:"ちょっと 難|むずか しいですね",reading:"ちょっとむずかしいですね",meaning:"這有點困難",type:'sentence',chapter:"交友篇"},
+{id:"c_1083",jp:"今回は遠慮しておきます",ruby:"今回|こんかい は 遠慮|えんりょ しておきます",reading:"こんかいはえんりょしておきます",meaning:"這次先不用",type:'sentence',chapter:"交友篇"},
+{id:"c_1084",jp:"また別の機会に…",ruby:"また 別|べつ の 機会|きかい に…",reading:"またべつのきかいに",meaning:"…",type:'sentence',chapter:"交友篇"},
+{id:"c_1085",jp:"自然的「オノマトペ」擬聲",ruby:"自然的「 オノマトペ 」擬聲",reading:"オノマトペ",meaning:"耍廢「",type:'sentence',chapter:"交友篇"},
+{id:"c_1086",jp:"カフェとか雑貨屋さん巡りとか在日本，語氣、提問方式、",ruby:"カフェとか 雑貨屋|ざっかや さん 巡|めく りとか  在日本，語氣、提問方式、",reading:"カフェとかざっかやさんめくりとか",meaning:"去逛咖啡廳、小雜貨店之類的",type:'sentence',chapter:"交友篇"},
+{id:"c_1087",jp:"すみません、病院はどこですか",ruby:"すみません、 病院|びょういん はどこですか",reading:"すみませんびょういんはどこですか",meaning:"不好意思，請問醫院在哪裡",type:'sentence',chapter:"看病篇"},
+{id:"c_1088",jp:"すみません、救急車を呼んでください",ruby:"すみません、 救急車|きゅうきゅうしゃ を 呼|よん んでください",reading:"すみませんきゅうきゅうしゃをよんんでください",meaning:"不好意思，請叫救護車",type:'sentence',chapter:"看病篇"},
+{id:"c_1089",jp:"すみません、救急車を呼んでもらえますか",ruby:"すみません、 救急車|きゅうきゅうしゃ を 呼|よん んでもらえますか",reading:"すみませんきゅうきゅうしゃをよんんでもらえますか",meaning:"護車",type:'sentence',chapter:"看病篇"},
+{id:"c_1090",jp:"すみません、予約していないんですが…",ruby:"すみません、 予約|よやく していないんですが…",reading:"すみませんよやくしていないんですが",meaning:"我沒有預約，可以現在掛號嗎…",type:'sentence',chapter:"看病篇"},
+{id:"c_1091",jp:"ネットで予約したです",ruby:"ネットで 予約|よやく した です",reading:"ネットでよやくしたです",meaning:"我是透過網路預約的＿＿＿",type:'sentence',chapter:"看病篇"},
+{id:"c_1092",jp:"電話で予約したです",ruby:"電話|でんわ で 予約|よやく した です",reading:"でんわでよやくしたです",meaning:"我是透過電話預約的＿＿＿",type:'sentence',chapter:"看病篇"},
+{id:"c_1093",jp:"保険証はお持ちですか",ruby:"保険証|ほけんしょう はお 持|も ちですか",reading:"ほけんしょうはおもちですか",meaning:"請問您有健保卡嗎",type:'sentence',chapter:"看病篇"},
+{id:"c_1094",jp:"今日はどうされましたか",ruby:"今日|きょう はどうされましたか",reading:"きょうはどうされましたか",meaning:"今天怎麼了呢",type:'sentence',chapter:"看病篇"},
+{id:"c_1095",jp:"頭が痛いです",ruby:"頭|あたま が 痛|いた い です",reading:"あたまがいたいです",meaning:"我頭痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1096",jp:"喉が痛いです痛い：有明顯的痛感",ruby:"喉|のど が 痛|いた い です 痛|いた い ：有明顯的痛感",reading:"のどがいたいですいたい",meaning:"我喉嚨痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1097",jp:"お腹が痛いです",ruby:"お 腹|なか が 痛|いた い です",reading:"おなかがいたいです",meaning:"我肚子痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1098",jp:"胃が痛いです",ruby:"胃|い が 痛|いた い です",reading:"いがいたいです",meaning:"我胃痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1099",jp:"鼻が辛いです",ruby:"鼻|はな が 辛|つら い です",reading:"はながつらいです",meaning:"我鼻子很不舒服",type:'sentence',chapter:"看病篇"},
+{id:"c_1100",jp:"体が辛いです",ruby:"体|からだ が 辛|つら い です",reading:"からだがつらいです",meaning:"我全身無力",type:'sentence',chapter:"看病篇"},
+{id:"c_1101",jp:"胸が辛いです",ruby:"胸|むね が 辛|つら い です",reading:"むねがつらいです",meaning:"我胸口不太舒服",type:'sentence',chapter:"看病篇"},
+{id:"c_1102",jp:"薬物アレルギーはありますか",ruby:"薬物|やくぶつ アレルギーはありますか",reading:"やくぶつアレルギーはありますか",meaning:"有藥物過敏嗎",type:'sentence',chapter:"看病篇"},
+{id:"c_1103",jp:"アスピリンアレルギーがあります",ruby:"アスピリン アレルギーがあります",reading:"アスピリンアレルギーがあります",meaning:"我對阿斯匹靈過敏",type:'sentence',chapter:"看病篇"},
+{id:"c_1104",jp:"頭が少し痛いです",ruby:"頭|あたま が 少|すこ し 痛|いた いです",reading:"あたまがすこしいたいです",meaning:"頭有一點痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1105",jp:"喉がとても痛いです",ruby:"喉|のど が とても 痛|いた いです",reading:"のどがとてもいたいです",meaning:"喉嚨非常痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1106",jp:"お腹がすごく痛いです",ruby:"お 腹|なか が すごく 痛|いた いです",reading:"おなかがすごくいたいです",meaning:"肚子痛到不行",type:'sentence',chapter:"看病篇"},
+{id:"c_1107",jp:"咳がずっと出ます",ruby:"咳|せき が ずっと 出|で ます",reading:"せきがずっとでます",meaning:"一直在咳嗽",type:'sentence',chapter:"看病篇"},
+{id:"c_1108",jp:"頭がときどき痛いんです",ruby:"頭|あたま が ときどき 痛|いた いんです",reading:"あたまがときどきいたいんです",meaning:"偶爾會頭痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1109",jp:"喉はあまり痛くないです",ruby:"喉|のど は あまり 痛|いた く ない です",reading:"のどはあまりいたくないです",meaning:"喉嚨不太痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1110",jp:"昨日から熱があります",ruby:"昨日|きのう から 熱|ねつ があります",reading:"きのうからねつがあります",meaning:"從昨天開始就發燒",type:'sentence',chapter:"看病篇"},
+{id:"c_1111",jp:"二日前から喉が痛いです",ruby:"二日前|ふつかまえ から 喉|のど が 痛|いた いです",reading:"ふつかまえからのどがいたいです",meaning:"從兩天前開始喉嚨痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1112",jp:"朝からお腹が痛いです",ruby:"朝|あさ から お 腹|なか が 痛|いた いです",reading:"あさからおなかがいたいです",meaning:"從早上開始肚子痛",type:'sentence',chapter:"看病篇"},
+{id:"c_1113",jp:"頭痛に効くお薬を探しているんですが…",ruby:"頭痛|ずつう に 効|き くお 薬|くすり を 探|さが しているんですが… ",reading:"ずつうにきくおくすりをさがしているんですが",meaning:"我想找頭痛的時候可以吃的藥…",type:'sentence',chapter:"看病篇"},
+{id:"c_1114",jp:"喉が痛い時に効くお薬を探しているんですが…",ruby:"喉|のど が 痛|いた い 時|とき に 効|き くお 薬|くすり を 探|さが しているんですが… ",reading:"のどがいたいときにきくおくすりをさがしているんですが",meaning:"我想找喉嚨痛的時候可以吃的藥…",type:'sentence',chapter:"看病篇"},
+{id:"c_1115",jp:"咳が止まらない時に効くお薬を探しているんですが…",ruby:"咳|せき が 止|とま まらない 時|とき に 効|き くお 薬|くすり を 探|さが しているんですが… ",reading:"せきがとままらないときにきくおくすりをさがしているんですが",meaning:"我想找止咳的藥…",type:'sentence',chapter:"看病篇"},
+{id:"c_1116",jp:"熱に効くお薬を探しているんですが…",ruby:"熱|ねつ に 効|き くお 薬|くすり を 探|さが しているんですが…",reading:"ねつにきくおくすりをさがしているんですが",meaning:"我想找治療發燒的藥…",type:'sentence',chapter:"看病篇"},
+{id:"c_1117",jp:"腹痛に効くお薬を探しているんですが…",ruby:"腹痛|ふくつう に 効|き くお 薬|くすり を 探|さが しているんですが…",reading:"ふくつうにきくおくすりをさがしているんですが",meaning:"我想找治療肚子痛的藥…",type:'sentence',chapter:"看病篇"},
+{id:"c_1118",jp:"鼻づまりに効くお薬を探しているんですが…",ruby:"鼻|はな づまり に 効|き くお 薬|くすり を 探|さが しているんですが…",reading:"はなづまりにきくおくすりをさがしているんですが",meaning:"我想找治療鼻塞的藥…",type:'sentence',chapter:"看病篇"},
+{id:"c_1119",jp:"胃薬を探しているんですが…",ruby:"胃薬|いぐすり を 探|さが しているんですが…",reading:"いぐすりをさがしているんですが",meaning:"我在找胃藥…",type:'sentence',chapter:"看病篇"},
+{id:"c_1120",jp:"風邪薬を探しているんですが…",ruby:"風邪薬|かぜぐすり を 探|さが しているんですが…",reading:"かぜぐすりをさがしているんですが",meaning:"…",type:'sentence',chapter:"看病篇"},
+{id:"c_1121",jp:"どうやって飲めばいいですか",ruby:"どうやって 飲|の め ばいいですか",reading:"どうやってのめばいいですか",meaning:"請問這個要怎麼吃",type:'sentence',chapter:"看病篇"},
+{id:"c_1122",jp:"どうやって使えばいいですか",ruby:"どうやって 使|つか え ばいいですか",reading:"どうやってつかえばいいですか",meaning:"請問這個要怎麼用",type:'sentence',chapter:"看病篇"},
+{id:"c_1123",jp:"どうやって貼ればいいですか",ruby:"どうやって 貼|は れ ばいいですか",reading:"どうやってはればいいですか",meaning:"請問這個要怎麼貼",type:'sentence',chapter:"看病篇"},
+{id:"c_1124",jp:"一日に何回飲めばいいですか",ruby:"一日|いちにち に 何回飲|なんかいの めばいいですか",reading:"いちにちになんかいのめばいいですか",meaning:"一天要吃幾次",type:'sentence',chapter:"看病篇"},
+{id:"c_1125",jp:"いつ飲めばいいですか",ruby:"いつ 飲|の めばいいですか",reading:"いつのめばいいですか",meaning:"請問什麼時候吃",type:'sentence',chapter:"看病篇"},
+{id:"c_1126",jp:"他のお薬も飲んでいるんですが、大丈夫ですか",ruby:"他|ほか のお 薬|くすり も 飲|の んでいるんですが、 大丈夫|だいじょうぶ ですか",reading:"ほかのおくすりものんでいるんですがだいじょうぶですか",meaning:"我正在吃其他藥，這樣可以嗎",type:'sentence',chapter:"看病篇"},
+{id:"c_1127",jp:"降圧剤も飲んでいるんですが、大丈夫ですか",ruby:"降圧剤|こうあつざい も 飲|の んでいるんですが、 大丈夫|だいじょうぶ ですか",reading:"こうあつざいものんでいるんですがだいじょうぶですか",meaning:"我正在吃降血壓藥，這樣可以嗎",type:'sentence',chapter:"看病篇"},
+{id:"c_1128",jp:"アレルギー薬も飲んでいるんですが、大丈夫ですか",ruby:"アレルギー 薬|やく も 飲|の んでいるんですが、 大丈夫|だいじょうぶ ですか",reading:"アレルギーやくものんでいるんですがだいじょうぶですか",meaning:"我正在吃過敏藥，這樣可以嗎",type:'sentence',chapter:"看病篇"},
+{id:"c_1129",jp:"胃薬も飲んでいるんですが、大丈夫ですか",ruby:"胃薬|いぐすり も 飲|の んでいるんですが、 大丈夫|だいじょうぶ ですか",reading:"いぐすりものんでいるんですがだいじょうぶですか",meaning:"我正在吃胃藥，這樣可以嗎",type:'sentence',chapter:"看病篇"},
+{id:"c_1130",jp:"睡眠薬も飲んでいるんですが、大丈夫ですか",ruby:"睡眠薬|すいみんやく も 飲|の んでいるんですが、 大丈夫|だいじょうぶ ですか",reading:"すいみんやくものんでいるんですがだいじょうぶですか",meaning:"我正在吃安眠藥，這樣可以嗎",type:'sentence',chapter:"看病篇"},
+{id:"c_1131",jp:"携帯を契約したいんですが…",ruby:"携帯|けいたい を 契約|けいやく したいんですが…",reading:"けいたいをけいやくしたいんですが",meaning:"…",type:'sentence',chapter:"生活篇"},
+{id:"c_1132",jp:"Wi-Fiを契約したいんですが…",ruby:"Wi-Fi を 契約|けいやく したいんですが…",reading:"をけいやくしたいんですが",meaning:"Wi-Fi…",type:'sentence',chapter:"生活篇"},
+{id:"c_1133",jp:"どんなプランがありますか",ruby:"どんなプランがありますか",reading:"どんなプランがありますか",meaning:"有哪些方案呢",type:'sentence',chapter:"生活篇"},
+{id:"c_1134",jp:"支払いはここでできますか可以～",ruby:"支払|しはらい いはここで できます か 可以～",reading:"しはらいいはここでできますか",meaning:"可以在這裡繳費嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1135",jp:"請求書が届いていないんですが…",ruby:"請求書|せいきゅうしょ が 届|とど いていないんですが…",reading:"せいきゅうしょがとどいていないんですが",meaning:"我沒有收到帳單…",type:'sentence',chapter:"生活篇"},
+{id:"c_1136",jp:"いくらになりますか",ruby:"いくらになりますか",reading:"いくらになりますか",meaning:"請問總共多少錢",type:'sentence',chapter:"生活篇"},
+{id:"c_1137",jp:"ネットが繋がらないんですが…",ruby:"ネットが 繋|つな がらないんですが…",reading:"ネットがつながらないんですが",meaning:"網路連不上，怎麼辦…",type:'sentence',chapter:"生活篇"},
+{id:"c_1138",jp:"電波が悪いんですが…",ruby:"電波|でんぱ が 悪|わる いんですが…",reading:"でんぱがわるいんですが",meaning:"訊號很弱，怎麼辦呢…",type:'sentence',chapter:"生活篇"},
+{id:"c_1139",jp:"確認していただけますか",ruby:"確認|かくにん し ていただけますか",reading:"かくにんしていただけますか",meaning:"可以請您幫我確認一下嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1140",jp:"荷物を送りたいんですが…",ruby:"荷物|にもつ を 送|おく りたいんですが…",reading:"にもつをおくりたいんですが",meaning:"我想寄包裹…",type:'sentence',chapter:"生活篇"},
+{id:"c_1141",jp:"書類を送りたいんですが…",ruby:"書類|しょるい を 送|おく りたいんですが…",reading:"しょるいをおくりたいんですが",meaning:"…",type:'sentence',chapter:"生活篇"},
+{id:"c_1142",jp:"お土産を送りたいんですが…",ruby:"お 土産|みやげ を 送|おく りたいんです が…",reading:"おみやげをおくりたいんですが",meaning:"我想寄伴手禮…",type:'sentence',chapter:"生活篇"},
+{id:"c_1143",jp:"服を送りたいんですが…",ruby:"服|ふく を 送|おく りたいんですが…",reading:"ふくをおくりたいんですが",meaning:"…",type:'sentence',chapter:"生活篇"},
+{id:"c_1144",jp:"アメリカまで送れますか",ruby:"アメリカ まで 送|おく れますか",reading:"アメリカまでおくれますか",meaning:"可以寄到美國嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1145",jp:"シンガポールまで送れますか",ruby:"シンガポール まで 送|おく れますか",reading:"シンガポールまでおくれますか",meaning:"可以寄到新加坡嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1146",jp:"どの発送方法がありますか",ruby:"どの 発送方法|はっそうほうほう がありますか",reading:"どのはっそうほうほうがありますか",meaning:"有哪些寄送方式呢",type:'sentence',chapter:"生活篇"},
+{id:"c_1147",jp:"送料はいくらですか",ruby:"送料|そうりょう はいくらですか",reading:"そうりょうはいくらですか",meaning:"請問郵資多少錢呢",type:'sentence',chapter:"生活篇"},
+{id:"c_1148",jp:"EMSはいくらですか",ruby:"EMS はいくらですか",reading:"はいくらですか",meaning:"EMS",type:'sentence',chapter:"生活篇"},
+{id:"c_1149",jp:"船便はいくらですか",ruby:"船便|ふなびん はいくらですか",reading:"ふなびんはいくらですか",meaning:"多久到大概多久會到呢",type:'sentence',chapter:"生活篇"},
+{id:"c_1150",jp:"航空便はどのくらいで着きますか",ruby:"航空便|こうくうびん はどのくらいで 着|つ きますか",reading:"こうくうびんはどのくらいでつきますか",meaning:"空運大概多久會到呢",type:'sentence',chapter:"生活篇"},
+{id:"c_1151",jp:"EMSはどのくらいで着きますか",ruby:"EMS はどのくらいで 着|つ きますか",reading:"はどのくらいでつきますか",meaning:"EMS大概多久會到呢",type:'sentence',chapter:"生活篇"},
+{id:"c_1152",jp:"どう書けばいいですか",ruby:"どう 書|か けばいいですか",reading:"どうかけばいいですか",meaning:"這個要怎麼填",type:'sentence',chapter:"生活篇"},
+{id:"c_1153",jp:"ここは何を書けばいいですか",ruby:"ここは 何|なに を 書|か けばいいですか",reading:"ここはなにをかけばいいですか",meaning:"請問這一格要寫什麼",type:'sentence',chapter:"生活篇"},
+{id:"c_1154",jp:"不在票が入っていたんですが…",ruby:"不在票|ふざいひょう が 入|はい っていたんですが…",reading:"ふざいひょうがはいっていたんですが",meaning:"我收到未在通知單…",type:'sentence',chapter:"生活篇"},
+{id:"c_1155",jp:"荷物を受け取りたいんですが…",ruby:"荷物|にもつ を 受|う け 取|と りたいんですが…",reading:"にもつをうけとりたいんですが",meaning:"我想領包裹…",type:'sentence',chapter:"生活篇"},
+{id:"c_1156",jp:"身分証明書を見せたらいいですか",ruby:"身分証明書|みぶんしょうめいしょ を 見|み せたらいいですか",reading:"みぶんしょうめいしょをみせたらいいですか",meaning:"是出示證件就好嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1157",jp:"まだ戻って来ていません",ruby:"まだ 戻|もど って 来|き ていません",reading:"まだもどってきていません",meaning:"包裹還沒送回來",type:'sentence',chapter:"生活篇"},
+{id:"c_1158",jp:"午後なら受け取れます",ruby:"午後|ごご なら 受|う け 取|と れます",reading:"ごごならうけとれます",meaning:"下午的話可以領取喔",type:'sentence',chapter:"生活篇"},
+{id:"c_1159",jp:"ネットで注文した物を受け取りたいんですが…",ruby:"ネットで 注文|ちゅうもん した 物|もの を 受|う け 取|と りたいんですが…",reading:"ネットでちゅうもんしたものをうけとりたいんですが",meaning:"我想領網購包裹…",type:'sentence',chapter:"生活篇"},
+{id:"c_1160",jp:"こちらで受け取れますか",ruby:"こちらで 受|う け 取|と れますか",reading:"こちらでうけとれますか",meaning:"可以在這裡取嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1161",jp:"支払いをしたいんですが…",ruby:"支払|しはら い をしたいんですが…",reading:"しはらいをしたいんですが",meaning:"…",type:'sentence',chapter:"生活篇"},
+{id:"c_1162",jp:"電気代を支払いたいんですが…",ruby:"電気代|でんきだい を 支払|しはら いたいんですが…",reading:"でんきだいをしはらいたいんですが",meaning:"…",type:'sentence',chapter:"生活篇"},
+{id:"c_1163",jp:"ガス代を支払いたいんですが…",ruby:"ガス 代|だい を 支払|しはら いたいんですが…",reading:"ガスだいをしはらいたいんですが",meaning:"…",type:'sentence',chapter:"生活篇"},
+{id:"c_1164",jp:"水道代を支払いたいんですが…",ruby:"水道代|すいどうだい を 支払|しはら いたいんですが…",reading:"すいどうだいをしはらいたいんですが",meaning:"…",type:'sentence',chapter:"生活篇"},
+{id:"c_1165",jp:"SUICAでお願いします",ruby:"SUICA でお 願|ねが いします",reading:"でおねがいします",meaning:"SUICA",type:'sentence',chapter:"生活篇"},
+{id:"c_1166",jp:"PayPayでお願いします",ruby:"PayPay でお 願|ねが いします",reading:"でおねがいします",meaning:"PayPay",type:'sentence',chapter:"生活篇"},
+{id:"c_1167",jp:"コピーしたいんですが…",ruby:"コピー したい んですが…",reading:"コピーしたいんですが",meaning:"我想影印…",type:'sentence',chapter:"生活篇"},
+{id:"c_1168",jp:"プリントしたいんですが…",ruby:"プリント したい んですが…",reading:"プリントしたいんですが",meaning:"我想列印…",type:'sentence',chapter:"生活篇"},
+{id:"c_1169",jp:"スキャンしたいんですが…",ruby:"スキャン したい んですが…",reading:"スキャンしたいんですが",meaning:"我想掃描…",type:'sentence',chapter:"生活篇"},
+{id:"c_1170",jp:"スマホのデータを印刷できますか",ruby:"スマホのデータを 印刷|いんさつ できますか",reading:"スマホのデータをいんさつできますか",meaning:"可以印手機裡的檔案嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1171",jp:"シャツを３枚お願いします",ruby:"シャツ を ３ 枚|さんまい お 願|ねが いします",reading:"シャツをさんまいおねがいします",meaning:"我要洗三件襯衫",type:'sentence',chapter:"生活篇"},
+{id:"c_1172",jp:"ズボンを２着お願いします",ruby:"ズボン を ２ 着|にちゃく お 願|ねが いします",reading:"ズボンをにちゃくおねがいします",meaning:"我要洗兩件褲子",type:'sentence',chapter:"生活篇"},
+{id:"c_1173",jp:"コートを1枚お願いします",ruby:"コート を 1  枚|いちまい お 願|ねが いします",reading:"コートをいちまいおねがいします",meaning:"我要洗一件外套",type:'sentence',chapter:"生活篇"},
+{id:"c_1174",jp:"このコートはクリーニングできますか",ruby:"この コート はクリーニングできますか",reading:"このコートはクリーニングできますか",meaning:"這件外套可以乾洗嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1175",jp:"このセーター、手洗いでお願いできますか",ruby:"この セーター 、 手洗|てあら いで お 願|ねが いできますか ",reading:"このセーターてあらいでおねがいできますか",meaning:"這件毛衣可以幫我用手洗的方式嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1176",jp:"白いシャツの漂白はできますか",ruby:"白|しろ いシャツの 漂白|ひょうはく はできますか",reading:"しろいシャツのひょうはくはできますか",meaning:"白襯衫可以漂白嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1177",jp:"このワンピース、デリケートなので、優しく洗っていただけますか",ruby:"このワンピース、デリケートなので、 優|やさ しく 洗|あら っていただけますか ",reading:"このワンピースデリケートなのでやさしくあらっていただけますか",meaning:"這件洋裝很脆弱，可以幫我溫和清洗嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1178",jp:"いつできますか",ruby:"いつできますか",reading:"いつできますか",meaning:"什麼時候會洗好",type:'sentence',chapter:"生活篇"},
+{id:"c_1179",jp:"明日の午前中までにできますか",ruby:"明日|あした の 午前中|ごぜんじゅう までにできますか",reading:"あしたのごぜんじゅうまでにできますか",meaning:"可以在明天早上前完成嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1180",jp:"急ぎなんですが、今日中にできますか",ruby:"急|いそ ぎなんですが、 今日中|きょうじゅう にできますか ",reading:"いそぎなんですがきょうじゅうにできますか",meaning:"我趕時間，可以今天內取件嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1181",jp:"前髪を少し短くしてください",ruby:"前髪|まえがみ を 少|すこ し 短|みじか くし てください",reading:"まえがみをすこしみじかくしてください",meaning:"瀏海稍微剪短一點點",type:'sentence',chapter:"生活篇"},
+{id:"c_1182",jp:"全体を揃えてください",ruby:"全体|ぜんたい を 揃|そろ え てください",reading:"ぜんたいをそろえてください",meaning:"整體幫我修整一下",type:'sentence',chapter:"生活篇"},
+{id:"c_1183",jp:"サイドは梳いてください",ruby:"サイド は 梳|す いてください",reading:"サイドはすいてください",meaning:"側邊請打薄一點",type:'sentence',chapter:"生活篇"},
+{id:"c_1184",jp:"後ろは梳いてください",ruby:"後|うし ろ は 梳|す いてください",reading:"うしろはすいてください",meaning:"後面請打薄一點",type:'sentence',chapter:"生活篇"},
+{id:"c_1185",jp:"レイヤーを入れてください",ruby:"レイヤーを 入|い れてください",reading:"レイヤーをいれてください",meaning:"請加層次",type:'sentence',chapter:"生活篇"},
+{id:"c_1186",jp:"耳が見えるくらいでお願いします",ruby:"耳|みみ が 見|み えるくらいでお 願|ねが いします",reading:"みみがみえるくらいでおねがいします",meaning:"大概剪到耳朵露出來",type:'sentence',chapter:"生活篇"},
+{id:"c_1187",jp:"後ろは短めでお願いします",ruby:"後|うし ろは 短|みじか めでお 願|ねが いします",reading:"うしろはみじかめでおねがいします",meaning:"後面請剪短一點",type:'sentence',chapter:"生活篇"},
+{id:"c_1188",jp:"もう少し短くできますか",ruby:"もう 少|すこ し 短|みじか くできますか",reading:"もうすこしみじかくできますか",meaning:"可以再短一點嗎",type:'sentence',chapter:"生活篇"},
+{id:"c_1189",jp:"スタイリングの仕方を教えていただけますか",ruby:"スタイリングの 仕方|しかた を 教|おし えていただけますか",reading:"スタイリングのしかたをおしえていただけますか",meaning:"可以教我怎麼整理髮型嗎",type:'sentence',chapter:"生活篇"}
+];
 </script>
 <script>
 // ===== SRS ENGINE — Anki SM-2 =====
@@ -1849,14 +3058,19 @@ function _unlockLoopEl() {
   if (_loopUnlocked && _loopEl) return;
   _loopEl = new Audio();
   _loopEl.src = _silentMp3;
-  _loopEl.volume = 0;
+  // FIX: 原本 volume=0 → 要等 play() 的 promise resolve 才設回 1。
+  // 若 TTS 很快回來、在 resolve 前就換 src 播出，第一段會完全沒聲音。
+  // 改用 muted 並在 play() 後「同步」解除，不留競態窗口。
+  _loopEl.muted = true;
   const p = _loopEl.play();
+  _loopEl.muted = false;
+  _loopEl.volume = 1;
   if (p) p.then(() => {
-    _loopEl.pause();
-    _loopEl.volume = 1;
+    try { _loopEl.pause(); _loopEl.currentTime = 0; } catch(e) {}
+    _loopEl.muted = false; _loopEl.volume = 1;
     _loopUnlocked = true;
     _dbg('_loopEl unlocked');
-  }).catch(e => { _dbg(`_loopEl unlock failed: ${e.name}`); });
+  }).catch(e => { _loopEl.muted = false; _dbg(`_loopEl unlock failed: ${e.name}`); });
 }
 
 function _loopPlay(url, onended, onerror) {
@@ -1904,14 +3118,27 @@ let state = {
   srsSortEnabled: false,
 };
 
+// FIX: 把 checkbox 的勾選狀態強制對齊 state。
+// 瀏覽器（特別是 Safari 的返回／bfcache）會自行還原表單控件的勾選，
+// 而 JS 的 state 是重新初始化的 false → 開關看起來開著、實際沒作用。
+// 因此除了啟動時，DOMContentLoaded 與 pageshow（含 bfcache 還原）也要再同步一次。
+function _syncToggleDom() {
+  const map = [['loopToggle', 'isLooping'], ['cnToggle', 'cnMode'], ['x3Toggle', 'x3Mode']];
+  map.forEach(([id, key]) => { const e = $id(id); if (e) e.checked = !!state[key]; });
+  const st = $id('srsSortToggle');
+  if (st) st.checked = !!state.srsSortEnabled;
+}
+window.addEventListener('DOMContentLoaded', _syncToggleDom);
+window.addEventListener('pageshow', _syncToggleDom);
+
 // ===== INIT DATA =====
 function initData() {
   // Load custom items
   const saved = localStorage.getItem('jptutor_custom_v3');
   state.customItems = saved ? JSON.parse(saved) : [];
 
-  // Merge embedded + custom
-  state.allItems = [...EMBEDDED_WORDS, ...state.customItems];
+  // Merge embedded + course + custom
+  state.allItems = [...EMBEDDED_WORDS, ...COURSE_CARDS, ...state.customItems];
 
   // Load SRS data
   const srs = localStorage.getItem('jptutor_srs_v1');
@@ -1921,6 +3148,28 @@ function initData() {
   state.srsSortEnabled = localStorage.getItem('jptutor_srs_sort') === '1';
   const srsToggle = $id('srsSortToggle');
   if (srsToggle) srsToggle.checked = state.srsSortEnabled;
+
+  // FIX: 還原「連播 / 中日 / ×3 / 語速 / JLPT 篩選」。
+  // 原本這些每次重開 App 都歸零，朋友每次都得重新設一遍。
+  // 更重要的是：這裡「一律」把 checkbox 的 DOM 狀態寫成與 state 相同。
+  // 瀏覽器（尤其 Safari 的返回／bfcache）會自行還原 checkbox 的勾選狀態，
+  // 但 state 是全新的 false → 開關看起來是開的、實際卻沒作用，
+  // 這正是「開了沒反應、修不好」最典型的來源。
+  state.isLooping = localStorage.getItem('jptutor_loop') === '1';
+  state.cnMode    = localStorage.getItem('jptutor_cn') === '1';
+  state.x3Mode    = localStorage.getItem('jptutor_x3') === '1';
+  _syncToggleDom();
+
+  const _spd = parseFloat(localStorage.getItem('jptutor_speed'));
+  if ([0.6, 0.85, 1.0].includes(_spd)) {
+    state.speed = _spd;
+    document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+    const _map = { 0.6: 'spd06', 0.85: 'spd085', 1.0: 'spd10' };
+    if ($id(_map[_spd])) $id(_map[_spd]).classList.add('active');
+  }
+
+  const _lv = localStorage.getItem('jptutor_level');
+  if (_lv) state.levelFilter = _lv;   // 章節名或 N5/N4 或 all
 
   // Load flagged
   loadFlagged();
@@ -1946,7 +3195,8 @@ function initData() {
 
 function saveCustom() {
   localStorage.setItem('jptutor_custom_v3', JSON.stringify(state.customItems));
-  state.allItems = [...EMBEDDED_WORDS, ...state.customItems];
+  state.allItems = [...EMBEDDED_WORDS, ...COURSE_CARDS, ...state.customItems];
+  rebuildQueue();   // FIX: 題庫變動後佇列必須重建，否則練習頁看不到新卡
 }
 
 function saveSRS() {
@@ -1955,44 +3205,96 @@ function saveSRS() {
 
 // ===== FILTERED ITEMS =====
 function filteredItems() {
-  let items = state.allItems;
-
-  // Level filter
-  if (state.levelFilter !== 'all') {
-    items = items.filter(i => i.jlpt === state.levelFilter);
-  }
-
-  // Category filter (library)
-  if (state.currentCategory === 'N5') items = state.allItems.filter(i => i.jlpt === 'N5');
-  else if (state.currentCategory === 'N4') items = state.allItems.filter(i => i.jlpt === 'N4');
-  else if (state.currentCategory === 'custom') items = state.customItems;
-  else if (state.currentCategory === 'mastered') {
-    items = state.allItems.filter(i => {
+  const cat = state.currentCategory;
+  if (cat === 'custom') return state.customItems;
+  if (cat === 'mastered') {
+    return state.allItems.filter(i => {
       const s = state.srsData[i.id];
       return s && s.masteredCount >= 5;
     });
   }
+  if (cat && cat !== 'all') return state.allItems.filter(i => groupOf(i) === cat);
+  return state.allItems;
+}
 
+// ===== 分類軸：章節（新）＋ JLPT（既有 1041 張）=====
+// 講義卡片用 chapter，原本的 N5/N4 單字用 jlpt，統一由 groupOf() 取得所屬分類。
+// 這樣既有卡片一個欄位都不用改，兩批資料就能共用同一個篩選器。
+const GROUP_ORDER = ['基礎句型','禮儀篇','餐廳篇','購物篇','住宿篇','交通篇',
+                     '觀光篇','狀況篇','交友篇','看病篇','生活篇','五十音','N5','N4'];
+
+function groupOf(item) {
+  return item.chapter || item.jlpt || '其他';
+}
+
+function allGroups() {
+  const c = {};
+  state.allItems.forEach(i => { const g = groupOf(i); c[g] = (c[g] || 0) + 1; });
+  const known = GROUP_ORDER.filter(g => c[g]);
+  const rest = Object.keys(c).filter(g => !GROUP_ORDER.includes(g)).sort();
+  return [...known, ...rest].map(g => ({ name: g, n: c[g] }));
+}
+
+function renderGroupOptions() {
+  const groups = allGroups();
+  const total = state.allItems.length;
+  const opts = [`<option value="all">全部（${total}）</option>`]
+    .concat(groups.map(g => `<option value="${g.name}">${g.name}（${g.n}）</option>`))
+    .join('');
+  const a = $id('groupSelect');
+  if (a) { a.innerHTML = opts; a.value = state.levelFilter; }
+  const b = $id('libGroupSelect');
+  if (b) {
+    b.innerHTML = opts;
+    b.value = groups.some(g => g.name === state.currentCategory) ? state.currentCategory : 'all';
+  }
+}
+
+// ===== 練習佇列（FIX: 改為快取，不再每次呼叫都重排）=====
+// 原本 practiceItems() 每次呼叫都即時重新排序 1041 張卡。它一輪播放中會被呼叫
+// 十幾次（loadCurrentCard / getCurrentItem / _prefetchNext / _loopNextCard…），
+// 而排序結果依賴 Date.now() 與 srsData——所以「評分一張卡」或「跨過一個到期時間點」
+// 就會讓整個清單在播放中途重排，導致預抓好的音檔對到別張卡（唸錯字、卡片跳號）。
+// 現在佇列只在明確事件時重建，播放過程中絕對穩定。
+let _queue = null;
+
+function buildQueue() {
+  let items = state.allItems;
+  if (state.levelFilter !== 'all') {
+    items = items.filter(i => groupOf(i) === state.levelFilter);
+  }
+  items = items.slice();
+  if (!state.srsSortEnabled) return items;
+  // SRS 排程：到期卡優先 → 新卡 → 未到期
+  const now = Date.now();
+  const cat = s => !s ? 1 : (new Date(s.nextReview).getTime() <= now ? 0 : 2);
+  items.sort((a, b) => {
+    const sa = state.srsData[a.id], sb = state.srsData[b.id];
+    const ca = cat(sa), cb = cat(sb);
+    if (ca !== cb) return ca - cb;          // due(0) < new(1) < future(2)
+    if (ca === 1) return 0;                 // 新卡維持教科書順序
+    return new Date(sa.nextReview).getTime() - new Date(sb.nextReview).getTime();
+  });
   return items;
 }
 
-function practiceItems() {
-  let items = state.allItems;
-  if (state.levelFilter !== 'all') {
-    items = items.filter(i => i.jlpt === state.levelFilter);
+// 重建佇列。盡量讓使用者停在同一張卡上，不要跳走。
+function rebuildQueue(keepId) {
+  const id = (keepId !== undefined && keepId !== null)
+    ? keepId
+    : (_queue && _queue[state.currentIndex] ? _queue[state.currentIndex].id : null);
+  _queue = buildQueue();
+  if (id) {
+    const i = _queue.findIndex(x => x.id === id);
+    state.currentIndex = i >= 0 ? i : 0;
   }
-  if (!state.srsSortEnabled) return items;
-  // SRS scheduling: due cards first, then new cards, then future cards
-  const now = Date.now();
-  items = items.slice().sort((a, b) => {
-    const sa = state.srsData[a.id], sb = state.srsData[b.id];
-    const catA = !sa ? 1 : (new Date(sa.nextReview).getTime() <= now ? 0 : 2);
-    const catB = !sb ? 1 : (new Date(sb.nextReview).getTime() <= now ? 0 : 2);
-    if (catA !== catB) return catA - catB; // due(0) < new(1) < future(2)
-    if (catA === 0 || catA === 2) return new Date(sa.nextReview).getTime() - new Date(sb.nextReview).getTime();
-    return 0; // new cards: keep original order
-  });
-  return items;
+  if (state.currentIndex >= _queue.length) state.currentIndex = 0;
+  return _queue;
+}
+
+function practiceItems() {
+  if (!_queue) _queue = buildQueue();
+  return _queue;
 }
 
 
@@ -2033,8 +3335,15 @@ function loadCurrentCard() {
     fetchEnglish(item).then(_setEnWord);
   }
 
-  $id('sentenceBadge').textContent = item.jlpt || '—';
-  $id('sentenceType').textContent = item.type || '';
+  $id('sentenceBadge').textContent = groupOf(item);
+  $id('sentenceType').textContent = item.type === 'sentence' ? '句子' : (item.type || '');
+
+  // 講義的使用時機備註
+  const noteEl = $id('cardNote');
+  if (noteEl) {
+    if (item.note) { noteEl.textContent = item.note; noteEl.style.display = ''; }
+    else { noteEl.style.display = 'none'; }
+  }
 
   // SRS indicator
   const srsD = state.srsData[item.id];
@@ -2097,12 +3406,30 @@ function _resetExampleMode() {
   _setExampleMode(false);
 }
 
+let _resumeTimer = null;
+
 function _stopAudio() {
   _speakVersion++; // abort any in-flight speak loop
   _dbg(`_stopAudio → ver bumped to ${_speakVersion}`);
+  clearTimeout(_resumeTimer); _resumeTimer = null;
   if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
   _stopLoopEl();
+  _clearPrefetch();   // FIX: 停止時丟掉預抓音檔，否則下次可能播到上一張卡的音
   _speakEndUI();
+}
+
+// FIX（核心修正）：連播中做任何換卡動作後，把連播接回去。
+// 原本 nextCard/prevCard 只呼叫 _stopAudio()，而 _stopAudio 會讓 _speakVersion 前進，
+// 使所有進行中的播放鏈全部作廢——但沒有任何程式碼負責重新啟動。
+// 結果：連播中只要按一次上一張／下一張，連播就永久停止，
+// 而 state.isLooping 仍是 true、開關仍顯示「開」→ 使用者眼中就是「輪播壞了」。
+function _loopResumeIfNeeded(delay) {
+  clearTimeout(_resumeTimer);
+  if (!state.isLooping) return;
+  _resumeTimer = setTimeout(() => {
+    _resumeTimer = null;
+    if (state.isLooping) speakCurrent();
+  }, delay === undefined ? 260 : delay);
 }
 
 function prevCard() {
@@ -2111,6 +3438,7 @@ function prevCard() {
   const items = practiceItems();
   state.currentIndex = (state.currentIndex - 1 + items.length) % items.length;
   loadCurrentCard();
+  _loopResumeIfNeeded();   // FIX: 連播中換卡後要繼續播，不能默默停掉
 }
 
 function nextCard() {
@@ -2119,12 +3447,19 @@ function nextCard() {
   const items = practiceItems();
   state.currentIndex = (state.currentIndex + 1) % items.length;
   loadCurrentCard();
+  _loopResumeIfNeeded();   // FIX: 同上
 }
 
 // ===== SRS RATING =====
+let _rating = false;
+
 function rateSRS(rating) {
   const item = getCurrentItem();
   if (!item) return;
+  // FIX: 評分後要等 650ms 才換卡。這段時間內再按一次，會對同一張卡評兩次分，
+  // 並多前進一張 → 中間那張卡被跳過、不會出現也不會發音。手機上很容易誤觸兩次。
+  if (_rating) { _dbg('rateSRS ignored (still advancing)'); return; }
+  _rating = true;
 
   // Visual feedback: flash tapped button, then reset all
   const btnMap = ['.srs-btn.again', '.srs-btn.hard', '.srs-btn.good', '.srs-btn.easy'];
@@ -2145,6 +3480,12 @@ function rateSRS(rating) {
   };
   saveSRS();
 
+  // FIX: 原本評分不會停止正在播放的音訊。連播中評分時，
+  // 「評分前進一張」和「連播自己前進一張」會同時發生 → 卡片跳號、語音對不上畫面。
+  // 現在評分一律先停音、前進一張，若原本在連播就重新接上。
+  const _wasLooping = state.isLooping;
+  _stopAudio();
+
   // Advance card after visual feedback
   setTimeout(() => {
     // Flash animation on release, then reset
@@ -2159,6 +3500,8 @@ function rateSRS(rating) {
       state.currentIndex = (state.currentIndex + 1) % items.length;
       loadCurrentCard();
       updateHUD();
+      _rating = false;
+      if (_wasLooping) _loopResumeIfNeeded(120);
     }, 350);
   }, 300);
 }
@@ -2166,8 +3509,11 @@ function rateSRS(rating) {
 // ===== FILTER =====
 function resetSRS() {
   if (!confirm('確定要清除所有 SRS 學習紀錄嗎？此操作無法復原。')) return;
+  _stopAudio();
   state.srsData = {};
   localStorage.removeItem('jptutor_srs_v1');
+  state.currentIndex = 0;
+  rebuildQueue(null);
   state.currentIndex = 0;
   loadCurrentCard();
   updateHUD();
@@ -2178,18 +3524,24 @@ function toggleSrsSort() {
   state.srsSortEnabled = $id('srsSortToggle').checked;
   localStorage.setItem('jptutor_srs_sort', state.srsSortEnabled ? '1' : '0');
   state.currentIndex = 0;
+  rebuildQueue(null);
+  state.currentIndex = 0;
   loadCurrentCard();
   updateHUD();
 }
 
 function setLevelFilter(level) {
+  const wasLooping = state.isLooping;
+  _stopAudio();
   state.levelFilter = level;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    const bl = b.textContent === '全部' ? 'all' : b.textContent;
-    b.classList.toggle('active', bl === level);
-  });
+  localStorage.setItem('jptutor_level', level);
+  const gs = $id('groupSelect');
+  if (gs && gs.value !== level) gs.value = level;
+  state.currentIndex = 0;
+  rebuildQueue(null);
   state.currentIndex = 0;
   loadCurrentCard();
+  if (wasLooping) _loopResumeIfNeeded();
 }
 
 
@@ -2263,8 +3615,10 @@ function toggleSpeak() {
   if ($id('btnPlay')?.classList.contains('playing')) {
     _stopAudio();
   } else {
-    // Unlock audio element on iOS within user gesture context (synchronous)
-    if (state.isLooping) _unlockLoopEl();
+    // FIX: 原本只在「已經開連播」時才解鎖。若使用者先按播放、之後才打開連播，
+    // _loopEl 從未被使用者手勢解鎖 → iOS 會用 NotAllowedError 擋掉整條連播鏈。
+    // 這裡是使用者手勢，一律解鎖。
+    _unlockLoopEl();
     speakCurrent();
   }
 }
@@ -2582,10 +3936,13 @@ function speakCurrent() {
     if (_speakVersion !== myVer) return;
     try {
       if (state.cnMode && item.meaning) {
-        setTimeout(() => speakChinese(item.meaning, () => {
-          if (_speakVersion !== myVer) return;
-          _afterSpeak(myVer);
-        }), 400);
+        setTimeout(() => {
+          if (_speakVersion !== myVer) return;   // FIX: 延遲 400ms 期間可能已換卡
+          speakChinese(item.meaning, () => {
+            if (_speakVersion !== myVer) return;
+            _afterSpeak(myVer);
+          }, myVer);
+        }, 400);
       } else {
         _afterSpeak(myVer);
       }
@@ -2632,10 +3989,13 @@ function _afterSpeak(ver) {
       function afterAll3() {
         if (_speakVersion !== myVer) return;
         if (state.cnMode && nextItem.meaning) {
-          setTimeout(() => speakChinese(nextItem.meaning, () => {
+          setTimeout(() => {
             if (_speakVersion !== myVer) return;
-            _afterSpeak(myVer);
-          }), 400);
+            speakChinese(nextItem.meaning, () => {
+              if (_speakVersion !== myVer) return;
+              _afterSpeak(myVer);
+            }, myVer);
+          }, 400);
         } else {
           _afterSpeak(myVer);
         }
@@ -2649,11 +4009,18 @@ function _afterSpeak(ver) {
         clearTimeout(_pfSt);
         _currentAudio = null; _speakEndUI(); URL.revokeObjectURL(pfUrl);
         if (err) showToast(err);
+        // FIX: 原本這裡完全沒有版本守衛。使用者按停止／換卡後，
+        // 這個殘留的 callback 仍會執行，並讀取「當下」的 state.cnMode，
+        // 把上一張卡的中文意思唸出來（實測到畫面顯示「課長」卻唸「店員」）。
+        if (_speakVersion !== myVer) { _dbg(`_pfDone abort stale ver=${myVer}`); return; }
         if (state.cnMode && nextItem.meaning) {
-          setTimeout(() => speakChinese(nextItem.meaning, () => {
+          setTimeout(() => {
             if (_speakVersion !== myVer) return;
-            _afterSpeak(myVer);
-          }), 400);
+            speakChinese(nextItem.meaning, () => {
+              if (_speakVersion !== myVer) return;
+              _afterSpeak(myVer);
+            }, myVer);
+          }, 400);
         } else {
           _afterSpeak(myVer);
         }
@@ -2693,18 +4060,30 @@ function _afterSpeak(ver) {
 
 function toggleLoop() {
   state.isLooping = $id('loopToggle').checked;
+  localStorage.setItem('jptutor_loop', state.isLooping ? '1' : '0');
   // 連播開啟時隱藏例句按鈕，關閉時恢復
   const item = getCurrentItem();
   const _exBtn = $id('btnSpeakEx');
   if (_exBtn) _exBtn.style.display = (item?.sentence && !state.isLooping) ? '' : 'none';
+
+  // FIX: 原本打開開關什麼都不會發生（要再按一次 ▶），關掉也要等當前卡播完才停。
+  // 現在開＝立刻開始連播，關＝立刻停。切換本身就是使用者手勢，趁機解鎖 iOS 音訊。
+  if (state.isLooping) {
+    _unlockLoopEl();
+    if (!$id('btnPlay')?.classList.contains('playing')) speakCurrent();
+  } else {
+    _stopAudio();
+  }
 }
 
 function toggleCnMode() {
   state.cnMode = $id('cnToggle').checked;
+  localStorage.setItem('jptutor_cn', state.cnMode ? '1' : '0');
 }
 
 function toggleX3Mode() {
   state.x3Mode = $id('x3Toggle').checked;
+  localStorage.setItem('jptutor_x3', state.x3Mode ? '1' : '0');
   _speakEndUI();
   const ex = $id('btnSpeakEx');
   if (ex) ex.textContent = state.x3Mode ? '▶ 例句 ×3' : '▶ 例句';
@@ -2724,32 +4103,77 @@ function speakEn(which) {
 }
 
 // Chinese TTS — Azure with zh-TW voice
-async function speakChinese(text, onEnd) {
+// FIX: 原版有四個問題，都會被使用者感受成「中文功能怪怪的」：
+//   1. 沒有版本守衛 → 換卡／按停止後，途中才回來的中文會硬播出來，唸的是上一張卡的意思。
+//   2. 沒有檢查 res.ok，catch 也完全靜默 → 中文語音失敗時毫無提示（日文失敗有 toast）。
+//   3. 不更新按鈕 UI → 播中文時按鈕顯示「▶ 單字」，使用者以為停了就再按一次。
+//   4. 連播中沒有 NotAllowedError 重試 → 手機切到背景再回來，整條連播鏈就斷了。
+async function speakChinese(text, onEnd, verSnap) {
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
+  const stale = () => (verSnap !== undefined && _speakVersion !== verSnap);
   if (!key) { if (onEnd) onEnd(); return; }
+  if (stale()) { _dbg('cn abort: stale before start'); return; }
   try {
     const token = await _getAzureToken(key, region);
+    if (stale()) { _dbg('cn abort: stale after token'); return; }
+
     const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='zh-TW'><voice name='zh-TW-HsiaoYuNeural'>${_xmlEsc(text)}</voice></speak>`;
     const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' },
       body: ssml
     });
+    if (!res.ok) throw new Error('中文語音請求失敗 ' + res.status);
     const blob = await res.blob();
+    if (stale()) { _dbg('cn abort: stale after blob'); return; }
+
     const url = URL.createObjectURL(blob);
     const useLoop = state.isLooping;
-    const audio = useLoop ? (_loopEl || (_loopEl = new Audio())) : new Audio(url);
-    if (useLoop) audio.src = url;
     let _done = false;
-    const _end = () => { if (_done) return; _done = true; clearTimeout(_cnSafe); try { audio.pause(); } catch(e){} URL.revokeObjectURL(url); if (onEnd) onEnd(); };
-    const _cnSafe = setTimeout(() => { _dbg('cn safety'); _end(); }, 10000);
-    audio.onended = _end;
-    audio.onerror = _end;
-    _currentAudio = audio;
-    const p = audio.play();
-    if (p) p.catch(_end);
-  } catch(e) { if (onEnd) onEnd(); }
+    let _cnSafe = null;
+    const _end = () => {
+      if (_done) return; _done = true;
+      clearTimeout(_cnSafe);
+      try { if (_currentAudio) _currentAudio.pause(); } catch(e){}
+      _currentAudio = null;
+      _speakEndUI();
+      URL.revokeObjectURL(url);
+      if (onEnd) onEnd();
+    };
+    _cnSafe = setTimeout(() => { _dbg('cn safety'); _end(); }, 10000);
+
+    let audio;
+    if (useLoop) {
+      // 連播中沿用同一個 Audio 元素，維持 iOS 的解鎖鏈
+      _speakPlayUI();
+      const p = _loopPlay(url, () => { _dbg('cn ended'); _end(); }, () => { _dbg('cn error'); _end(); });
+      audio = _loopEl;
+      if (p) p.catch(e => {
+        _dbg(`cn play rejected: ${e.name}`);
+        if (e.name === 'NotAllowedError') {
+          clearTimeout(_cnSafe);
+          const _r = () => { document.removeEventListener('touchstart', _r); _loopEl.play().catch(() => _end()); };
+          document.addEventListener('touchstart', _r, { once: true, passive: true });
+          setTimeout(_r, 60000);
+        } else { _end(); }
+      });
+    } else {
+      audio = new Audio(url);
+      _currentAudio = audio;
+      _speakPlayUI();
+      audio.onended = _end;
+      audio.onerror = _end;
+      const p = audio.play();
+      if (p) p.catch(() => _end());
+    }
+  } catch(e) {
+    _currentAudio = null;
+    _azureToken = null;
+    _speakEndUI();
+    if (!stale()) showToast('中文語音失敗：' + e.message);
+    if (onEnd) onEnd();
+  }
 }
 
 // MyMemory translation API — CORS-friendly, free, no key needed
@@ -2816,6 +4240,7 @@ function speakExample() {
 
 function setSpeed(s) {
   state.speed = s;
+  localStorage.setItem('jptutor_speed', String(s));
   document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
   const map = { 0.6: 'spd06', 0.85: 'spd085', 1.0: 'spd10' };
   if (map[s]) $id(map[s]).classList.add('active');
@@ -2878,8 +4303,10 @@ function updateHUD() {
 function switchCategory(cat) {
   state.currentCategory = cat;
   document.querySelectorAll('.cat-tab').forEach((t, i) => {
-    t.classList.toggle('active', ['all','N5','N4','custom','mastered'][i] === cat);
+    t.classList.toggle('active', ['all','custom','mastered'][i] === cat);
   });
+  const b = $id('libGroupSelect');
+  if (b && b.value !== cat) b.value = (cat === 'custom' || cat === 'mastered') ? 'all' : cat;
   renderLibrary();
 }
 
@@ -2930,10 +4357,15 @@ function renderLibrary() {
 }
 
 function practiceItem(id) {
+  // FIX: 原本不停音就換 index。若當時正在播（尤其連播已預抓下一張），
+  // 會出現「畫面是你點的那張、聲音是別張」。改為先停、再依原狀態接回連播。
+  const wasLooping = state.isLooping;
+  _stopAudio();
   const idx = practiceItems().findIndex(i => i.id === id);
   if (idx !== -1) state.currentIndex = idx;
   switchSection('practice');
   loadCurrentCard();
+  if (wasLooping) _loopResumeIfNeeded();
 }
 
 function addItem() {
@@ -3018,10 +4450,10 @@ function renderStats() {
     </div>
   `;
 
-  // Level bars
-  const levels = ['N5', 'N4'];
+  // Group bars
+  const levels = allGroups().map(g => g.name);
   const barsHtml = levels.map(lv => {
-    const lvItems = state.allItems.filter(i => i.jlpt === lv);
+    const lvItems = state.allItems.filter(i => groupOf(i) === lv);
     const lvMastered = lvItems.filter(i => (state.srsData[i.id]?.masteredCount || 0) >= 5).length;
     const pct = lvItems.length > 0 ? Math.round(lvMastered / lvItems.length * 100) : 0;
     return `
@@ -3363,9 +4795,22 @@ function showToast(msg) {
 // ===== INIT =====
 function init() {
   initData();
+  renderGroupOptions();    // 依實際資料建立分類選單
+  // 還原的分類若已不存在（例如資料換版），退回全部
+  if (state.levelFilter !== 'all' && !allGroups().some(g => g.name === state.levelFilter)) {
+    state.levelFilter = 'all';
+  }
+  const _gs = $id('groupSelect'); if (_gs) _gs.value = state.levelFilter;
+  rebuildQueue(null);      // FIX: 依還原後的篩選／排序建立穩定佇列
+  state.currentIndex = 0;
   loadCurrentCard();
   updateHUD();
   renderLibrary();
+  // 連播狀態雖然還原了，但不自動發聲——瀏覽器要求由使用者手勢啟動播放。
+  const _b = $id('btnSpeakEx');
+  const _it = getCurrentItem();
+  if (_b) _b.style.display = (_it && _it.sentence && !state.isLooping) ? '' : 'none';
+  if ($id('btnPlay')) $id('btnPlay').textContent = state.x3Mode ? '▶ 單字 ×3' : '▶ 單字';
 }
 
 init();
