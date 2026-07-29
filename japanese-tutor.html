@@ -36,7 +36,7 @@
     min-height: 100vh;
     max-width: 480px;
     margin: 0 auto;
-    padding-bottom: 145px;
+    padding-bottom: 145px;   /* 底部控制列高度，開機後由 _syncBottomPad() 依實際高度校正 */
   }
 
   header {
@@ -298,8 +298,8 @@
     box-shadow: 0 -2px 14px rgba(0,0,0,0.06);
     z-index: 200;
   }
-  .ctrl-row-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .tog-group { display: flex; align-items: center; gap: 12px; }
+  .ctrl-row-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 8px; flex-wrap: wrap; }
+  .tog-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .speed-group { display: flex; gap: 4px; }
   .nav-row-bar { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
   .btn-nav-bar { width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 999px; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.82rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background 0.12s; }
@@ -329,7 +329,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v4.2</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v4.3</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -349,6 +349,14 @@
                   onchange="setLevelFilter(this.value)"></select>
         </div>
 
+      </div>
+
+      <!-- 起始卡片：自行選擇這一篇要從哪一張開始讀 -->
+      <div class="filter-bar" style="margin-bottom:12px;">
+        <span class="filter-label">起始</span>
+        <select class="group-select" id="startSelect" autocomplete="off" title="選擇這一篇要從第幾張開始讀"
+                style="max-width:230px;" onchange="jumpToIndex(this.value)"></select>
+        <button class="filter-btn" onclick="jumpToIndex(0)" title="回到這一篇第一張">↺ 從頭</button>
       </div>
 
       <div class="flashcard-wrap" id="flashcardWrap">
@@ -640,6 +648,11 @@
           <input type="checkbox" id="loopToggle" autocomplete="off" onchange="toggleLoop()">
           <div class="tog-track"></div>
           連播
+        </label>
+        <label class="tog-switch">
+          <input type="checkbox" id="exToggle" autocomplete="off" onchange="toggleExMode()">
+          <div class="tog-track"></div>
+          例句
         </label>
         <label class="tog-switch">
           <input type="checkbox" id="cnToggle" autocomplete="off" onchange="toggleCnMode()">
@@ -3325,6 +3338,88 @@ async function _prefetchNext(ver) {
   } catch(e) { _clearPrefetch(); _dbg(`pf✗ ${e.message}`); }
 }
 
+// ===== 例句連播 =====
+// 連播時把目前這張卡的例句也唸出來（單字 →〔中文〕→ 例句 → 下一張）。
+// 例句音檔在「單字還在播」的時候就先抓好，換段時才能在 onended 裡「同步」play()，
+// 這是 iOS 鎖屏／背景能繼續播放的關鍵（跟 _prefetchNext 同樣的理由）。
+let _exPf = { url: null, id: null, ver: null };
+function _clearExPrefetch() {
+  if (_exPf.url) { try { URL.revokeObjectURL(_exPf.url); } catch(e){} }
+  _exPf = { url: null, id: null, ver: null };
+}
+// ruby 標記（漢字|かな）還原成純日文，TTS 才不會把假名唸出來
+function _exPlainText(s) {
+  return s.split(' ').map(t => t.includes('|') ? t.split('|')[0] : t).join('');
+}
+async function _prefetchExample(item, ver) {
+  if (!state.isLooping || !state.loopExample) return;
+  if (!item || !item.sentence) return;
+  const key = localStorage.getItem('azureKey') || '';
+  const region = localStorage.getItem('azureRegion') || 'japaneast';
+  const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
+  if (!key) return;
+  if (_exPf.id === item.id && _exPf.ver === ver) return;   // 已在抓同一張
+  _clearExPrefetch();
+  _exPf.id = item.id; _exPf.ver = ver;
+  try {
+    const token = await _getAzureToken(key, region);
+    if (_speakVersion !== ver) { _clearExPrefetch(); return; }
+    const ssml = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='ja-JP'><voice name='${voice}'><prosody rate='${_ssmlRate()}'>${_xmlEsc(_exPlainText(item.sentence))}</prosody></voice></speak>`;
+    const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+      method: 'POST', headers: { 'Authorization': 'Bearer '+token, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'audio-16khz-128kbitrate-mono-mp3' }, body: ssml
+    });
+    if (!res.ok || _speakVersion !== ver) { _clearExPrefetch(); return; }
+    const blob = await res.blob();
+    if (_speakVersion !== ver) { _clearExPrefetch(); return; }
+    _exPf.url = URL.createObjectURL(blob);
+    _dbg(`exPf✓ ${item.jp}`);
+  } catch(e) { _clearExPrefetch(); _dbg(`exPf✗ ${e.message}`); }
+}
+
+// 播完單字（與中文）後接例句，播完再呼叫 done()。沒開例句連播就直接 done()。
+function _playLoopExample(item, myVer, done) {
+  if (!state.isLooping || !state.loopExample || !item || !item.sentence) { done(); return; }
+  if (_speakVersion !== myVer) { _dbg(`exLoop abort stale ver=${myVer}`); return; }
+
+  const url = (_exPf.url && _exPf.id === item.id) ? _exPf.url : null;
+  _setExampleMode(true);   // 播例句時按鈕高亮，跟手動按「▶ 例句」一致
+
+  if (!url) {
+    // 沒抓到（太慢／剛開開關）→ 走一般 speak()，會有一小段抓取延遲但不會斷鏈
+    _dbg(`exLoop no prefetch, fallback fetch`);
+    speak(_exPlainText(item.sentence), () => {
+      if (_speakVersion !== myVer) return;
+      done();
+    }, myVer);
+    return;
+  }
+
+  _exPf = { url: null, id: null, ver: null };   // 交棒，之後由這裡負責 revoke
+  let fin = false;
+  const finish = (err) => {
+    if (fin) return; fin = true;
+    clearTimeout(st);
+    try { URL.revokeObjectURL(url); } catch(e){}
+    _currentAudio = null;
+    if (err) _dbg(`exLoop ${err}`);
+    if (_speakVersion !== myVer) { _dbg(`exLoop done but stale`); return; }
+    done();
+  };
+  const st = setTimeout(() => finish('safetyTimer'), 15000);
+  _dbg(`exLoop▶ ${item.jp}`);
+  const p = _loopPlay(url, () => finish(), () => finish('error'));
+  if (p) p.catch(e => {
+    _dbg(`exLoop play rejected: ${e.name}`);
+    if (e.name === 'NotAllowedError') {
+      // 背景被擋 → 等使用者回到前景再續播，跟單字的處理一致
+      clearTimeout(st);
+      const retry = () => { document.removeEventListener('touchstart', retry); _loopEl.play().catch(() => finish('retry fail')); };
+      document.addEventListener('touchstart', retry, { once: true, passive: true });
+      setTimeout(retry, 60000);
+    } else finish(e.name);
+  });
+}
+
 // Loop debug logger — writes to console AND on-screen panel (visible on mobile)
 let _loopLogLines = [];
 function _dbg(msg) {
@@ -3416,6 +3511,7 @@ let state = {
   isLooping: false,
   cnMode: false,
   x3Mode: false,
+  loopExample: false,   // 連播時是否連例句一起播
   settings: { claudeKey: '' },
   generatedItems: [],
   srsSortEnabled: false,
@@ -3426,7 +3522,7 @@ let state = {
 // 而 JS 的 state 是重新初始化的 false → 開關看起來開著、實際沒作用。
 // 因此除了啟動時，DOMContentLoaded 與 pageshow（含 bfcache 還原）也要再同步一次。
 function _syncToggleDom() {
-  const map = [['loopToggle', 'isLooping'], ['cnToggle', 'cnMode'], ['x3Toggle', 'x3Mode']];
+  const map = [['loopToggle', 'isLooping'], ['cnToggle', 'cnMode'], ['x3Toggle', 'x3Mode'], ['exToggle', 'loopExample']];
   map.forEach(([id, key]) => { const e = $id(id); if (e) e.checked = !!state[key]; });
   const st = $id('srsSortToggle');
   if (st) st.checked = !!state.srsSortEnabled;
@@ -3460,9 +3556,10 @@ function initData() {
   // 瀏覽器（尤其 Safari 的返回／bfcache）會自行還原 checkbox 的勾選狀態，
   // 但 state 是全新的 false → 開關看起來是開的、實際卻沒作用，
   // 這正是「開了沒反應、修不好」最典型的來源。
-  state.isLooping = localStorage.getItem('jptutor_loop') === '1';
-  state.cnMode    = localStorage.getItem('jptutor_cn') === '1';
-  state.x3Mode    = localStorage.getItem('jptutor_x3') === '1';
+  state.isLooping   = localStorage.getItem('jptutor_loop') === '1';
+  state.cnMode      = localStorage.getItem('jptutor_cn') === '1';
+  state.x3Mode      = localStorage.getItem('jptutor_x3') === '1';
+  state.loopExample = localStorage.getItem('jptutor_loop_ex') === '1';
   _syncToggleDom();
 
   const _spd = parseFloat(localStorage.getItem('jptutor_speed'));
@@ -3518,7 +3615,7 @@ function filteredItems() {
       return s && s.masteredCount >= 5;
     });
   }
-  if (cat && cat !== 'all') return state.allItems.filter(i => groupOf(i) === cat);
+  if (cat && cat !== 'all') return state.allItems.filter(i => matchesGroup(i, cat));
   return state.allItems;
 }
 
@@ -3532,9 +3629,32 @@ function groupOf(item) {
   return item.chapter || item.jlpt || '其他';
 }
 
+// 「基礎句型」＝聚合檢視：除了自己章節那 111 張，也自動收錄各章的句子卡
+// （type='sentence'）。卡片本身不搬家，餐廳篇／購物篇…仍保留自己的句子，
+// 想一次練全部句子就選「基礎句型」。
+const SENTENCE_GROUP = '基礎句型';
+
+function matchesGroup(item, g) {
+  if (g === SENTENCE_GROUP) return item.chapter === SENTENCE_GROUP || item.type === 'sentence';
+  return groupOf(item) === g;
+}
+
+// 基礎句型的排序：自己章節的先，其餘句子卡依章節順序接在後面，章內維持原順序
+function sortSentenceGroup(items) {
+  const rank = i => (i.chapter === SENTENCE_GROUP) ? -1
+    : (GROUP_ORDER.indexOf(groupOf(i)) < 0 ? 99 : GROUP_ORDER.indexOf(groupOf(i)));
+  return items
+    .map((it, idx) => ({ it, idx }))
+    .sort((a, b) => (rank(a.it) - rank(b.it)) || (a.idx - b.idx))
+    .map(o => o.it);
+}
+
 function allGroups() {
   const c = {};
   state.allItems.forEach(i => { const g = groupOf(i); c[g] = (c[g] || 0) + 1; });
+  // 基礎句型顯示聚合後的張數
+  c[SENTENCE_GROUP] = state.allItems.filter(i => matchesGroup(i, SENTENCE_GROUP)).length;
+  if (!c[SENTENCE_GROUP]) delete c[SENTENCE_GROUP];
   const known = GROUP_ORDER.filter(g => c[g]);
   const rest = Object.keys(c).filter(g => !GROUP_ORDER.includes(g)).sort();
   return [...known, ...rest].map(g => ({ name: g, n: c[g] }));
@@ -3566,7 +3686,8 @@ let _queue = null;
 function buildQueue() {
   let items = state.allItems.filter(i => !state.hiddenIds.has(i.id));
   if (state.levelFilter !== 'all') {
-    items = items.filter(i => groupOf(i) === state.levelFilter);
+    items = items.filter(i => matchesGroup(i, state.levelFilter));
+    if (state.levelFilter === SENTENCE_GROUP) items = sortSentenceGroup(items);
   }
   items = items.slice();
   if (!state.srsSortEnabled) return items;
@@ -3594,12 +3715,39 @@ function rebuildQueue(keepId) {
     state.currentIndex = i >= 0 ? i : 0;
   }
   if (state.currentIndex >= _queue.length) state.currentIndex = 0;
+  renderStartOptions();
   return _queue;
 }
 
 function practiceItems() {
   if (!_queue) _queue = buildQueue();
   return _queue;
+}
+
+// ===== 起始卡片選單 =====
+// 讓使用者自己選這一篇要從第幾張開始讀（不必再一直按下一張）。
+// 選單只在佇列變動時重建（章節切換／刪除／排序切換），換卡時只更新 value。
+function renderStartOptions() {
+  const sel = $id('startSelect');
+  if (!sel) return;
+  const items = practiceItems();
+  if (!items.length) { sel.innerHTML = '<option value="0">—</option>'; return; }
+  sel.innerHTML = items.map((it, i) => {
+    const label = (it.jp || '').length > 16 ? it.jp.slice(0, 16) + '…' : (it.jp || '');
+    return `<option value="${i}">${i + 1}. ${label.replace(/</g, '&lt;')}</option>`;
+  }).join('');
+  sel.value = String(Math.min(state.currentIndex, items.length - 1));
+}
+
+function jumpToIndex(v) {
+  const items = practiceItems();
+  const n = parseInt(v, 10);
+  if (!items.length || isNaN(n) || n < 0 || n >= items.length) return;
+  _stopAudio();
+  _resetExampleMode();
+  state.currentIndex = n;
+  loadCurrentCard();
+  _loopResumeIfNeeded();   // 連播中換起點後要接回去
 }
 
 
@@ -3623,6 +3771,13 @@ function loadCurrentCard() {
   // 記住每個章節目前讀到的位置
   state.chapterPos[state.levelFilter] = state.currentIndex;
   localStorage.setItem('jptutor_chapter_pos', JSON.stringify(state.chapterPos));
+
+  // 起始卡片選單跟著目前位置走
+  const _startSel = $id('startSelect');
+  if (_startSel) {
+    if (_startSel.options.length !== items.length) renderStartOptions();
+    _startSel.value = String(state.currentIndex);
+  }
 
   // Render main word
   $id('sentenceJp').innerHTML = renderRuby(item.ruby, item.jp);
@@ -3724,6 +3879,7 @@ function _stopAudio() {
   if (_currentAudio) { try { _currentAudio.pause(); } catch(e){} _currentAudio = null; }
   _stopLoopEl();
   _clearPrefetch();   // FIX: 停止時丟掉預抓音檔，否則下次可能播到上一張卡的音
+  _clearExPrefetch(); // 例句預抓同理
   _speakEndUI();
 }
 
@@ -4126,10 +4282,11 @@ function getCurrentItem() {
 }
 
 // ×3 mode with pre-fetched word URL — skips fetch, plays immediately in onended (iOS background safe).
-// When looping: word ×3 only (skip example to avoid iOS audio chain break).
+// When looping: word ×3 only, unless the 例句 toggle is on → word ×3 + example.
 // When not looping: word ×3 + example.
 function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
-  const skipEx = state.isLooping;
+  // 連播時預設不播例句；打開「例句」開關就照播（音檔一樣先抓好，不破壞 iOS 音訊鏈）
+  const skipEx = state.isLooping && !state.loopExample;
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
@@ -4211,9 +4368,10 @@ function _speakWord3RepsFromUrl(wordUrl, item, myVer, onDone) {
 
 // ×3 mode: fetch word TTS once, play 3 times via onended chain (no async gap → iOS safe),
 // then play pre-fetched example in the same onended chain.
-// When looping: word ×3 only (skip example to avoid iOS audio chain break).
+// When looping: word ×3 only, unless the 例句 toggle is on → word ×3 + example.
 async function _speakWord3Reps(item, myVer, onDone) {
-  const skipEx = state.isLooping;
+  // 連播時預設不播例句；打開「例句」開關就照播（音檔一樣先抓好，不破壞 iOS 音訊鏈）
+  const skipEx = state.isLooping && !state.loopExample;
   const key = localStorage.getItem('azureKey') || '';
   const region = localStorage.getItem('azureRegion') || 'japaneast';
   const voice = localStorage.getItem('azureVoice') || 'ja-JP-NanamiNeural';
@@ -4329,16 +4487,20 @@ function speakCurrent() {
     _dbg(`afterAll ver=${myVer} cur=${_speakVersion}`);
     if (_speakVersion !== myVer) return;
     try {
+      // ×3 模式的例句已在 _speakWord3Reps 裡播過，這裡不再重播
+      const next = () => (state.x3Mode
+        ? _afterSpeak(myVer)
+        : _playLoopExample(item, myVer, () => _afterSpeak(myVer)));
       if (state.cnMode && item.meaning) {
         setTimeout(() => {
           if (_speakVersion !== myVer) return;   // FIX: 延遲 400ms 期間可能已換卡
           speakChinese(item.meaning, () => {
             if (_speakVersion !== myVer) return;
-            _afterSpeak(myVer);
+            next();
           }, myVer);
         }, 400);
       } else {
-        _afterSpeak(myVer);
+        next();
       }
     } catch(e) { _dbg(`afterAll ERROR: ${e.message}`); showToast('Loop error: ' + e.message); }
   }
@@ -4348,6 +4510,7 @@ function speakCurrent() {
     _speakWord3Reps(item, myVer, afterAll);
   } else {
     // ×1: use speak() with pre-fetch chain
+    _prefetchExample(item, myVer);   // 例句音檔趁單字播放時先抓好
     speak(item.jp, afterAll, myVer);
   }
 }
@@ -4407,21 +4570,23 @@ function _afterSpeak(ver) {
         // 這個殘留的 callback 仍會執行，並讀取「當下」的 state.cnMode，
         // 把上一張卡的中文意思唸出來（實測到畫面顯示「課長」卻唸「店員」）。
         if (_speakVersion !== myVer) { _dbg(`_pfDone abort stale ver=${myVer}`); return; }
+        const nextStep = () => _playLoopExample(nextItem, myVer, () => _afterSpeak(myVer));
         if (state.cnMode && nextItem.meaning) {
           setTimeout(() => {
             if (_speakVersion !== myVer) return;
             speakChinese(nextItem.meaning, () => {
               if (_speakVersion !== myVer) return;
-              _afterSpeak(myVer);
+              nextStep();
             }, myVer);
           }, 400);
         } else {
-          _afterSpeak(myVer);
+          nextStep();
         }
       };
       const _pfSt = setTimeout(() => { _dbg(`pf safety`); _pfDone(); }, 12000);
       _speakPlayUI();
       _prefetchNext(myVer);
+      _prefetchExample(nextItem, myVer);   // 這張卡的例句，趁單字播放時先抓好
       const pp = _loopPlay(pfUrl,
         () => { _dbg(`pf ended`); _pfDone(); },
         () => _pfDone('音訊播放失敗')
@@ -4473,6 +4638,15 @@ function toggleLoop() {
 function toggleCnMode() {
   state.cnMode = $id('cnToggle').checked;
   localStorage.setItem('jptutor_cn', state.cnMode ? '1' : '0');
+}
+
+// 連播時是否連例句一起唸。開關本身不打斷目前這段，下一段就會生效。
+function toggleExMode() {
+  state.loopExample = $id('exToggle').checked;
+  localStorage.setItem('jptutor_loop_ex', state.loopExample ? '1' : '0');
+  if (!state.loopExample) _clearExPrefetch();
+  else if (state.isLooping) _prefetchExample(getCurrentItem(), _speakVersion);
+  showToast(state.loopExample ? '連播會唸例句' : '連播只唸單字');
 }
 
 function toggleX3Mode() {
@@ -5177,6 +5351,7 @@ function switchSection(name) {
   });
   const ctrl = $id('practiceCtrl');
   if (ctrl) ctrl.style.display = name === 'practice' ? '' : 'none';
+  _syncBottomPad();   // 控制列收起／展開後高度會變
   if (name === 'stats') renderStats();
   if (name === 'library') renderLibrary();
   if (name === 'settings') renderDeletedList();
@@ -5192,6 +5367,15 @@ function showToast(msg) {
 }
 
 // ===== INIT =====
+// 底部控制列是 fixed 的，開關數量／螢幕寬度不同會換行、高度會變。
+// 內距寫死就會擋住最後一顆評分按鈕，改成量實際高度。
+function _syncBottomPad() {
+  const bar = document.querySelector('.bottom-bar');
+  if (bar) document.body.style.paddingBottom = (bar.offsetHeight + 16) + 'px';
+}
+window.addEventListener('resize', _syncBottomPad);
+window.addEventListener('orientationchange', () => setTimeout(_syncBottomPad, 200));
+
 function init() {
   initData();
   renderGroupOptions();    // 依實際資料建立分類選單
@@ -5201,7 +5385,10 @@ function init() {
   }
   const _gs = $id('groupSelect'); if (_gs) _gs.value = state.levelFilter;
   rebuildQueue(null);      // FIX: 依還原後的篩選／排序建立穩定佇列
-  state.currentIndex = 0;
+  // 開 App 直接回到這一篇上次讀到的位置（想從頭讀就按「↺ 從頭」或用起始選單）
+  const _savedPos = state.chapterPos[state.levelFilter];
+  state.currentIndex = (typeof _savedPos === 'number' && _savedPos >= 0) ? _savedPos : 0;
+  renderStartOptions();
   loadCurrentCard();
   updateHUD();
   renderLibrary();
@@ -5210,6 +5397,7 @@ function init() {
   const _it = getCurrentItem();
   if (_b) _b.style.display = (_it && _it.sentence && !state.isLooping) ? '' : 'none';
   if ($id('btnPlay')) $id('btnPlay').textContent = state.x3Mode ? '▶ 單字 ×3' : '▶ 單字';
+  _syncBottomPad();
 }
 
 init();
