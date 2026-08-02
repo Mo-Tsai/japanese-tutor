@@ -70,18 +70,18 @@
 
   .sentence-display {
     text-align: center;
-    padding: 32px 20px 24px;
+    padding: 24px 18px 20px;
     background: var(--paper);
     border: 1px solid var(--border);
     border-radius: 16px;
     position: relative;
     transition: background 0.15s;
-    min-height: 200px;
+    min-height: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 7px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   }
   .sentence-display.srs-due { border-color: var(--warn); }
@@ -91,37 +91,42 @@
   .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); }
   .srs-indicator { position: absolute; bottom: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.55rem; color: var(--muted); }
 
+  /* 單字的 ruby 是 inline-flex（假名疊在漢字上），所以 line-height 決定的是
+     漢字自己那個行框的高度——行高開太大，上下留白就把假名推遠。1.2 讓假名貼著漢字。 */
   .sentence-jp {
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 3.36rem;
-    letter-spacing: 0.12em;
-    line-height: 1.8;
+    font-size: 3.0rem;
+    letter-spacing: 0.08em;
+    line-height: 1.26;
   }
   .sentence-jp ruby { display: inline-flex; flex-direction: column-reverse; align-items: center; margin: 0 1px; vertical-align: bottom; }
-  .sentence-jp ruby rt { font-size: 0.36em; letter-spacing: 0.04em; color: #6b5e56; font-family: 'Noto Sans JP', sans-serif; font-weight: 400; line-height: 1; margin-bottom: 2px; }
-  .sentence-meaning { font-size: 1.03rem; color: var(--muted); }
+  .sentence-jp ruby rt { font-size: 0.34em; letter-spacing: 0.04em; color: #6b5e56; font-family: 'Noto Sans JP', sans-serif; font-weight: 400; line-height: 1.05; margin-bottom: 2px; white-space: nowrap; }
+  .sentence-meaning { font-size: 0.93rem; color: var(--muted); }
   .sentence-type { font-family: 'Courier New', monospace; font-size: 0.58rem; color: var(--border); letter-spacing: 0.06em; }
 
   /* Example sentence block */
   .example-block {
     width: 100%;
     border-top: 1px solid var(--border);
-    margin-top: 8px;
-    padding-top: 10px;
+    margin-top: 6px;
+    padding-top: 8px;
     text-align: center;
   }
+  /* 例句是原生 <ruby>，假名靠行距擠出來的空間放，所以行高不能壓太狠（2.05 是下限）。 */
   .example-jp {
     font-family: 'Noto Sans JP', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 0.08em;
-    line-height: 2.4;
+    font-size: 1.62rem;
+    letter-spacing: 0.05em;
+    line-height: 2.05;
     color: var(--ink);
+    max-width: 30em;
+    margin: 0 auto;
   }
   .example-jp ruby { margin: 0 1px; }
   .example-jp ruby rt { font-size: 0.67em; color: #6b5e56; font-family: 'Noto Sans JP', sans-serif; font-weight: 400; text-align: center; }
-  .example-meaning { font-size: 0.95rem; color: var(--muted); margin-top: 2px; }
-  .example-meaning-en { font-size: 0.88rem; color: var(--muted); font-style: italic; }
-  .word-meaning-en { font-size: 0.94rem; color: var(--muted); font-style: italic; }
+  .example-meaning { font-size: 0.86rem; color: var(--muted); margin-top: 1px; }
+  .example-meaning-en { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+  .word-meaning-en { font-size: 0.85rem; color: var(--muted); font-style: italic; }
   .en-speak-row { display: flex; align-items: center; gap: 4px; justify-content: center; }
   .btn-speak-en { background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 0 2px; opacity: 0.45; line-height: 1; transition: opacity 0.15s; }
   .btn-speak-en:hover { opacity: 1; }
@@ -325,7 +330,8 @@
 
   /* MOBILE */
   @media (max-width: 600px) {
-    .sentence-jp { font-size: 2.52rem; }
+    .sentence-jp { font-size: 2.24rem; }
+    .example-jp { font-size: 1.45rem; line-height: 2.1; }
     .srs-btn { padding: 10px 8px; font-size: 0.62rem; }
     .add-form { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -338,7 +344,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v4.4</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v4.5</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
