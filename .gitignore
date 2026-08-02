@@ -1,1 +1,6 @@
 _archive/PDF.pdf
+
+# 課程講義原檔（56MB PDF 與全文抽取）— 版權內容，不進 repo
+paper md/*.pdf
+paper md/講義全文_解碼後.md
+paper md/講義抽取卡片_複核用.md
