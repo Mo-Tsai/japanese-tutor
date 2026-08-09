@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;600&family=DM+Mono:wght@300;400&family=Shippori+Mincho:wght@400;600&display=swap');
+  :root {
+    --ink: #2a201c; --paper: #fdf9f6; --paper2: #f5ede8;
+    --gold: #c4845a; --muted: #9a8f87; --border: #e8ddd8;
+    --good: #4a8c6a; --warn: #e07b39; --bad: #c0392b; --accent: #c9727e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Serif JP', serif; background: var(--paper); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; }
+
+  /* ── HEADER ── */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 11px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--paper);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  }
+  .header-left { display: flex; align-items: baseline; gap: 8px; }
+  header h1 { font-family: 'Shippori Mincho', serif; font-size: 1.1rem; letter-spacing: 0.06em; }
+  .header-sub { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.1em; }
+  .header-counter { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); }
+
+  /* ── CARD ── */
+  .card-wrap { flex: 1; padding: 16px 14px 8px; overflow-y: auto; }
+
+  .card {
+    background: #fff; border: 1px solid var(--border); border-radius: 18px;
+    padding: 20px 22px 22px; position: relative;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+    animation: cardIn 0.2s ease;
+  }
+  @keyframes cardIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .jlpt-pill { font-family: 'DM Mono', monospace; font-size: 0.58rem; letter-spacing: 0.08em; padding: 3px 10px; border-radius: 999px; background: var(--paper2); color: var(--muted); border: 1px solid var(--border); }
+  .mastered-btn { font-family: 'DM Mono', monospace; font-size: 0.6rem; padding: 3px 12px; border-radius: 999px; border: 1px solid var(--border); background: transparent; cursor: pointer; color: var(--muted); }
+  .mastered-btn.active { background: var(--good); color: #fff; border-color: var(--good); }
+
+  .word-reading { font-family: 'Noto Serif JP', serif; font-size: 0.78rem; color: var(--accent); letter-spacing: 0.12em; margin-bottom: 4px; }
+  .word-main { font-family: 'Shippori Mincho', serif; font-size: 2.6rem; font-weight: 600; letter-spacing: 0.08em; line-height: 1.2; margin-bottom: 4px; cursor: pointer; }
+  .word-type { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 14px; }
+
+  .meaning-cn { font-size: 1.05rem; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .meaning-en { font-size: 0.8rem; color: var(--muted); font-style: italic; display: flex; align-items: center; gap: 5px; }
+  .btn-en-speak { background: none; border: none; cursor: pointer; font-size: 0.78rem; opacity: 0.45; padding: 0; }
+
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  .example-label { font-family: 'DM Mono', monospace; font-size: 0.55rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .example-jp { font-family: 'Shippori Mincho', serif; font-size: 1rem; line-height: 2.4; letter-spacing: 0.06em; margin-bottom: 6px; }
+  .example-jp ruby { margin: 0 1px; }
+  .example-jp ruby rt { font-size: 0.5em; color: var(--muted); }
+  .example-cn { font-size: 0.82rem; color: var(--muted); margin-bottom: 2px; }
+  .example-en { font-size: 0.72rem; color: var(--muted); font-style: italic; display: flex; align-items: center; gap: 5px; }
+
+  /* ── BOTTOM BAR ── */
+  .bottom-bar {
+    position: sticky; bottom: 0;
+    background: var(--paper); border-top: 1px solid var(--border);
+    padding: 10px 14px 14px;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.05);
+  }
+
+  /* Row 1: toggles + speed */
+  .ctrl-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .tog-group { display: flex; align-items: center; gap: 12px; }
+  .tog-switch { display: flex; align-items: center; gap: 5px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; user-select: none; }
+  .tog-switch input { display: none; }
+  .tog-track { width: 28px; height: 15px; background: rgba(0,0,0,0.1); border-radius: 8px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .tog-track::after { content: ''; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: white; top: 3px; left: 3px; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+  .tog-switch input:checked + .tog-track { background: var(--accent); }
+  .tog-switch input:checked + .tog-track::after { transform: translateX(13px); }
+  .speed-group { display: flex; gap: 4px; align-items: center; }
+  .speed-btn { font-family: 'DM Mono', monospace; font-size: 0.58rem; padding: 3px 10px; border: 1px solid var(--border); border-radius: 999px; background: transparent; cursor: pointer; color: var(--muted); }
+  .speed-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* Row 2: nav */
+  .nav-row { display: flex; gap: 6px; align-items: center; }
+  .btn-nav { width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 999px; background: transparent; cursor: pointer; color: var(--muted); font-size: 0.8rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .btn-word { flex: 1.4; height: 38px; background: var(--accent); color: #fff; border: none; border-radius: 999px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .btn-sent { flex: 1; height: 38px; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 999px; cursor: pointer; font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.04em; display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+  /* Row 3: tab bar */
+  .tab-bar { display: flex; gap: 0; margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .tab-btn { flex: 1; padding: 7px 0; font-family: 'DM Mono', monospace; font-size: 0.62rem; letter-spacing: 0.06em; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active { background: var(--accent); color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <h1>日語練習所</h1>
+    <span class="header-sub">JAPANESE TUTOR</span>
+  </div>
+  <span class="header-counter">1 / 1041</span>
+</header>
+
+<!-- CARD -->
+<div class="card-wrap">
+  <div class="card">
+    <div class="card-top">
+      <span class="jlpt-pill">N4</span>
+      <button class="mastered-btn">✓ 學會</button>
+    </div>
+
+    <div class="word-reading">かちょう</div>
+    <div class="word-main" onclick="">課長</div>
+    <div class="word-type">名詞</div>
+
+    <div class="meaning-cn">科長</div>
+    <div class="meaning-en">
+      section chief
+      <button class="btn-en-speak">🔊</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="example-label">例句</div>
+    <div class="example-jp">
+      あの<ruby>人<rt>ひと</rt></ruby>は<ruby>私<rt>わたし</rt></ruby>の<ruby>課長<rt>かちょう</rt></ruby>です。
+    </div>
+    <div class="example-cn">那個人是我的科長。</div>
+    <div class="example-en">
+      That person is my section chief.
+      <button class="btn-en-speak">🔊</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="bottom-bar">
+  <!-- Row 1: toggles + speed -->
+  <div class="ctrl-top">
+    <div class="tog-group">
+      <label class="tog-switch">
+        <input type="checkbox" id="loopToggle">
+        <div class="tog-track"></div>
+        Loop
+      </label>
+      <label class="tog-switch">
+        <input type="checkbox" id="cnToggle" checked>
+        <div class="tog-track"></div>
+        中日
+      </label>
+    </div>
+    <div class="speed-group">
+      <button class="speed-btn">Slow</button>
+      <button class="speed-btn active">Mid</button>
+      <button class="speed-btn">Fast</button>
+    </div>
+  </div>
+
+  <!-- Row 2: nav -->
+  <div class="nav-row">
+    <button class="btn-nav">◀</button>
+    <button class="btn-word">▶ 単字 ×3</button>
+    <button class="btn-sent">▶ 例句</button>
+    <button class="btn-nav">▶</button>
+  </div>
+
+  <!-- Row 3: tab bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active">練習</button>
+    <button class="tab-btn">題庫</button>
+    <button class="tab-btn">統計</button>
+    <button class="tab-btn">設定</button>
+  </div>
+</div>
+
+</body>
+</html>
