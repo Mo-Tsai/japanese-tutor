@@ -84,12 +84,21 @@
     gap: 7px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
   }
-  .sentence-display.srs-due { border-color: var(--warn); }
-  .sentence-display.srs-new { border-color: var(--accent); }
+  /* v5.1：卡片不再整圈換色。原本 srs-due／srs-new 會把整張卡的外框染成橘／粉，
+     在手機上像一個大紅框，很搶戲。改成只染卡片底部那排狀態圓點，資訊還在但不吵。 */
+  .sentence-display.srs-due .srs-indicator { color: var(--warn); }
+  .sentence-display.srs-new .srs-indicator { color: var(--accent); }
 
   .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'Noto Sans TC', 'Courier New', monospace; font-family: 'Courier New', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
   .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); }
   .srs-indicator { position: absolute; bottom: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.55rem; color: var(--muted); }
+
+  /* v5.1：🚩／狀態點／🗑 本來都是 absolute 貼在卡片左下右下，🗑 直接壓在 ○○○○○ 上，
+     文法徽章多一排時又會撞到它們。改成卡片最後一列的實體 flex row，三者各佔一格。 */
+  .card-foot { width: 100%; display: flex; align-items: center; justify-content: space-between;
+               gap: 10px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--border); }
+  .card-foot .btn-flag, .card-foot .srs-indicator { position: static; bottom: auto; left: auto; right: auto; }
+  .card-foot .srs-indicator { letter-spacing: 0.16em; }
 
   /* 這裡有兩個不同的「行高」，一定要分開設，不能只調一個：
      ruby 是 inline-flex（假名疊在漢字上方），ruby 自己的 line-height 決定「漢字那格」
@@ -150,13 +159,14 @@
 
   /* SRS RATING BUTTONS */
   .srs-row { display: flex; gap: 8px; margin-top: 14px; justify-content: center; }
+  /* v5.1：四顆評分鍵是每張卡都要按的主要動作，字級與觸控高度往上調一階。 */
   .srs-btn {
-    font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.05em;
-    padding: 10px 20px; border: 1px solid; border-radius: 10px; cursor: pointer;
+    font-family: 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 0.05em;
+    padding: 13px 18px; border: 1px solid; border-radius: 10px; cursor: pointer;
     transition: all 0.15s; background: transparent; flex: 1; max-width: 140px;
-    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
   }
-  .srs-btn .srs-interval { font-size: 0.55rem; opacity: 0.7; }
+  .srs-btn .srs-interval { font-size: 0.64rem; opacity: 0.7; }
   .srs-btn.again { border-color: var(--bad); color: var(--bad); }
   .srs-btn.again:hover, .srs-btn.again.tapped { background: var(--bad); color: #fff; transform: scale(0.93); }
   .srs-btn.hard { border-color: var(--warn); color: var(--warn); }
@@ -328,8 +338,9 @@
   .btn-word-bar.playing { background: var(--good); }
   .btn-sent-bar { flex: 1; height: 38px; background: transparent; color: var(--accent); border: 1.5px solid var(--accent); border-radius: 999px; cursor: pointer; font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.04em; transition: all 0.12s; }
   .btn-sent-bar:hover { background: var(--paper2); }
-  .tab-bar-bottom { display: flex; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .tab-btn-bottom { flex: 1; padding: 7px 0; font-family: 'Courier New', monospace; font-size: 0.64rem; letter-spacing: 0.06em; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
+  /* v5.1：最下方四格切換鍵一天只按幾次，縮小讓出畫面給卡片。 */
+  .tab-bar-bottom { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .tab-btn-bottom { flex: 1; padding: 5px 0; font-family: 'Courier New', monospace; font-size: 0.56rem; letter-spacing: 0.06em; border: none; background: transparent; cursor: pointer; color: var(--muted); border-right: 1px solid var(--border); transition: all 0.12s; }
   .tab-btn-bottom:last-child { border-right: none; }
   .tab-btn-bottom.active { background: var(--accent); color: #fff; }
 
@@ -337,15 +348,17 @@
   @media (max-width: 600px) {
     .sentence-jp { font-size: 2.24rem; }
     .example-jp { font-size: 1.45rem; line-height: 2.1; }
-    .srs-btn { padding: 10px 8px; font-size: 0.62rem; }
+    .srs-btn { padding: 13px 6px; font-size: 0.74rem; }
     .add-form { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
   }
 
   /* ===== v5.0 標日文法 ===== */
-  .grammar-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; justify-content:center; }
-  .g-chip { font-size:0.62rem; padding:3px 9px; border:1px solid var(--accent); border-radius:10px;
-            color:var(--accent); background:transparent; cursor:pointer; font-family:'Noto Sans TC',sans-serif; }
+  /* v5.1：文法徽章是進文法解說的唯一入口，字太小點不到，往上調一階。 */
+  .grammar-chips { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; justify-content:center; }
+  .g-chip { font-size:0.76rem; padding:6px 13px; border:1px solid var(--accent); border-radius:12px;
+            color:var(--accent); background:transparent; cursor:pointer; font-family:'Noto Sans TC',sans-serif;
+            line-height:1.35; }
   .g-chip:active { opacity:0.6; }
   #grammarOverlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:400;
                     display:flex; align-items:center; justify-content:center; padding:18px; }
@@ -354,20 +367,21 @@
   .g-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; }
   .g-head .card-label { margin-bottom:0; }
   .g-close { background:none; border:1px solid var(--border); border-radius:8px; color:var(--muted);
-             padding:4px 10px; cursor:pointer; font-size:0.75rem; }
-  .g-pattern { font-size:1.05rem; font-weight:700; margin:4px 0 2px; }
-  .g-sec { font-size:0.6rem; color:var(--muted); font-family:'DM Mono',monospace; }
-  .g-explain { font-size:0.78rem; line-height:1.75; margin:10px 0; }
-  .g-ex { border-top:1px dashed var(--border); padding:9px 0 7px; }
-  .g-ex-jp { font-size:0.95rem; line-height:1.9; }
-  .g-ex-cn { font-size:0.7rem; color:var(--muted); margin-top:2px; }
+             padding:5px 12px; cursor:pointer; font-size:0.85rem; }
+  /* v5.1：文法總覽與文法解說整頁字級 +18%（總覽的課名／條目 +22%），手機上不用瞇眼看。 */
+  .g-pattern { font-size:1.24rem; font-weight:700; margin:4px 0 3px; }
+  .g-sec { font-size:0.7rem; color:var(--muted); font-family:'DM Mono',monospace; }
+  .g-explain { font-size:0.92rem; line-height:1.8; margin:11px 0; }
+  .g-ex { border-top:1px dashed var(--border); padding:10px 0 8px; }
+  .g-ex-jp { font-size:1.12rem; line-height:1.95; }
+  .g-ex-cn { font-size:0.82rem; color:var(--muted); margin-top:3px; }
   .g-play { background:none; border:1px solid var(--border); border-radius:8px; cursor:pointer;
-            font-size:0.65rem; color:var(--accent); padding:2px 8px; margin-left:6px; vertical-align:middle; }
-  .g-linked-h { font-size:0.62rem; color:var(--muted); margin:14px 0 4px; letter-spacing:0.1em; }
-  .g-lesson-h { font-size:0.72rem; font-weight:700; margin:14px 0 4px; border-bottom:1px solid var(--border); padding-bottom:3px; }
+            font-size:0.75rem; color:var(--accent); padding:3px 9px; margin-left:6px; vertical-align:middle; }
+  .g-linked-h { font-size:0.74rem; color:var(--muted); margin:16px 0 5px; letter-spacing:0.1em; }
+  .g-lesson-h { font-size:0.9rem; font-weight:700; margin:16px 0 5px; border-bottom:1px solid var(--border); padding-bottom:4px; }
   .g-idx-item { display:block; width:100%; text-align:left; background:none; border:none; cursor:pointer;
-                padding:6px 2px; font-size:0.8rem; color:inherit; border-bottom:1px dashed var(--border); }
-  .g-idx-item small { color:var(--muted); font-size:0.65rem; margin-left:8px; }
+                padding:9px 2px; font-size:0.98rem; color:inherit; border-bottom:1px dashed var(--border); }
+  .g-idx-item small { color:var(--muted); font-size:0.78rem; margin-left:8px; }
 </style>
 </head>
 <body>
@@ -376,7 +390,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v5.0</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v5.1</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -424,10 +438,6 @@
         <div class="sentence-display" id="sentenceDisplay">
           <span class="sentence-badge" id="sentenceBadge">—</span>
           <span class="sentence-counter" id="sentenceCounter" onclick="jumpToCard()" title="點擊跳到指定卡片" style="cursor:pointer; text-decoration:underline dotted; text-underline-offset:3px;">1 / 1</span>
-          <span class="srs-indicator" id="srsIndicator"></span>
-          <button class="btn-flag" id="btnFlag" onclick="toggleFlag()" title="回報問題">🚩</button>
-          <button class="btn-flag" id="btnDelCard" onclick="deleteCurrentCard()" title="刪除這張卡（可復原）" style="left:auto; right:14px;">🗑</button>
-
           <div class="sentence-jp" id="sentenceJp">載入中…</div>
           <div class="sentence-meaning" id="sentenceMeaning"></div>
           <div class="card-note" id="cardNote" style="display:none;"></div>
@@ -450,6 +460,13 @@
 
           <!-- v5.0 這張卡用到的標日文法點 -->
           <div class="grammar-chips" id="grammarChips" style="display:none;"></div>
+
+          <!-- v5.1 卡片底列：回報 / 熟練度 / 刪除。以前三者都是 absolute，🗑 會壓在圓點上。 -->
+          <div class="card-foot">
+            <button class="btn-flag" id="btnFlag" onclick="toggleFlag()" title="回報問題">🚩</button>
+            <span class="srs-indicator" id="srsIndicator"></span>
+            <button class="btn-flag" id="btnDelCard" onclick="deleteCurrentCard()" title="刪除這張卡（可復原）">🗑</button>
+          </div>
         </div>
       </div>
 
