@@ -1,6 +1,41 @@
-_archive/PDF.pdf
+# ─────────────────────────────────────────────────────────────
+# 教材原檔與全文抽取 —— 版權內容，一律不進 repo
+#
+# 這個 repo 是公開的（GitHub Pages）。教材的原始 PDF、OCR 全文、
+# 以及逐頁抽出來的課文 JSON 都是別人的著作，只能留在本機當素材，
+# 不能推上去。進 repo 的只有我們自己改寫過的卡片（paper md/std_cards/）。
+#
+# 2026-08-13：這幾個檔曾經被推上公開 repo，已用 git filter-repo
+# 從全部歷史清掉並 force push。規則寫寬一點，避免再犯。
+# ─────────────────────────────────────────────────────────────
 
-# 課程講義原檔（56MB PDF 與全文抽取）— 版權內容，不進 repo
-paper md/*.pdf
+# 原始 PDF（標日上下冊各 200MB+、艾莎講義 56MB）
+*.pdf
+
+# 標日課本 OCR 全文
+paper md/中日交流標準日本語.md
+paper md/新版标日第二版初级 下册(高清无水印) (2).md
+
+# 標日課文座標抽取（等同課文全文）
+paper md/std_extracted.json
+paper md/std_extracted_shita.json
+
+# 艾莎講義全文與抽取
 paper md/講義全文_解碼後.md
 paper md/講義抽取卡片_複核用.md
+
+# 早期從課本 PDF 抽出來的文字
+_archive/PDF_extracted.txt
+_archive/pdf_extract.txt
+_archive/vocab_extract.txt
+
+# ─────────────────────────────────────────────────────────────
+# 舊素材與產物
+# ─────────────────────────────────────────────────────────────
+
+# 2026-03 的實驗檔與一次性腳本，留在本機備查，不進 repo
+_archive/
+
+# Python 快取
+__pycache__/
+*.pyc
