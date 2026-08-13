@@ -34,6 +34,29 @@ def validate(card, errs):
     if rd and not KANA_OK.match(rd):
         errs.append(f"{cid}: reading 含非假名: {reading[:24]}")
 
+    # ruby 展開後就是這張卡的完整讀音，跟 reading 欄應該一致。分開手寫兩份必然會
+    # 打錯字，而且錯字本身是合法假名，前面兩道檢查都攔不到（實際發生過：
+    # 「お邪魔することにしました」的 reading 寫成「おじゃまることにしました」，
+    # 少一個す，照樣通過）。這裡把 ruby 展開再比對，這類漏字、錯字就跑不掉。
+    # 例外：ruby 不會在數字與英文上標假名（顯示用，「7階」就是寫 7），但 reading 要
+    # 拼給 TTS 唸（ななかい、ジェーシー），這時兩邊本來就會不一樣。所以只在 ruby
+    # 展開後是純假名時才比對——這仍然涵蓋絕大多數卡片，也照樣抓得到漏字。
+    if ruby and reading:
+        exp = "".join(t.split("|")[1] if "|" in t else t for t in ruby.split(" "))
+        exp = _kana_only(exp)
+        got = _kana_only(reading)
+        if exp and got and KANA_OK.match(exp) and exp != got:
+            errs.append(f"{cid}: reading 與 ruby 展開不符\n"
+                        f"      ruby→ {exp[:46]}\n"
+                        f"      read→ {got[:46]}")
+
+# 比對前把標點、空白、以及漢字以外都拿掉——ruby 段落裡的純假名部分會原樣帶進來，
+# 兩邊都用同一把尺清乾淨才比得準。
+_PUNCT = "、。，,．.！!？?…「」『』（）()・〜~ 　"
+
+def _kana_only(s):
+    return "".join(ch for ch in s if ch not in _PUNCT)
+
 def main():
     files = sorted(glob.glob(os.path.join(HERE, "std_cards", "L*.json")),
                    key=lambda p: int(re.search(r"L(\d+)", os.path.basename(p)).group(1)))
