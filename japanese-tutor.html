@@ -28,6 +28,14 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* v5.3：假名一律不准自己折行。
+     讀音比漢字長很多時（「中国航空」4 字配「ちゅうごくこうくう」9 個假名），
+     原生 <ruby> 的 rt 會在漢字寬度內折成好幾行，rt 框從 20px 撐到 68px，
+     直接壓進上一行的字。.sentence-jp 本來就有設 nowrap 所以看不出問題，
+     例句（.example-jp）與文法頁例句（.g-ex-jp）漏了才會撞。
+     設 nowrap 後 rt 會照原生 ruby 的方式往左右溢出、把鄰字推開，不再往下長。 */
+  ruby rt { white-space: nowrap; }
+
   body {
     font-family: 'Inter', 'Noto Sans JP', sans-serif;
     font-size: 120%;
@@ -57,6 +65,11 @@
   .section.active { display: block; }
 
   .card { background: #fff; border: 1px solid var(--border); padding: 22px 26px; margin-bottom: 18px; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.05); }
+  /* v5.3：練習頁的卡片不要外框。外框本身左右各吃 26px，裡面的 .sentence-display
+     再吃 18px，手機上 375px 的畫面只剩 259px 給字——句子被逼著一直折行，
+     折行後上下兩行的假名就容易打架。拿掉兩層框後可用寬度回到 347px。
+     題庫／統計／設定還是保留白框，那幾頁是清單與表單，有框比較好讀。 */
+  .card-bare { background: transparent; border: none; box-shadow: none; padding: 0; margin-bottom: 0; }
   .card-label { font-family: 'Courier New', monospace; font-size: 0.62rem; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
   .card-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
@@ -68,21 +81,21 @@
     user-select: none;
   }
 
+  /* v5.3：卡片本體也不要框。左右 padding 歸零，字才吃得到整個畫面寬度。 */
   .sentence-display {
     text-align: center;
-    padding: 24px 18px 20px;
-    background: var(--paper);
-    border: 1px solid var(--border);
-    border-radius: 16px;
+    padding: 4px 0 6px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
     position: relative;
-    transition: background 0.15s;
     min-height: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 7px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    box-shadow: none;
   }
   /* v5.1：卡片不再整圈換色。原本 srs-due／srs-new 會把整張卡的外框染成橘／粉，
      在手機上像一個大紅框，很搶戲。改成只染卡片底部那排狀態圓點，資訊還在但不吵。 */
@@ -92,6 +105,15 @@
   .sentence-badge { position: absolute; top: 10px; left: 14px; font-family: 'Noto Sans TC', 'Courier New', monospace; font-family: 'Courier New', monospace; font-size: 0.55rem; letter-spacing: 0.08em; padding: 2px 8px; border: 1px solid var(--border); color: var(--muted); text-transform: uppercase; }
   .sentence-counter { position: absolute; top: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.6rem; color: var(--muted); }
   .srs-indicator { position: absolute; bottom: 10px; right: 14px; font-family: 'Courier New', monospace; font-size: 0.55rem; color: var(--muted); }
+
+  /* v5.3：課別徽章與張數本來是 absolute 貼在卡片左上右上，第一行漢字的假名
+     （rt 疊在行框上方）會直接壓到徽章的框線上——螢幕截圖裡「さけ」就壓在
+     「標日 第3單元・第12課」那個框上。改成實體 flex row 排在句子上面，
+     靠正常流排版隔開，不管假名多高都不會再撞。 */
+  .card-head { width: 100%; display: flex; align-items: center; justify-content: space-between;
+               gap: 10px; margin-bottom: 4px; }
+  .card-head .sentence-badge, .card-head .sentence-counter {
+    position: static; top: auto; left: auto; right: auto; }
 
   /* v5.1：🚩／狀態點／🗑 本來都是 absolute 貼在卡片左下右下，🗑 直接壓在 ○○○○○ 上，
      文法徽章多一排時又會撞到它們。改成卡片最後一列的實體 flex row，三者各佔一格。 */
@@ -157,26 +179,9 @@
   .speed-btn { font-family: 'Courier New', monospace; font-size: 0.63rem; padding: 4px 11px; border: 1px solid var(--border); border-radius: 20px; background: transparent; cursor: pointer; color: var(--muted); transition: all 0.12s; }
   .speed-btn.active,.speed-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
-  /* SRS RATING BUTTONS */
-  .srs-row { display: flex; gap: 8px; margin-top: 14px; justify-content: center; }
-  /* v5.1：四顆評分鍵是每張卡都要按的主要動作，字級與觸控高度往上調一階。 */
-  .srs-btn {
-    font-family: 'Courier New', monospace; font-size: 0.8rem; letter-spacing: 0.05em;
-    padding: 13px 18px; border: 1px solid; border-radius: 10px; cursor: pointer;
-    transition: all 0.15s; background: transparent; flex: 1; max-width: 140px;
-    display: flex; flex-direction: column; align-items: center; gap: 3px;
-  }
-  .srs-btn .srs-interval { font-size: 0.64rem; opacity: 0.7; }
-  .srs-btn.again { border-color: var(--bad); color: var(--bad); }
-  .srs-btn.again:hover, .srs-btn.again.tapped { background: var(--bad); color: #fff; transform: scale(0.93); }
-  .srs-btn.hard { border-color: var(--warn); color: var(--warn); }
-  .srs-btn.hard:hover, .srs-btn.hard.tapped { background: var(--warn); color: #fff; transform: scale(0.93); }
-  .srs-btn.good { border-color: var(--good); color: var(--good); }
-  .srs-btn.good:hover, .srs-btn.good.tapped { background: var(--good); color: #fff; transform: scale(0.93); }
-  .srs-btn.easy { border-color: var(--gold); color: var(--gold); }
-  .srs-btn.easy:hover, .srs-btn.easy.tapped { background: var(--gold); color: #fff; transform: scale(0.93); }
-  .srs-btn.flash { animation: srsFlash 0.35s ease-out; }
-  @keyframes srsFlash { 0% { transform: scale(0.93); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+  /* v5.3：四顆評分鍵（又忘了／困難／記得／很簡單）已移除，連帶 .srs-row／.srs-btn
+     的樣式與 srsFlash 動畫一起刪掉。SRS 的資料結構與統計頁沒有動，只是現在沒有
+     任何入口會再寫入新的複習排程。 */
 
   /* NAV */
   .btn { font-family: 'Courier New', monospace; font-size: 0.68rem; letter-spacing: 0.06em; padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px; background: transparent; cursor: pointer; transition: all 0.15s; color: var(--ink); }
@@ -348,7 +353,6 @@
   @media (max-width: 600px) {
     .sentence-jp { font-size: 2.24rem; }
     .example-jp { font-size: 1.45rem; line-height: 2.1; }
-    .srs-btn { padding: 13px 6px; font-size: 0.74rem; }
     .add-form { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
   }
@@ -390,7 +394,7 @@
   <div style="display:flex; align-items:baseline; gap:7px;">
     <h1>日語練習所</h1>
     <span class="header-sub">標準日本語</span>
-    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v5.2</span>
+    <span style="font-family:'DM Mono',monospace; font-size:0.5rem; color:var(--muted); opacity:0.5;">v5.3</span>
   </div>
   <span id="headerCounter" style="font-family:'DM Mono',monospace; font-size:0.7rem; color:var(--muted);">— / —</span>
 </header>
@@ -399,7 +403,7 @@
 
   <!-- PRACTICE -->
   <div class="section active" id="section-practice">
-    <div class="card">
+    <div class="card card-bare">
       <div style="display:flex; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
         <div class="card-label" style="margin-bottom:0; flex:1;">當前練習</div>
 
@@ -436,8 +440,11 @@
 
       <div class="flashcard-wrap" id="flashcardWrap">
         <div class="sentence-display" id="sentenceDisplay">
-          <span class="sentence-badge" id="sentenceBadge">—</span>
-          <span class="sentence-counter" id="sentenceCounter" onclick="jumpToCard()" title="點擊跳到指定卡片" style="cursor:pointer; text-decoration:underline dotted; text-underline-offset:3px;">1 / 1</span>
+          <!-- v5.3 卡片頂列：課別徽章與張數。以前是 absolute，第一行的假名會壓上去。 -->
+          <div class="card-head">
+            <span class="sentence-badge" id="sentenceBadge">—</span>
+            <span class="sentence-counter" id="sentenceCounter" onclick="jumpToCard()" title="點擊跳到指定卡片" style="cursor:pointer; text-decoration:underline dotted; text-underline-offset:3px;">1 / 1</span>
+          </div>
           <div class="sentence-jp" id="sentenceJp">載入中…</div>
           <div class="sentence-meaning" id="sentenceMeaning"></div>
           <div class="card-note" id="cardNote" style="display:none;"></div>
@@ -470,25 +477,7 @@
         </div>
       </div>
 
-      <!-- SRS Rating (shown in SRS mode) -->
-      <div class="srs-row" id="srsRating" style="display:none;">
-        <button class="srs-btn again" onclick="rateSRS(0)">
-          又忘了
-          <span class="srs-interval" id="intAgain"></span>
-        </button>
-        <button class="srs-btn hard" onclick="rateSRS(1)">
-          困難
-          <span class="srs-interval" id="intHard"></span>
-        </button>
-        <button class="srs-btn good" onclick="rateSRS(2)">
-          記得
-          <span class="srs-interval" id="intGood"></span>
-        </button>
-        <button class="srs-btn easy" onclick="rateSRS(3)">
-          很簡單
-          <span class="srs-interval" id="intEasy"></span>
-        </button>
-      </div>
+      <!-- v5.3 四顆評分鍵（又忘了／困難／記得／很簡單）已移除 -->
 
     </div>
   </div>
@@ -5516,13 +5505,7 @@ function loadCurrentCard() {
     $id('exampleBlock').style.display = 'none';
   }
 
-  // SRS rating buttons — always visible (Anki-style)
-  $id('srsRating').style.display = 'flex';
-  const curr = state.srsData[item.id] || { ef: 2.5, interval: 1, reps: 0 };
-  $id('intAgain').textContent = '明天';
-  $id('intHard').textContent = intervalLabel(srsNextInterval(curr, 1).interval);
-  $id('intGood').textContent = intervalLabel(srsNextInterval(curr, 2).interval);
-  $id('intEasy').textContent = intervalLabel(srsNextInterval(curr, 3).interval);
+  // v5.3：四顆評分鍵已移除，這裡原本負責顯示它們與各自的下次複習間隔。
 
   const _exBtn = $id('btnSpeakEx');
   _exBtn.style.display = (item.sentence && !state.isLooping) ? '' : 'none';
@@ -5832,7 +5815,17 @@ function renderRuby(rubyStr, jpStr) {
   return rubyStr.split(' ').map(token => {
     if (token.includes('|')) {
       const [base, rt] = token.split('|');
-      return `<ruby>${base}<rt>${rt}</rt></ruby>`;
+      // v5.3：ruby 是靠空白分段的，來源資料常常把緊跟在讀音後面的東西一起黏進來
+      // （`着用禁止|ちゃくようきんし」と`、`明日|あした。`）。這些字會被當成假名塞進
+      // rt：輕則標點浮在漢字上方，重則 rt 太長被迫折行、往上壓到前一行。
+      // 規則是「讀音只可能是假名」，所以從第一個非假名字元切斷，後面原樣擺回
+      // ruby 外面——這樣連 `」と` 這種標點後面還跟著假名的情況也切得乾淨。
+      // ～／〜 要留在讀音裡，`～側|～がわ` 這類接尾詞卡靠它。
+      const m = /^([ぁ-ゟ゠-ヿ々〜～ｦ-ﾟ]*)([\s\S]*)$/.exec(rt);
+      const rtClean = m ? m[1] : rt;
+      const tail = m ? m[2] : '';
+      if (!rtClean) return base + tail;
+      return `<ruby>${base}<rt>${rtClean}</rt></ruby>${tail}`;
     }
     return token;
   }).join('');
@@ -6551,10 +6544,8 @@ document.addEventListener('keydown', e => {
   else if (e.key === 'ArrowLeft' || e.key === 'h') prevCard();
   else if (e.key === ' ') { e.preventDefault(); speakCurrent(); }
   else if (e.key === 'e') showAndSpeakExample();
-  else if (e.key === '1') rateSRS(0);
-  else if (e.key === '2') rateSRS(1);
-  else if (e.key === '3') rateSRS(2);
-  else if (e.key === '4') rateSRS(3);
+  // v5.3：1〜4 原本對應四顆評分鍵。按鍵留著會變成「看不見的功能」——
+  // 按下去會偷偷評分並跳下一張，找不到原因，所以跟按鈕一起拿掉。
 });
 
 // ===== HUD =====
