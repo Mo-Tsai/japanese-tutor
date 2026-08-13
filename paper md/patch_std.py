@@ -27,7 +27,10 @@ def validate(card, errs):
     if plain.replace(" ", "") != jp.replace(" ", ""):
         errs.append(f"{cid}: ruby 還原不符 jp={jp[:24]}")
     rd = reading.replace("、", "").replace("。", "").replace("，", "").replace(",", "").replace(" ", "")
-    rd = re.sub(r'[A-Za-zＡ-Ｚａ-ｚ0-9０-９？?！!・]', '', rd)
+    # 這裡本來連 A-Za-z0-9？！・ 都一起濾掉再檢查，等於在讀音欄開了一個大洞：
+    # 混進去的英文字母不會被抓到（實際發生過，reading 尾巴多了一個 especially 還過關）。
+    # 全 24 課掃過，合法讀音裡沒有任何英文、數字、？！或中黑點——外來語一律寫成
+    # 片假名（JC→ジェーシー、CD→シーディー），所以這些字元出現就是錯字，不再放行。
     if rd and not KANA_OK.match(rd):
         errs.append(f"{cid}: reading 含非假名: {reading[:24]}")
 
